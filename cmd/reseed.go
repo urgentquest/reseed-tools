@@ -13,6 +13,7 @@ import (
 	"github.com/MDrollette/i2p-tools/reseed"
 	"github.com/codegangsta/cli"
 	"github.com/cretz/bine/tor"
+	"github.com/cretz/bine/torutil"
 	"github.com/cretz/bine/torutil/ed25519"
 )
 
@@ -125,8 +126,26 @@ func reseedAction(c *cli.Context) {
 	tlsHost := c.String("tlsHost")
 
 	if c.Bool("onion") {
+		var ok []byte
+		var err error
 		if tlsHost == "" {
-			tlsHost = "onion"
+			if _, err = os.Stat(c.String("onionKey")); err == nil {
+				ok, err = ioutil.ReadFile(c.String("onionKey"))
+				if err != nil {
+					log.Fatalln(err.Error())
+				}
+			} else {
+				key, err := ed25519.GenerateKey(nil)
+				if err != nil {
+					log.Fatalln(err.Error())
+				}
+				ok = []byte(key.PrivateKey())
+			}
+			tlsHost = torutil.OnionServiceIDFromPrivateKey(ed25519.PrivateKey(ok)) + ".onion"
+		}
+		err = ioutil.WriteFile(c.String("onionKey"), ok, 0644)
+		if err != nil {
+			log.Fatalln(err.Error())
 		}
 	}
 
@@ -227,7 +246,6 @@ func reseedAction(c *cli.Context) {
 								DiscardKey:   false,
 							},
 							tlsCert, tlsKey,
-							c.String("onionKey"),
 						),
 					)
 				} else {
@@ -242,42 +260,23 @@ func reseedAction(c *cli.Context) {
 								NonAnonymous: c.Bool("singleOnion"),
 								DiscardKey:   false,
 							},
-							c.String("onionKey"),
 						),
 					)
 				}
 			}
 		} else if os.IsNotExist(err) {
-			if tlsCert != "" && tlsKey != "" {
-				log.Fatalln(
-					server.ListenAndServeOnionTLS(
-						nil,
-						&tor.ListenConf{
-							LocalPort:    port,
-							RemotePorts:  []int{443},
-							Version3:     true,
-							NonAnonymous: c.Bool("singleOnion"),
-							DiscardKey:   false,
-						},
-						tlsCert, tlsKey,
-						c.String("onionKey"),
-					),
-				)
-			} else {
-				log.Fatalln(
-					server.ListenAndServeOnion(
-						nil,
-						&tor.ListenConf{
-							LocalPort:    port,
-							RemotePorts:  []int{80},
-							Version3:     true,
-							NonAnonymous: c.Bool("singleOnion"),
-							DiscardKey:   false,
-						},
-						c.String("onionKey"),
-					),
-				)
-			}
+			log.Fatalln(
+				server.ListenAndServeOnion(
+					nil,
+					&tor.ListenConf{
+						LocalPort:    port,
+						RemotePorts:  []int{80},
+						Version3:     true,
+						NonAnonymous: c.Bool("singleOnion"),
+						DiscardKey:   false,
+					},
+				),
+			)
 		} else {
 
 		}
