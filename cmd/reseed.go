@@ -124,9 +124,11 @@ func reseedAction(c *cli.Context) {
 	var tlsCert, tlsKey string
 	tlsHost := c.String("tlsHost")
 
-    if c.Bool("onion") {
-        tlsHost = "onion"
-    }
+	if c.Bool("onion") {
+		if tlsHost == "" {
+			tlsHost = "onion"
+		}
+	}
 
 	if tlsHost != "" {
 		tlsKey = c.String("tlsKey")
@@ -195,7 +197,7 @@ func reseedAction(c *cli.Context) {
 	if c.Duration("stats") != 0 {
 		go func() {
 			var mem runtime.MemStats
-			for _ = range time.Tick(c.Duration("stats")) {
+			for range time.Tick(c.Duration("stats")) {
 				runtime.ReadMemStats(&mem)
 				log.Printf("TotalAllocs: %d Kb, Allocs: %d Kb, Mallocs: %d, NumGC: %d", mem.TotalAlloc/1024, mem.Alloc/1024, mem.Mallocs, mem.NumGC)
 			}
@@ -212,70 +214,70 @@ func reseedAction(c *cli.Context) {
 			if err != nil {
 				log.Fatalln(err.Error())
 			} else {
-                if tlsCert != "" && tlsKey != "" {
-                    log.Fatalln(
-                        server.ListenAndServeOnionTLS(
-                            nil,
-                            &tor.ListenConf{
-                                LocalPort:    port,
-                                Key:          ed25519.PrivateKey(ok),
-                                RemotePorts:  []int{443},
-                                Version3:     true,
-                                NonAnonymous: c.Bool("singleOnion"),
-                                DiscardKey:   false,
-                            },
-                            tlsCert, tlsKey,
-                            c.String("onionKey"),
-                        ),
-                    )
-                }else{
-                    log.Fatalln(
-                        server.ListenAndServeOnion(
-                            nil,
-                            &tor.ListenConf{
-                                LocalPort:    port,
-                                Key:          ed25519.PrivateKey(ok),
-                                RemotePorts:  []int{80},
-                                Version3:     true,
-                                NonAnonymous: c.Bool("singleOnion"),
-                                DiscardKey:   false,
-                            },
-                            c.String("onionKey"),
-                        ),
-                    )
-                }
+				if tlsCert != "" && tlsKey != "" {
+					log.Fatalln(
+						server.ListenAndServeOnionTLS(
+							nil,
+							&tor.ListenConf{
+								LocalPort:    port,
+								Key:          ed25519.PrivateKey(ok),
+								RemotePorts:  []int{443},
+								Version3:     true,
+								NonAnonymous: c.Bool("singleOnion"),
+								DiscardKey:   false,
+							},
+							tlsCert, tlsKey,
+							c.String("onionKey"),
+						),
+					)
+				} else {
+					log.Fatalln(
+						server.ListenAndServeOnion(
+							nil,
+							&tor.ListenConf{
+								LocalPort:    port,
+								Key:          ed25519.PrivateKey(ok),
+								RemotePorts:  []int{80},
+								Version3:     true,
+								NonAnonymous: c.Bool("singleOnion"),
+								DiscardKey:   false,
+							},
+							c.String("onionKey"),
+						),
+					)
+				}
 			}
 		} else if os.IsNotExist(err) {
-            if tlsCert != "" && tlsKey != "" {
-                log.Fatalln(
-                    server.ListenAndServeOnionTLS(
-                        nil,
-                        &tor.ListenConf{
-                            LocalPort:    port,
-                            RemotePorts:  []int{443},
-                            Version3:     true,
-                            NonAnonymous: c.Bool("singleOnion"),
-                            DiscardKey:   false,
-                        },
-                        tlsCert, tlsKey,
-                        c.String("onionKey"),
-                    ),
-                )
-            }else{
-                log.Fatalln(
-                    server.ListenAndServeOnion(
-                        nil,
-                        &tor.ListenConf{
-                            LocalPort:    port,
-                            RemotePorts:  []int{80},
-                            Version3:     true,
-                            NonAnonymous: c.Bool("singleOnion"),
-                            DiscardKey:   false,
-                        },
-                        c.String("onionKey"),
-                    ),
-                )
-            }
+			if tlsCert != "" && tlsKey != "" {
+				log.Fatalln(
+					server.ListenAndServeOnionTLS(
+						nil,
+						&tor.ListenConf{
+							LocalPort:    port,
+							RemotePorts:  []int{443},
+							Version3:     true,
+							NonAnonymous: c.Bool("singleOnion"),
+							DiscardKey:   false,
+						},
+						tlsCert, tlsKey,
+						c.String("onionKey"),
+					),
+				)
+			} else {
+				log.Fatalln(
+					server.ListenAndServeOnion(
+						nil,
+						&tor.ListenConf{
+							LocalPort:    port,
+							RemotePorts:  []int{80},
+							Version3:     true,
+							NonAnonymous: c.Bool("singleOnion"),
+							DiscardKey:   false,
+						},
+						c.String("onionKey"),
+					),
+				)
+			}
 		} else {
 
 		}

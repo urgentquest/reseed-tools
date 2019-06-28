@@ -26,16 +26,10 @@ i2p-tools reseed --signer=you@mail.i2p --netdb=/home/i2p/.i2p/netDb --port=8443 
 i2p-tools reseed --signer=you@mail.i2p --netdb=/home/i2p/.i2p/netDb --tlsHost=your-domain.tld
 ```
 
-### Without a webserver, standalone, automatic OnionV3
-
-```
-i2p-tools reseed --signer=you@mail.i2p --netdb=/home/i2p/.i2p/netDb --onion
-```
-
 ### Without a webserver, standalone, automatic OnionV3 with TLS support
 
 ```
-i2p-tools reseed --signer=you@mail.i2p --netdb=/home/i2p/.i2p/netDb --tlsHost=your-domain.tld --onion
+i2p-tools reseed --signer=you@mail.i2p --netdb=/home/i2p/.i2p/netDb --onion
 ```
 
 If this is your first time running a reseed server (ie. you don't have any existing keys),

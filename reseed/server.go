@@ -140,11 +140,11 @@ func (srv *Server) ListenAndServeOnionTLS(startConf *tor.StartConf, listenConf *
 	if srv.TLSConfig.NextProtos == nil {
 		srv.TLSConfig.NextProtos = []string{"http/1.1"}
 	}
-    srv.OnionListener, err = tor.Listen(listenCtx, listenConf)
+	srv.OnionListener, err = tor.Listen(listenCtx, listenConf)
 	if err != nil {
 		return err
 	}
-    srv.Addr = srv.OnionListener.ID
+	srv.Addr = srv.OnionListener.ID
 
 	//	var err error
 	srv.TLSConfig.Certificates = make([]tls.Certificate, 1)
