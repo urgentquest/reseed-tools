@@ -155,6 +155,7 @@ func (srv *Server) ListenAndServeOnionTLS(startConf *tor.StartConf, listenConf *
 
 	log.Printf("Onionv3 server started on https://%v.onion\n", srv.OnionListener.ID)
 
+	//	tlsListener := tls.NewListener(newBlacklistListener(srv.OnionListener, srv.Blacklist), srv.TLSConfig)
 	tlsListener := tls.NewListener(srv.OnionListener, srv.TLSConfig)
 
 	return srv.Serve(tlsListener)
