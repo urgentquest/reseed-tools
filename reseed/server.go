@@ -15,6 +15,9 @@ import (
 	"github.com/cretz/bine/tor"
 	"github.com/gorilla/handlers"
 	"github.com/justinas/alice"
+	"github.com/libp2p/go-libp2p-core/host"
+	gostream "github.com/libp2p/go-libp2p-gostream"
+	p2phttp "github.com/libp2p/go-libp2p-http"
 	"github.com/throttled/throttled"
 	"github.com/throttled/throttled/store"
 )
@@ -178,6 +181,15 @@ func (srv *Server) ListenAndServeOnion(startConf *tor.StartConf, listenConf *tor
 
 	log.Printf("Onionv3 server started on http://%v.onion\n", srv.OnionListener.ID)
 	return srv.Serve(srv.OnionListener)
+}
+
+// ListenAndServeLibP2P is used to serve the reseed server over libp2p http connections
+func (srv *Server) ListenAndServeLibP2P(hst host.Host) error {
+	listener, err := gostream.Listen(hst, p2phttp.DefaultP2PProtocol)
+	if err != nil {
+		return err
+	}
+	return srv.Serve(listener)
 }
 
 func (srv *Server) reseedHandler(w http.ResponseWriter, r *http.Request) {
