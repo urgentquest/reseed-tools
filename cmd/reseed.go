@@ -11,7 +11,7 @@ import (
 	"time"
 
 	"github.com/MDrollette/i2p-tools/reseed"
-	"github.com/codegangsta/cli"
+	"github.com/urfave/cli"
 	"github.com/cretz/bine/tor"
 	"github.com/cretz/bine/torutil"
 	"github.com/cretz/bine/torutil/ed25519"
