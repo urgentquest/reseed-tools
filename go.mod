@@ -17,6 +17,6 @@ require (
 	gopkg.in/throttled/throttled.v2 v2.2.4 // indirect
 )
 
-replace github.com/MDrollette/i2p-tools v0.0.0 => ./
+replace github.com/MDrollette/i2p-tools v0.0.0 => github.com/eyedeekay/i2p-tools-1 v0.0.0
 
 replace github.com/codegangsta/cli v1.22.1 => github.com/urfave/cli v1.22.1
