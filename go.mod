@@ -16,3 +16,5 @@ require (
 	golang.org/x/net v0.0.0-20191101175033-0deb6923b6d9 // indirect
 	gopkg.in/throttled/throttled.v2 v2.0.3 // indirect
 )
+
+replace github.com/codegangsta/cli v1.20.0 => github.com/urfave/cli v1.20.0
