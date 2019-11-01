@@ -5,7 +5,7 @@ import (
 	"runtime"
 
 	"github.com/MDrollette/i2p-tools/cmd"
-	"github.com/urfave/cli"
+	"github.com/codegangsta/cli"
 )
 
 func main() {

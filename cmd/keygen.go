@@ -3,7 +3,7 @@ package cmd
 import (
 	"fmt"
 
-	"github.com/urfave/cli"
+	"github.com/codegangsta/cli"
 )
 
 func NewKeygenCommand() cli.Command {
