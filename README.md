@@ -59,13 +59,13 @@ fork, from anywhere:
 ./i2p-tools-1 reseed --signer=you@mail.i2p --netdb=/home/i2p/.i2p/netDb --p2p
 ```
 
-### Without a webserver, standalone, TLS over-web, automatic OnionV3 with TLS support
+### Without a webserver, standalone, Regular TLS, OnionV3 with TLS
 
 ```
 ./i2p-tools-1 reseed --tlsHost=your-domain.tld --signer=you@mail.i2p --netdb=/home/i2p/.i2p/netDb --onion
 ```
 
-### Without a webserver, standalone, TLS over-web, automatic OnionV3 with TLS support and LibP2P
+### Without a webserver, standalone, Regular TLS, OnionV3 with TLS, and LibP2P
 
 ```
 ./i2p-tools-1 reseed --tlsHost=your-domain.tld --signer=you@mail.i2p --netdb=/home/i2p/.i2p/netDb --onion --p2p
