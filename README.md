@@ -61,8 +61,10 @@ fork, from anywhere:
 
 ### Without a webserver, standalone, upload a single signed .su3 to github
 
+* This one isn't working yet, look for it by ~Monday.
+
 ```
-./i2p-tools-1 reseed --signer=you@mail.i2p --netdb=/home/i2p/.i2p/netDb --github
+./i2p-tools-1 reseed --signer=you@mail.i2p --netdb=/home/i2p/.i2p/netDb --github --ghrepo i2p-tools-1 --ghuser eyedeekay
 ```
 
 ### Without a webserver, standalone, in-network reseed
