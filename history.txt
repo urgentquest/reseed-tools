@@ -1,3 +1,7 @@
+2019-11-16
+ * allow multiple reseed transports from the same application
+ * incorporate libp2p(ipfs) listener from RTradeLtd/i2p-tools-1 master
+
 2019-06-27
  * automatically configuring Tor Onionv3 Server
 

@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"context"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -15,6 +16,8 @@ import (
 	"github.com/cretz/bine/tor"
 	"github.com/cretz/bine/torutil"
 	"github.com/cretz/bine/torutil/ed25519"
+	"github.com/libp2p/go-libp2p"
+	"github.com/libp2p/go-libp2p-core/host"
 )
 
 func NewReseedCommand() cli.Command {
@@ -104,6 +107,10 @@ func NewReseedCommand() cli.Command {
 				Value: 0,
 				Usage: "Periodically print memory stats.",
 			},
+			cli.BoolFlag{
+				Name:  "p2p",
+				Usage: "Listen for reseed request via libp2p",
+			},
 		},
 	}
 }
@@ -124,28 +131,47 @@ func reseedAction(c *cli.Context) {
 
 	var tlsCert, tlsKey string
 	tlsHost := c.String("tlsHost")
+	onionTlsHost := ""
+	var onionTlsCert, onionTlsKey string
 
 	if c.Bool("onion") {
 		var ok []byte
 		var err error
-		if tlsHost == "" {
-			if _, err = os.Stat(c.String("onionKey")); err == nil {
-				ok, err = ioutil.ReadFile(c.String("onionKey"))
-				if err != nil {
-					log.Fatalln(err.Error())
-				}
-			} else {
-				key, err := ed25519.GenerateKey(nil)
-				if err != nil {
-					log.Fatalln(err.Error())
-				}
-				ok = []byte(key.PrivateKey())
+		if _, err = os.Stat(c.String("onionKey")); err == nil {
+			ok, err = ioutil.ReadFile(c.String("onionKey"))
+			if err != nil {
+				log.Fatalln(err.Error())
 			}
-			tlsHost = torutil.OnionServiceIDFromPrivateKey(ed25519.PrivateKey(ok)) + ".onion"
+		} else {
+			key, err := ed25519.GenerateKey(nil)
+			if err != nil {
+				log.Fatalln(err.Error())
+			}
+			ok = []byte(key.PrivateKey())
 		}
+		onionTlsHost = torutil.OnionServiceIDFromPrivateKey(ed25519.PrivateKey(ok)) + ".onion"
 		err = ioutil.WriteFile(c.String("onionKey"), ok, 0644)
 		if err != nil {
 			log.Fatalln(err.Error())
+		}
+		if onionTlsHost != "" {
+			onionTlsKey = c.String("tlsKey")
+			// if no key is specified, default to the host.pem in the current dir
+			if onionTlsKey == "" {
+				onionTlsKey = onionTlsHost + ".pem"
+			}
+
+			onionTlsCert = c.String("tlsCert")
+			// if no certificate is specified, default to the host.crt in the current dir
+			if onionTlsCert == "" {
+				onionTlsCert = onionTlsHost + ".crt"
+			}
+
+			// prompt to create tls keys if they don't exist?
+			err := checkOrNewTLSCert(onionTlsHost, &onionTlsCert, &onionTlsKey)
+			if nil != err {
+				log.Fatalln(err)
+			}
 		}
 	}
 
@@ -200,6 +226,33 @@ func reseedAction(c *cli.Context) {
 	reseeder.Start()
 
 	// create a server
+
+	if c.Bool("onion") {
+		log.Printf("Onion server starting\n")
+		if tlsHost != "" && tlsCert != "" && tlsKey != "" {
+			go reseedOnion(c, onionTlsCert, onionTlsKey, reseeder)
+		} else {
+			reseedOnion(c, onionTlsCert, onionTlsKey, reseeder)
+		}
+	}
+	if c.Bool("p2p") {
+		log.Printf("libP2P listener starting\n")
+		if tlsHost != "" && tlsCert != "" && tlsKey != "" {
+			go reseedP2P(c, reseeder)
+		} else {
+			reseedP2P(c, reseeder)
+		}
+	}
+	if tlsHost != "" && tlsCert != "" && tlsKey != "" {
+		log.Printf("HTTPS server starting\n")
+		reseedHTTPS(c, tlsCert, tlsKey, reseeder)
+	} else {
+		log.Printf("HTTP server starting on\n")
+		reseedHTTP(c, reseeder)
+	}
+}
+
+func reseedHTTPS(c *cli.Context, tlsCert, tlsKey string, reseeder reseed.Reseeder) {
 	server := reseed.NewServer(c.String("prefix"), c.Bool("trustProxy"))
 	server.Reseeder = reseeder
 	server.Addr = net.JoinHostPort(c.String("ip"), c.String("port"))
@@ -222,69 +275,158 @@ func reseedAction(c *cli.Context) {
 			}
 		}()
 	}
+	log.Printf("HTTPS server started on %s\n", server.Addr)
+	if err := server.ListenAndServeTLS(tlsCert, tlsKey); err != nil {
+		log.Fatalln(err)
+	}
+}
 
-	if c.Bool("onion") {
-		port, err := strconv.Atoi(c.String("port"))
+func reseedHTTP(c *cli.Context, reseeder reseed.Reseeder) {
+	server := reseed.NewServer(c.String("prefix"), c.Bool("trustProxy"))
+	server.Reseeder = reseeder
+	server.Addr = net.JoinHostPort(c.String("ip"), c.String("port"))
+
+	// load a blacklist
+	blacklist := reseed.NewBlacklist()
+	server.Blacklist = blacklist
+	blacklistFile := c.String("blacklist")
+	if "" != blacklistFile {
+		blacklist.LoadFile(blacklistFile)
+	}
+
+	// print stats once in a while
+	if c.Duration("stats") != 0 {
+		go func() {
+			var mem runtime.MemStats
+			for range time.Tick(c.Duration("stats")) {
+				runtime.ReadMemStats(&mem)
+				log.Printf("TotalAllocs: %d Kb, Allocs: %d Kb, Mallocs: %d, NumGC: %d", mem.TotalAlloc/1024, mem.Alloc/1024, mem.Mallocs, mem.NumGC)
+			}
+		}()
+	}
+	log.Printf("HTTP server started on %s\n", server.Addr)
+	if err := server.ListenAndServe(); err != nil {
+		log.Fatalln(err)
+	}
+}
+
+func makeRandomHost(port int) (host.Host, error) {
+	host, err := libp2p.New(context.Background(), libp2p.ListenAddrStrings(fmt.Sprintf("/ip4/127.0.0.1/tcp/%d", port)))
+	if err != nil {
+		return nil, err
+	}
+	return host, nil
+}
+
+func reseedP2P(c *cli.Context, reseeder reseed.Reseeder) {
+	server := reseed.NewServer(c.String("prefix"), c.Bool("trustProxy"))
+	server.Reseeder = reseeder
+	server.Addr = net.JoinHostPort(c.String("ip"), c.String("port"))
+
+	// load a blacklist
+	blacklist := reseed.NewBlacklist()
+	server.Blacklist = blacklist
+	blacklistFile := c.String("blacklist")
+	if "" != blacklistFile {
+		blacklist.LoadFile(blacklistFile)
+	}
+
+	// print stats once in a while
+	if c.Duration("stats") != 0 {
+		go func() {
+			var mem runtime.MemStats
+			for range time.Tick(c.Duration("stats")) {
+				runtime.ReadMemStats(&mem)
+				log.Printf("TotalAllocs: %d Kb, Allocs: %d Kb, Mallocs: %d, NumGC: %d", mem.TotalAlloc/1024, mem.Alloc/1024, mem.Mallocs, mem.NumGC)
+			}
+		}()
+	}
+	port, err := strconv.Atoi(c.String("port"))
+	if err != nil {
+		log.Fatalln(err.Error())
+	}
+	port += 2
+	host, err := makeRandomHost(port)
+	if err != nil {
+		log.Fatalln(err.Error())
+	}
+	log.Printf("P2P server started on %s\n", host.ID())
+	if err := server.ListenAndServeLibP2P(host); err != nil {
+		log.Fatalln(err)
+	}
+}
+
+func reseedOnion(c *cli.Context, onionTlsCert, onionTlsKey string, reseeder reseed.Reseeder) {
+	server := reseed.NewServer(c.String("prefix"), c.Bool("trustProxy"))
+	server.Reseeder = reseeder
+	server.Addr = net.JoinHostPort(c.String("ip"), c.String("port"))
+
+	// load a blacklist
+	blacklist := reseed.NewBlacklist()
+	server.Blacklist = blacklist
+	blacklistFile := c.String("blacklist")
+	if "" != blacklistFile {
+		blacklist.LoadFile(blacklistFile)
+	}
+
+	// print stats once in a while
+	if c.Duration("stats") != 0 {
+		go func() {
+			var mem runtime.MemStats
+			for range time.Tick(c.Duration("stats")) {
+				runtime.ReadMemStats(&mem)
+				log.Printf("TotalAllocs: %d Kb, Allocs: %d Kb, Mallocs: %d, NumGC: %d", mem.TotalAlloc/1024, mem.Alloc/1024, mem.Mallocs, mem.NumGC)
+			}
+		}()
+	}
+	port, err := strconv.Atoi(c.String("port"))
+	if err != nil {
+		log.Fatalln(err.Error())
+	}
+	port += 1
+	if _, err := os.Stat(c.String("onionKey")); err == nil {
+		ok, err := ioutil.ReadFile(c.String("onionKey"))
 		if err != nil {
 			log.Fatalln(err.Error())
-		}
-		if _, err := os.Stat(c.String("onionKey")); err == nil {
-			ok, err := ioutil.ReadFile(c.String("onionKey"))
-			if err != nil {
-				log.Fatalln(err.Error())
-			} else {
-				if tlsCert != "" && tlsKey != "" {
-					log.Fatalln(
-						server.ListenAndServeOnionTLS(
-							nil,
-							&tor.ListenConf{
-								LocalPort:    port,
-								Key:          ed25519.PrivateKey(ok),
-								RemotePorts:  []int{443},
-								Version3:     true,
-								NonAnonymous: c.Bool("singleOnion"),
-								DiscardKey:   false,
-							},
-							tlsCert, tlsKey,
-						),
-					)
-				} else {
-					log.Fatalln(
-						server.ListenAndServeOnion(
-							nil,
-							&tor.ListenConf{
-								LocalPort:    port,
-								Key:          ed25519.PrivateKey(ok),
-								RemotePorts:  []int{80},
-								Version3:     true,
-								NonAnonymous: c.Bool("singleOnion"),
-								DiscardKey:   false,
-							},
-						),
-					)
-				}
-			}
-		} else if os.IsNotExist(err) {
-			log.Fatalln(
-				server.ListenAndServeOnion(
-					nil,
-					&tor.ListenConf{
-						LocalPort:    port,
-						RemotePorts:  []int{80},
-						Version3:     true,
-						NonAnonymous: c.Bool("singleOnion"),
-						DiscardKey:   false,
-					},
-				),
-			)
 		} else {
+			if onionTlsCert != "" && onionTlsKey != "" {
+				tlc := &tor.ListenConf{
+					LocalPort:    port,
+					Key:          ed25519.PrivateKey(ok),
+					RemotePorts:  []int{443},
+					Version3:     true,
+					NonAnonymous: c.Bool("singleOnion"),
+					DiscardKey:   false,
+				}
+				if err := server.ListenAndServeOnionTLS(nil, tlc, onionTlsCert, onionTlsKey); err != nil {
+					log.Fatalln(err)
+				}
+			} else {
+				tlc := &tor.ListenConf{
+					LocalPort:    port,
+					Key:          ed25519.PrivateKey(ok),
+					RemotePorts:  []int{80},
+					Version3:     true,
+					NonAnonymous: c.Bool("singleOnion"),
+					DiscardKey:   false,
+				}
+				if err := server.ListenAndServeOnion(nil, tlc); err != nil {
+					log.Fatalln(err)
+				}
 
+			}
 		}
-	} else if tlsHost != "" && tlsCert != "" && tlsKey != "" {
-		log.Printf("HTTPS server started on %s\n", server.Addr)
-		log.Fatalln(server.ListenAndServeTLS(tlsCert, tlsKey))
-	} else {
-		log.Printf("HTTP server started on %s\n", server.Addr)
-		log.Fatalln(server.ListenAndServe())
+	} else if os.IsNotExist(err) {
+		tlc := &tor.ListenConf{
+			LocalPort:    port,
+			RemotePorts:  []int{80},
+			Version3:     true,
+			NonAnonymous: c.Bool("singleOnion"),
+			DiscardKey:   false,
+		}
+		if err := server.ListenAndServeOnion(nil, tlc); err != nil {
+			log.Fatalln(err)
+		}
 	}
+	log.Printf("Onion server started on %s\n", server.Addr)
 }
