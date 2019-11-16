@@ -400,7 +400,7 @@ func reseedP2P(c *cli.Context, reseeder reseed.Reseeder) {
 	if err != nil {
 		log.Fatalln(err.Error())
 	}
-	log.Printf("P2P server started on %s\n", host.ID())
+	log.Printf("P2P listener started on %s\n", host.ID())
 	if err := server.ListenAndServeLibP2P(host); err != nil {
 		log.Fatalln(err)
 	}
