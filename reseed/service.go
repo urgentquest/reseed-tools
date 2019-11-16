@@ -15,7 +15,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/MDrollette/i2p-tools/su3"
+	"github.com/RTradeLtd/i2p-tools-1/su3"
 )
 
 type routerInfo struct {
