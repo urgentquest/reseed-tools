@@ -190,7 +190,7 @@ func (srv *Server) ListenAndServeOnion(startConf *tor.StartConf, listenConf *tor
 }
 
 func (srv *Server) ListenAndServeI2PTLS(samaddr string, I2PKeys i2pkeys.I2PKeys, certFile, keyFile string) error {
-	log.Println("Starting and registering I2P service, please wait a couple of minutes...")
+	log.Println("Starting and registering I2P HTTPS service, please wait a couple of minutes...")
 	var err error
 	srv.I2P, err = sam3.NewSAM(samaddr)
 	if err != nil {
