@@ -18,10 +18,10 @@ func main() {
 	runtime.GOMAXPROCS(runtime.NumCPU() / 2)
 
 	app := cli.NewApp()
-	app.Name = "i2p-tools"
+	app.Name = "i2p-tools-1"
 	app.Version = "0.1.7"
 	app.Usage = "I2P tools and reseed server"
-	app.Author = "MDrollette"
+	app.Author = "eyedeekay"
 	app.Email = "matt@rows.io"
 	app.Flags = []cli.Flag{}
 	app.Commands = []cli.Command{
