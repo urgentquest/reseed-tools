@@ -12,10 +12,12 @@ import (
 	"time"
 
 	"github.com/MDrollette/i2p-tools/reseed"
+	"github.com/RTradeLtd/go-garlic-tcp-transport/common"
 	"github.com/codegangsta/cli"
 	"github.com/cretz/bine/tor"
 	"github.com/cretz/bine/torutil"
 	"github.com/cretz/bine/torutil/ed25519"
+	"github.com/eyedeekay/sam3/i2pkeys"
 	"github.com/libp2p/go-libp2p"
 	"github.com/libp2p/go-libp2p-core/host"
 )
@@ -111,6 +113,15 @@ func NewReseedCommand() cli.Command {
 				Name:  "p2p",
 				Usage: "Listen for reseed request via libp2p",
 			},
+			cli.BoolFlag{
+				Name:  "i2p",
+				Usage: "Listen for reseed request inside the I2P network",
+			},
+			cli.StringFlag{
+				Name:  "samaddr",
+				Value: "127.0.0.1:7656",
+				Usage: "Use this SAM address to set up I2P connections for in-network reseed",
+			},
 		},
 	}
 }
@@ -133,6 +144,37 @@ func reseedAction(c *cli.Context) {
 	tlsHost := c.String("tlsHost")
 	onionTlsHost := ""
 	var onionTlsCert, onionTlsKey string
+	i2pTlsHost := ""
+	var i2pTlsCert, i2pTlsKey string
+	var i2pkey i2pkeys.I2PKeys
+
+	if c.Bool("i2p") {
+		var err error
+		i2pkey, err = i2phelpers.LoadKeys("i2pkeys")
+		if err != nil {
+			log.Fatalln(err)
+		}
+		i2pTlsHost = i2pkey.Addr().Base32()
+		if i2pTlsHost != "" {
+			i2pTlsKey = c.String("tlsKey")
+			// if no key is specified, default to the host.pem in the current dir
+			if i2pTlsKey == "" {
+				i2pTlsKey = i2pTlsHost + ".pem"
+			}
+
+			i2pTlsCert = c.String("tlsCert")
+			// if no certificate is specified, default to the host.crt in the current dir
+			if i2pTlsCert == "" {
+				i2pTlsCert = i2pTlsHost + ".crt"
+			}
+
+			// prompt to create tls keys if they don't exist?
+			err := checkOrNewTLSCert(i2pTlsHost, &i2pTlsCert, &i2pTlsKey)
+			if nil != err {
+				log.Fatalln(err)
+			}
+		}
+	}
 
 	if c.Bool("onion") {
 		var ok []byte
@@ -233,6 +275,14 @@ func reseedAction(c *cli.Context) {
 			go reseedOnion(c, onionTlsCert, onionTlsKey, reseeder)
 		} else {
 			reseedOnion(c, onionTlsCert, onionTlsKey, reseeder)
+		}
+	}
+	if c.Bool("i2p") {
+		log.Printf("I2P server starting\n")
+		if tlsHost != "" && tlsCert != "" && tlsKey != "" {
+			go reseedI2P(c, i2pTlsCert, i2pTlsKey, i2pkey, reseeder)
+		} else {
+			reseedI2P(c, i2pTlsCert, i2pTlsKey, i2pkey, reseeder)
 		}
 	}
 	if c.Bool("p2p") {
@@ -425,6 +475,58 @@ func reseedOnion(c *cli.Context, onionTlsCert, onionTlsKey string, reseeder rese
 			DiscardKey:   false,
 		}
 		if err := server.ListenAndServeOnion(nil, tlc); err != nil {
+			log.Fatalln(err)
+		}
+	}
+	log.Printf("Onion server started on %s\n", server.Addr)
+}
+
+func reseedI2P(c *cli.Context, i2pTlsCert, i2pTlsKey string, i2pIdentKey i2pkeys.I2PKeys, reseeder reseed.Reseeder) {
+	server := reseed.NewServer(c.String("prefix"), c.Bool("trustProxy"))
+	server.Reseeder = reseeder
+	server.Addr = net.JoinHostPort(c.String("ip"), c.String("port"))
+
+	// load a blacklist
+	blacklist := reseed.NewBlacklist()
+	server.Blacklist = blacklist
+	blacklistFile := c.String("blacklist")
+	if "" != blacklistFile {
+		blacklist.LoadFile(blacklistFile)
+	}
+
+	// print stats once in a while
+	if c.Duration("stats") != 0 {
+		go func() {
+			var mem runtime.MemStats
+			for range time.Tick(c.Duration("stats")) {
+				runtime.ReadMemStats(&mem)
+				log.Printf("TotalAllocs: %d Kb, Allocs: %d Kb, Mallocs: %d, NumGC: %d", mem.TotalAlloc/1024, mem.Alloc/1024, mem.Mallocs, mem.NumGC)
+			}
+		}()
+	}
+	port, err := strconv.Atoi(c.String("port"))
+	if err != nil {
+		log.Fatalln(err.Error())
+	}
+	port += 1
+	if _, err := os.Stat(c.String("onionKey")); err == nil {
+		//ok, err := ioutil.ReadFile(c.String("onionKey"))
+		if err != nil {
+			log.Fatalln(err.Error())
+		} else {
+			if i2pTlsCert != "" && i2pTlsKey != "" {
+				if err := server.ListenAndServeI2PTLS(c.String("samaddr"), i2pIdentKey, i2pTlsCert, i2pTlsKey); err != nil {
+					log.Fatalln(err)
+				}
+			} else {
+				if err := server.ListenAndServeI2P(c.String("samaddr"), i2pIdentKey); err != nil {
+					log.Fatalln(err)
+				}
+
+			}
+		}
+	} else if os.IsNotExist(err) {
+		if err := server.ListenAndServeI2P(c.String("samaddr"), i2pIdentKey); err != nil {
 			log.Fatalln(err)
 		}
 	}

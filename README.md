@@ -59,6 +59,18 @@ fork, from anywhere:
 ./i2p-tools-1 reseed --signer=you@mail.i2p --netdb=/home/i2p/.i2p/netDb --p2p
 ```
 
+### Without a webserver, standalone, upload a single signed .su3 to github
+
+```
+./i2p-tools-1 reseed --signer=you@mail.i2p --netdb=/home/i2p/.i2p/netDb --github
+```
+
+### Without a webserver, standalone, in-network reseed
+
+```
+./i2p-tools-1 reseed --signer=you@mail.i2p --netdb=/home/i2p/.i2p/netDb --i2p
+```
+
 ### Without a webserver, standalone, Regular TLS, OnionV3 with TLS
 
 ```

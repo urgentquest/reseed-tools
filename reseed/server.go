@@ -13,6 +13,8 @@ import (
 	"time"
 
 	"github.com/cretz/bine/tor"
+	"github.com/eyedeekay/sam3"
+	"github.com/eyedeekay/sam3/i2pkeys"
 	"github.com/gorilla/handlers"
 	"github.com/justinas/alice"
 	"github.com/libp2p/go-libp2p-core/host"
@@ -28,6 +30,10 @@ const (
 
 type Server struct {
 	*http.Server
+	I2P           *sam3.SAM
+	I2PSession    *sam3.StreamSession
+	I2PListener   *sam3.StreamListener
+	I2PKeys       i2pkeys.I2PKeys
 	Reseeder      Reseeder
 	Blacklist     *Blacklist
 	OnionListener *tor.OnionService
@@ -181,6 +187,66 @@ func (srv *Server) ListenAndServeOnion(startConf *tor.StartConf, listenConf *tor
 
 	log.Printf("Onionv3 server started on http://%v.onion\n", srv.OnionListener.ID)
 	return srv.Serve(srv.OnionListener)
+}
+
+func (srv *Server) ListenAndServeI2PTLS(samaddr string, I2PKeys i2pkeys.I2PKeys, certFile, keyFile string) error {
+	log.Println("Starting and registering I2P service, please wait a couple of minutes...")
+	var err error
+	srv.I2P, err = sam3.NewSAM(samaddr)
+	if err != nil {
+		return err
+	}
+	srv.I2PSession, err = srv.I2P.NewStreamSession("", I2PKeys, []string{})
+	if err != nil {
+		return err
+	}
+	srv.I2PListener, err = srv.I2PSession.Listen()
+	if err != nil {
+		return err
+	}
+	srv.Addr = srv.I2PListener.Addr().(i2pkeys.I2PAddr).Base32()
+	if srv.TLSConfig == nil {
+		srv.TLSConfig = &tls.Config{
+			ServerName: srv.I2PListener.Addr().(i2pkeys.I2PAddr).Base32(),
+		}
+	}
+
+	if srv.TLSConfig.NextProtos == nil {
+		srv.TLSConfig.NextProtos = []string{"http/1.1"}
+	}
+
+	//	var err error
+	srv.TLSConfig.Certificates = make([]tls.Certificate, 1)
+	srv.TLSConfig.Certificates[0], err = tls.LoadX509KeyPair(certFile, keyFile)
+	if err != nil {
+		return err
+	}
+
+	log.Printf("I2P server started on https://%v\n", srv.I2PListener.Addr().(i2pkeys.I2PAddr).Base32())
+
+	//	tlsListener := tls.NewListener(newBlacklistListener(srv.OnionListener, srv.Blacklist), srv.TLSConfig)
+	tlsListener := tls.NewListener(srv.I2PListener, srv.TLSConfig)
+
+	return srv.Serve(tlsListener)
+}
+
+func (srv *Server) ListenAndServeI2P(samaddr string, I2PKeys i2pkeys.I2PKeys) error {
+	log.Println("Starting and registering I2P service, please wait a couple of minutes...")
+	var err error
+	srv.I2P, err = sam3.NewSAM(samaddr)
+	if err != nil {
+		return err
+	}
+	srv.I2PSession, err = srv.I2P.NewStreamSession("", I2PKeys, []string{})
+	if err != nil {
+		return err
+	}
+	srv.I2PListener, err = srv.I2PSession.Listen()
+	if err != nil {
+		return err
+	}
+	log.Printf("I2P server started on http://%v.onion\n", srv.OnionListener.ID)
+	return srv.Serve(srv.I2PListener)
 }
 
 // ListenAndServeLibP2P is used to serve the reseed server over libp2p http connections
