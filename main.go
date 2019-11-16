@@ -4,7 +4,7 @@ import (
 	"os"
 	"runtime"
 
-	"github.com/RTradeLtd/i2p-tools-1/cmd"
+	"github.com/MDrollette/i2p-tools/cmd"
 	"github.com/codegangsta/cli"
 )
 

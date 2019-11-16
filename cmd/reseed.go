@@ -10,7 +10,7 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/RTradeLtd/i2p-tools-1/reseed"
+	"github.com/MDrollette/i2p-tools/reseed"
 	"github.com/codegangsta/cli"
 	"github.com/cretz/bine/tor"
 	"github.com/cretz/bine/torutil"
