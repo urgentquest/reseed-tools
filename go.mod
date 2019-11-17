@@ -3,6 +3,7 @@ module github.com/eyedeekay/i2p-tools-1
 go 1.13
 
 require (
+	crawshaw.io/littleboss v0.0.0-20190317185602-8957d0aedcce
 	github.com/MDrollette/i2p-tools v0.0.0
 	github.com/codegangsta/cli v1.22.1
 	github.com/cretz/bine v0.1.0

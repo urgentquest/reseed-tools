@@ -1,4 +1,6 @@
 cloud.google.com/go v0.26.0/go.mod h1:aQUYkXzVsufM+DwF1aE+0xfcU+56JwCaLick0ClmMTw=
+crawshaw.io/littleboss v0.0.0-20190317185602-8957d0aedcce h1:4VyRNGOpNgP9ioTYZ7ah3x8C28I7wsMt4Ao9nTXv2ec=
+crawshaw.io/littleboss v0.0.0-20190317185602-8957d0aedcce/go.mod h1:TIbCAHgttUfOKudw59Il7Z0XIlitzo228/mtwMe4vPM=
 github.com/AndreasBriese/bbloom v0.0.0-20180913140656-343706a395b7/go.mod h1:bOvUY6CB00SOBii9/FifXqc0awNKxLFCL/+pkDPuyl8=
 github.com/AndreasBriese/bbloom v0.0.0-20190306092124-e2d15f34fcf9/go.mod h1:bOvUY6CB00SOBii9/FifXqc0awNKxLFCL/+pkDPuyl8=
 github.com/BurntSushi/toml v0.3.1/go.mod h1:xHWCNGjB5oqiDr8zfno3MHue2Ht5sIBksp03qcyfWMU=

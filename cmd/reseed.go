@@ -11,6 +11,7 @@ import (
 	"strconv"
 	"time"
 
+	"crawshaw.io/littleboss"
 	"github.com/MDrollette/i2p-tools/reseed"
 	"github.com/RTradeLtd/go-garlic-tcp-transport/common"
 	"github.com/codegangsta/cli"
@@ -122,8 +123,22 @@ func NewReseedCommand() cli.Command {
 				Value: "127.0.0.1:7656",
 				Usage: "Use this SAM address to set up I2P connections for in-network reseed",
 			},
+			cli.StringFlag{
+				Name:  "restart",
+				Value: "start",
+				Usage: "Start in self-supervising mode",
+			},
 		},
 	}
+}
+
+func reseedMain(c *cli.Context) {
+	lb := littleboss.New("reseed")
+	restart := c.String("restart")
+	lb.Command("restart", &restart)
+	lb.Run(func(ctx context.Context) {
+		reseedAction(c)
+	})
 }
 
 func reseedAction(c *cli.Context) {
