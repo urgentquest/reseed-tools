@@ -3,6 +3,7 @@
  * incorporate libp2p(ipfs) listener from RTradeLtd/i2p-tools-1 master
  * in-network(I2P) reseeds in case there's a point to that.
  * self-supervising reseed service, if it crashes it will restart itself
+ * add an initscript
 
 2019-06-27
  * automatically configuring Tor Onionv3 Server
