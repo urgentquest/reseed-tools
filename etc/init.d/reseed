@@ -1,0 +1,80 @@
+#!/bin/sh
+### BEGIN INIT INFO
+# Provides:          samcatd
+# Required-Start:    $local_fs $network $named $time $syslog
+# Required-Stop:     $local_fs $network $named $time $syslog
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Description:       <DESCRIPTION>
+### END INIT INFO
+
+SCRIPT='/usr/local/bin/i2p-tools'
+RUNAS=i2psvc
+NETDBDIR=/var/lib/i2p/i2p-config/netDb
+RUNDIR=/var/lib/i2p/i2p-config/reseed
+SIGNER=you@mail.i2p
+MORE_OPTIONS=""
+if [ -f /etc/default/reseed ]; then
+    source /etc/default/reseed
+fi
+RUNOPTS=" reseed --signer=$SIGNER --netdb=$NETDBDIR $MORE_OPTIONS "
+
+rundir(){
+    if [ !-d $RUNDIR ]; then
+        install -d -oi2psvc -m2770 $RUNDIR
+    fi
+    cd $RUNDIR
+}
+
+start() {
+    rundir
+    su -u $RUNAS $SCRIPT $RUNOPTS --restart=start
+}
+
+stop() {
+    rundir
+    su -u $RUNAS $SCRIPT $RUNOPTS --restart=stop
+}
+
+start() {
+    rundir
+    su -u $RUNAS $SCRIPT $RUNOPTS --restart=restart
+}
+
+status() {
+    rundir
+    su -u $RUNAS $SCRIPT $RUNOPTS --restart=status
+}
+
+uninstall() {
+  echo -n "Are you really sure you want to uninstall this service? That cannot be undone. [yes|No] "
+  local SURE
+  read SURE
+  if [ "$SURE" = "yes" ]; then
+    stop
+    rm -f "$PIDFILE"
+    echo "Notice: log file is not be removed: '$LOGFILE'" >&2
+    update-rc.d -f reseed remove
+    rm -fv "$0"
+  fi
+}
+
+case "$1" in
+  start)
+    start
+    ;;
+  stop)
+    stop
+    ;;
+  status)
+    status
+    ;;
+  uninstall)
+    uninstall
+    ;;
+  restart)
+    restart
+    ;;
+  *)
+    echo "Usage: $0 {start|stop|restart|uninstall}"
+esac
