@@ -1,5 +1,5 @@
 
-VERSION=0.0.1
+VERSION=0.0.2
 APP=i2p-tools-1
 USER_GH=eyedeekay
 
@@ -23,7 +23,7 @@ build:
 		-ldflags '-w -extldflags "-static"' -o i2p-tools-$(GOOS)-$(GOARCH)
 
 clean:
-	rm i2p-tools-*ls *.key *.i2pKeys *.crt *.crl *.pem tmp -rf
+	rm i2p-tools-* *.key *.i2pKeys *.crt *.crl *.pem tmp -rf
 
 binary:
 	GOOS=darwin GOARCH=amd64 make build
