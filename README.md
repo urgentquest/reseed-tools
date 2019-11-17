@@ -47,6 +47,12 @@ fork, from anywhere:
         cd i2p-tools-1
         make build
 
+### Without a webserver, standalone, self-supervising(Automatic restarts)
+
+```
+./i2p-tools-1 reseed --signer=you@mail.i2p --netdb=/home/i2p/.i2p/netDb --restart=start
+```
+
 ### Without a webserver, standalone, automatic OnionV3 with TLS support
 
 ```
