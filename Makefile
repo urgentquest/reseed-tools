@@ -15,12 +15,15 @@ version:
 edit:
 	cat README.md | gothub edit -s $(GITHUB_TOKEN) -u $(USER_GH) -r $(APP) -t v$(VERSION) -d -
 
-upload:
+upload: binary tar
 	gothub upload -s $(GITHUB_TOKEN) -u $(USER_GH) -r $(APP) -t v$(VERSION) -f ../i2p-tools.tar.xz -n "i2p-tools.tar.xz"
 
 build:
 	go build -v -tags netgo \
 		-ldflags '-w -extldflags "-static"' -o i2p-tools-$(GOOS)-$(GOARCH)
+
+clean:
+	rm i2p-tools-*ls *.key *.i2pKeys *.crt *.crl *.pem tmp -rf
 
 binary:
 	GOOS=darwin GOARCH=amd64 make build
