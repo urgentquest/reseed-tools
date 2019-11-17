@@ -28,22 +28,22 @@ rundir(){
 
 start() {
     rundir
-    su -u $RUNAS $SCRIPT $RUNOPTS --restart=start
+    su - $RUNAS $SCRIPT $RUNOPTS --restart=start
 }
 
 stop() {
     rundir
-    su -u $RUNAS $SCRIPT $RUNOPTS --restart=stop
+    su - $RUNAS $SCRIPT $RUNOPTS --restart=stop
 }
 
 start() {
     rundir
-    su -u $RUNAS $SCRIPT $RUNOPTS --restart=restart
+    su - $RUNAS $SCRIPT $RUNOPTS --restart=restart
 }
 
 status() {
     rundir
-    su -u $RUNAS $SCRIPT $RUNOPTS --restart=status
+    su - $RUNAS $SCRIPT $RUNOPTS --restart=status
 }
 
 uninstall() {
