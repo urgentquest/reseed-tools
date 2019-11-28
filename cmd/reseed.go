@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"context"
+	//"flag"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -11,13 +12,13 @@ import (
 	"strconv"
 	"time"
 
-	"crawshaw.io/littleboss"
+	//"crawshaw.io/littleboss"
 	"github.com/MDrollette/i2p-tools/reseed"
-	"github.com/RTradeLtd/go-garlic-tcp-transport/common"
 	"github.com/codegangsta/cli"
 	"github.com/cretz/bine/tor"
 	"github.com/cretz/bine/torutil"
 	"github.com/cretz/bine/torutil/ed25519"
+	"github.com/eyedeekay/sam3"
 	"github.com/eyedeekay/sam3/i2pkeys"
 	"github.com/libp2p/go-libp2p"
 	"github.com/libp2p/go-libp2p-core/host"
@@ -124,25 +125,65 @@ func NewReseedCommand() cli.Command {
 				Usage: "Use this SAM address to set up I2P connections for in-network reseed",
 			},
 			cli.StringFlag{
-				Name:  "restart",
+				Name:  "littleboss",
 				Value: "start",
-				Usage: "Start in self-supervising mode",
+				Usage: "Self-Supervise this application",
 			},
 		},
 	}
 }
 
-func reseedMain(c *cli.Context) {
-	lb := littleboss.New("reseed")
-	restart := c.String("restart")
-	lb.Command("restart", &restart)
-	lb.Run(func(ctx context.Context) {
-		reseedAction(c)
-	})
+func CreateEepServiceKey(c *cli.Context) (i2pkeys.I2PKeys, error) {
+	sam, err := sam3.NewSAM(c.String("samaddr"))
+	if err != nil {
+		return i2pkeys.I2PKeys{}, err
+	}
+	defer sam.Close()
+	k, err := sam.NewKeys()
+	if err != nil {
+		return i2pkeys.I2PKeys{}, err
+	}
+	return k, err
+}
+
+func LoadKeys(keysPath string, c *cli.Context) (i2pkeys.I2PKeys, error) {
+	if _, err := os.Stat(keysPath); os.IsNotExist(err) {
+		keys, err := CreateEepServiceKey(c)
+		if err != nil {
+			return i2pkeys.I2PKeys{}, err
+		}
+		file, err := os.Create(keysPath)
+		defer file.Close()
+		if err != nil {
+			return i2pkeys.I2PKeys{}, err
+		}
+		err = i2pkeys.StoreKeysIncompat(keys, file)
+		if err != nil {
+			return i2pkeys.I2PKeys{}, err
+		}
+		return keys, nil
+	} else if err == nil {
+		file, err := os.Open(keysPath)
+		defer file.Close()
+		if err != nil {
+			return i2pkeys.I2PKeys{}, err
+		}
+		keys, err := i2pkeys.LoadKeysIncompat(file)
+		if err != nil {
+			return i2pkeys.I2PKeys{}, err
+		}
+		return keys, nil
+	} else {
+		return i2pkeys.I2PKeys{}, err
+	}
 }
 
 func reseedAction(c *cli.Context) {
 	// validate flags
+	if c.String("littleboss") != "start" {
+		log.Println("--littleboss", c.String("littleboss"))
+		return
+	}
 	netdbDir := c.String("netdb")
 	if netdbDir == "" {
 		fmt.Println("--netdb is required")
@@ -165,19 +206,17 @@ func reseedAction(c *cli.Context) {
 
 	if c.Bool("i2p") {
 		var err error
-		i2pkey, err = i2phelpers.LoadKeys("i2pkeys")
+		i2pkey, err = LoadKeys("reseed.i2pkeys", c)
 		if err != nil {
 			log.Fatalln(err)
 		}
 		i2pTlsHost = i2pkey.Addr().Base32()
 		if i2pTlsHost != "" {
-			i2pTlsKey = c.String("tlsKey")
 			// if no key is specified, default to the host.pem in the current dir
 			if i2pTlsKey == "" {
 				i2pTlsKey = i2pTlsHost + ".pem"
 			}
 
-			i2pTlsCert = c.String("tlsCert")
 			// if no certificate is specified, default to the host.crt in the current dir
 			if i2pTlsCert == "" {
 				i2pTlsCert = i2pTlsHost + ".crt"
@@ -212,13 +251,11 @@ func reseedAction(c *cli.Context) {
 			log.Fatalln(err.Error())
 		}
 		if onionTlsHost != "" {
-			onionTlsKey = c.String("tlsKey")
 			// if no key is specified, default to the host.pem in the current dir
 			if onionTlsKey == "" {
 				onionTlsKey = onionTlsHost + ".pem"
 			}
 
-			onionTlsCert = c.String("tlsCert")
 			// if no certificate is specified, default to the host.crt in the current dir
 			if onionTlsCert == "" {
 				onionTlsCert = onionTlsHost + ".crt"

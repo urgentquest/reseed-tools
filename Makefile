@@ -6,6 +6,8 @@ USER_GH=eyedeekay
 GOOS?=$(shell uname -s | tr A-Z a-z)
 GOARCH?="amd64"
 
+#ARG=-v -tags netgo -ldflags '-w -extldflags "-static"'
+
 echo:
 	@echo "type make version to do release $(APP) $(VERSION) $(GOOS) $(GOARCH) "
 
@@ -18,9 +20,8 @@ edit:
 upload: binary tar
 	gothub upload -s $(GITHUB_TOKEN) -u $(USER_GH) -r $(APP) -t v$(VERSION) -f ../i2p-tools.tar.xz -n "i2p-tools.tar.xz"
 
-build:
-	go build -v -tags netgo \
-		-ldflags '-w -extldflags "-static"' -o i2p-tools-$(GOOS)-$(GOARCH)
+build: gofmt
+	go build $(ARG) -o i2p-tools-$(GOOS)-$(GOARCH)
 
 clean:
 	rm i2p-tools-* *.key *.i2pKeys *.crt *.crl *.pem tmp -rf
@@ -63,3 +64,13 @@ unfork:
 
 gofmt:
 	gofmt -w main.go cmd/*.go reseed/*.go su3/*.go
+
+try:
+	mkdir -p tmp && \
+		cd tmp && \
+		../i2p-tools-$(GOOS)-$(GOARCH) reseed --signer=you@mail.i2p --netdb=/home/idk/.i2p/netDb --tlsHost=your-domain.tld --onion --p2p --i2p --littleboss=start
+
+stop:
+	mkdir -p tmp && \
+		cd tmp && \
+		../i2p-tools-$(GOOS)-$(GOARCH) reseed --signer=you@mail.i2p --netdb=/home/idk/.i2p/netDb --tlsHost=your-domain.tld --onion --p2p --i2p --littleboss=stop

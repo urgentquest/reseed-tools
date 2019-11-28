@@ -11,6 +11,7 @@ require (
 	github.com/gorilla/handlers v1.4.2
 	github.com/hashicorp/golang-lru v0.5.3 // indirect
 	github.com/justinas/alice v0.0.0-20171023064455-03f45bd4b7da
+    github.com/libp2p/go-libp2p v0.4.2
 	github.com/stretchr/testify v1.4.0 // indirect
 	github.com/throttled/throttled v2.2.4+incompatible
 	golang.org/x/crypto v0.0.0-20191029031824-8986dd9e96cf // indirect
