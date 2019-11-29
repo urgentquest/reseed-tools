@@ -56,7 +56,7 @@ fork, from anywhere:
 ### Without a webserver, standalone, automatic OnionV3 with TLS support
 
 ```
-./i2p-tools-1 reseed --signer=you@mail.i2p --netdb=/home/i2p/.i2p/netDb --onion
+./i2p-tools-1 reseed --signer=you@mail.i2p --netdb=/home/i2p/.i2p/netDb --onion --i2p --p2p
 ```
 
 ### Without a webserver, standalone, serve P2P with LibP2P
