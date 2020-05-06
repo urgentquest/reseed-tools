@@ -6,10 +6,16 @@ USER_GH=eyedeekay
 GOOS?=$(shell uname -s | tr A-Z a-z)
 GOARCH?="amd64"
 
-#ARG=-v -tags netgo -ldflags '-w -extldflags "-static"'
+ARG=-v -tags netgo -ldflags '-w -extldflags "-static"'
+
+MIN_GO_VERSION=`ls /usr/lib/go-1.14 2>/dev/null >/dev/null && echo 1.14`
+MIN_GO_VERSION?=1.13
+
+I2P_UID=$(shell id -u i2psvc)
+I2P_GID=$(shell id -g i2psvc)
 
 echo:
-	@echo "type make version to do release $(APP) $(VERSION) $(GOOS) $(GOARCH) "
+	@echo "type make version to do release $(APP) $(VERSION) $(GOOS) $(GOARCH) $(MIN_GO_VERSION) $(I2P_UID) $(I2P_GID)"
 
 version:
 	cat README.md | gothub release -s $(GITHUB_TOKEN) -u $(USER_GH) -r $(APP) -t v$(VERSION) -d -
@@ -21,7 +27,7 @@ upload: binary tar
 	gothub upload -s $(GITHUB_TOKEN) -u $(USER_GH) -r $(APP) -t v$(VERSION) -f ../i2p-tools.tar.xz -n "i2p-tools.tar.xz"
 
 build: gofmt
-	go build $(ARG) -o i2p-tools-$(GOOS)-$(GOARCH)
+	/usr/lib/go-$(MIN_GO_VERSION)/bin/go build $(ARG) -o i2p-tools-$(GOOS)-$(GOARCH)
 
 clean:
 	rm i2p-tools-* *.key *.i2pKeys *.crt *.crl *.pem tmp -rf
@@ -48,10 +54,10 @@ install:
 ## versions behaved the same way. -idk
 
 build-fork:
-	go build -o i2p-tools-idk
+	/usr/lib/go-$(MIN_GO_VERSION)/bin/go build -o i2p-tools-idk
 
 build-unfork:
-	go build -o i2p-tools-md
+	/usr/lib/go-$(MIN_GO_VERSION)/bin/go build -o i2p-tools-md
 
 fork:
 	sed -i 's|MDrollette/i2p-tools|eyedeekay/i2p-tools-1|g' main.go cmd/*.go reseed/*.go su3/*.go
@@ -74,3 +80,45 @@ stop:
 	mkdir -p tmp && \
 		cd tmp && \
 		../i2p-tools-$(GOOS)-$(GOARCH) reseed --signer=you@mail.i2p --netdb=/home/idk/.i2p/netDb --tlsHost=your-domain.tld --onion --p2p --i2p --littleboss=stop
+
+docker:
+	docker build -t eyedeekay/reseed .
+
+docker-push: docker
+	docker push --disable-content-trust false eyedeekay/reseed:$(VERSION)
+
+users:
+	docker run --rm eyedeekay/reseed cat /etc/passwd
+
+docker-ls:
+		docker run --rm \
+		--user $(I2P_UID) \
+		--group-add $(I2P_GID) \
+		--name reseed \
+		--publish 8443:8443 \
+		--volume /var/lib/i2p/i2p-config/netDb:/var/lib/i2p/i2p-config/netDb \
+		eyedeekay/reseed ls /var/lib/i2p/i2p-config -lah
+
+docker-server:
+	docker run -itd \
+		--name reseed \
+		--user $(I2P_UID) \
+		--group-add $(I2P_GID) \
+		--publish 8443:8443 \
+		--restart=always \
+		--volume /var/lib/i2p/i2p-config/netDb:/var/lib/i2p/i2p-config/netDb:z \
+		--volume /var/lib/i2p/i2p-config/reseed-keys:/var/lib/i2p/i2p-config/reseed \
+		eyedeekay/reseed \
+			--signer=hankhill19580@gmail.com
+	docker logs -f reseed
+
+docker-run:
+	docker run --rm -itd \
+		--name reseed \
+		--user $(I2P_UID) \
+		--group-add $(I2P_GID) \
+		--publish 8443:8443 \
+		--volume /var/lib/i2p/i2p-config/netDb:/var/lib/i2p/i2p-config/netDb:z \
+		--volume /var/lib/i2p/i2p-config/reseed-keys:/var/lib/i2p/i2p-config/reseed \
+		eyedeekay/reseed \
+			--signer=hankhill19580@gmail.com

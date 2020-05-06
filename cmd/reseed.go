@@ -119,6 +119,10 @@ func NewReseedCommand() cli.Command {
 				Name:  "i2p",
 				Usage: "Listen for reseed request inside the I2P network",
 			},
+			cli.BoolFlag{
+				Name:  "yes",
+				Usage: "Automatically answer 'yes' to self-signed SSL generation",
+			},
 			cli.StringFlag{
 				Name:  "samaddr",
 				Value: "127.0.0.1:7656",
@@ -223,7 +227,8 @@ func reseedAction(c *cli.Context) {
 			}
 
 			// prompt to create tls keys if they don't exist?
-			err := checkOrNewTLSCert(i2pTlsHost, &i2pTlsCert, &i2pTlsKey)
+            auto := c.Bool("yes")
+			err := checkOrNewTLSCert(i2pTlsHost, &i2pTlsCert, &i2pTlsKey, auto)
 			if nil != err {
 				log.Fatalln(err)
 			}
@@ -262,7 +267,8 @@ func reseedAction(c *cli.Context) {
 			}
 
 			// prompt to create tls keys if they don't exist?
-			err := checkOrNewTLSCert(onionTlsHost, &onionTlsCert, &onionTlsKey)
+            auto := c.Bool("yes")
+			err := checkOrNewTLSCert(onionTlsHost, &onionTlsCert, &onionTlsKey, auto)
 			if nil != err {
 				log.Fatalln(err)
 			}
@@ -283,7 +289,8 @@ func reseedAction(c *cli.Context) {
 		}
 
 		// prompt to create tls keys if they don't exist?
-		err := checkOrNewTLSCert(tlsHost, &tlsCert, &tlsKey)
+        auto := c.Bool("yes")
+		err := checkOrNewTLSCert(tlsHost, &tlsCert, &tlsKey, auto)
 		if nil != err {
 			log.Fatalln(err)
 		}
@@ -302,7 +309,8 @@ func reseedAction(c *cli.Context) {
 	}
 
 	// load our signing privKey
-	privKey, err := getOrNewSigningCert(&signerKey, signerID)
+    auto := c.Bool("yes")
+	privKey, err := getOrNewSigningCert(&signerKey, signerID, auto)
 	if nil != err {
 		log.Fatalln(err)
 	}
@@ -561,26 +569,16 @@ func reseedI2P(c *cli.Context, i2pTlsCert, i2pTlsKey string, i2pIdentKey i2pkeys
 		log.Fatalln(err.Error())
 	}
 	port += 1
-	if _, err := os.Stat(c.String("onionKey")); err == nil {
-		//ok, err := ioutil.ReadFile(c.String("onionKey"))
-		if err != nil {
-			log.Fatalln(err.Error())
-		} else {
-			if i2pTlsCert != "" && i2pTlsKey != "" {
-				if err := server.ListenAndServeI2PTLS(c.String("samaddr"), i2pIdentKey, i2pTlsCert, i2pTlsKey); err != nil {
-					log.Fatalln(err)
-				}
-			} else {
-				if err := server.ListenAndServeI2P(c.String("samaddr"), i2pIdentKey); err != nil {
-					log.Fatalln(err)
-				}
-
-			}
+	if i2pTlsCert != "" && i2pTlsKey != "" {
+		if err := server.ListenAndServeI2PTLS(c.String("samaddr"), i2pIdentKey, i2pTlsCert, i2pTlsKey); err != nil {
+			log.Fatalln(err)
 		}
-	} else if os.IsNotExist(err) {
+	} else {
 		if err := server.ListenAndServeI2P(c.String("samaddr"), i2pIdentKey); err != nil {
 			log.Fatalln(err)
 		}
+
 	}
+
 	log.Printf("Onion server started on %s\n", server.Addr)
 }
