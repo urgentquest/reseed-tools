@@ -84,6 +84,9 @@ stop:
 docker:
 	docker build -t eyedeekay/reseed .
 
+docker-push: docker
+	docker push --disable-content-trust false eyedeekay/reseed:$(VERSION)
+
 users:
 	docker run --rm eyedeekay/reseed cat /etc/passwd
 
