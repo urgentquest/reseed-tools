@@ -39,15 +39,17 @@ func signerFile(signerID string) string {
 	return strings.Replace(signerID, "@", "_at_", 1)
 }
 
-func getOrNewSigningCert(signerKey *string, signerID string) (*rsa.PrivateKey, error) {
+func getOrNewSigningCert(signerKey *string, signerID string, auto bool) (*rsa.PrivateKey, error) {
 	if _, err := os.Stat(*signerKey); nil != err {
 		fmt.Printf("Unable to read signing key '%s'\n", *signerKey)
+        if !auto {
 		fmt.Printf("Would you like to generate a new signing key for %s? (y or n): ", signerID)
 		reader := bufio.NewReader(os.Stdin)
 		input, _ := reader.ReadString('\n')
 		if []byte(input)[0] != 'y' {
 			return nil, fmt.Errorf("A signing key is required")
 		}
+        }
 		if err := createSigningCertificate(signerID); nil != err {
 			return nil, err
 		}
@@ -58,7 +60,7 @@ func getOrNewSigningCert(signerKey *string, signerID string) (*rsa.PrivateKey, e
 	return loadPrivateKey(*signerKey)
 }
 
-func checkOrNewTLSCert(tlsHost string, tlsCert, tlsKey *string) error {
+func checkOrNewTLSCert(tlsHost string, tlsCert, tlsKey *string, auto bool) error {
 	_, certErr := os.Stat(*tlsCert)
 	_, keyErr := os.Stat(*tlsKey)
 	if certErr != nil || keyErr != nil {
@@ -69,12 +71,14 @@ func checkOrNewTLSCert(tlsHost string, tlsCert, tlsKey *string) error {
 			fmt.Printf("Unable to read TLS key '%s'\n", *tlsKey)
 		}
 
-		fmt.Printf("Would you like to generate a new self-signed certificate for '%s'? (y or n): ", tlsHost)
-		reader := bufio.NewReader(os.Stdin)
-		input, _ := reader.ReadString('\n')
-		if []byte(input)[0] != 'y' {
-			fmt.Println("Continuing without TLS")
-			return nil
+		if auto {
+			fmt.Printf("Would you like to generate a new self-signed certificate for '%s'? (y or n): ", tlsHost)
+			reader := bufio.NewReader(os.Stdin)
+			input, _ := reader.ReadString('\n')
+			if []byte(input)[0] != 'y' {
+				fmt.Println("Continuing without TLS")
+				return nil
+			}
 		}
 
 		if err := createTLSCertificate(tlsHost); nil != err {
