@@ -22,6 +22,11 @@ a reseed, you will need to mount the netDb as a volume inside your docker
 container to provide access to it, and you will need to run it as the same user
 and group inside the container as I2P.
 
+When you run a reseed under Docker in this fashion, it will automatically
+generate a self-signed certificate for your reseed server in a Docker volume
+under your I2P directory. *Back up this directory*, if it is lost it is
+impossible to reproduce.
+
 #### If I2P is running as your user, do this:
 
         docker run -itd \
@@ -29,6 +34,7 @@ and group inside the container as I2P.
             --publish 443:8443 \
             --restart always \
             --volume $HOME/.i2p/netDb:$HOME/.i2p/netDb:z \
+            --volume $HOME/i2p/reseed-keys:/var/lib/i2p/i2p-config/reseed \
             eyedeekay/reseed \
                 --signer $YOUR_EMAIL_HERE
 
@@ -41,11 +47,9 @@ and group inside the container as I2P.
             --publish 443:8443 \
             --restart always \
             --volume /var/lib/i2p/i2p-config/netDb:/var/lib/i2p/i2p-config/netDb:z \
+            --volume /var/lib/i2p/i2p-config/reseed-keys:/var/lib/i2p/i2p-config/reseed \
             eyedeekay/reseed \
                 --signer $YOUR_EMAIL_HERE
-
-When you run a reseed under Docker in this fashion, it will automatically
-generate a self-signed certificate for your reseed server in a Docker volume
 
 ### Locally behind a webserver (reverse proxy setup), preferred:
 
