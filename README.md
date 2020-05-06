@@ -27,6 +27,9 @@ generate a self-signed certificate for your reseed server in a Docker volume
 under your I2P directory. *Back up this directory*, if it is lost it is
 impossible to reproduce.
 
+Please note that Docker is not currently compatible with .onion reseeds unless
+you pass the --network=host tag.
+
 #### If I2P is running as your user, do this:
 
         docker run -itd \
