@@ -46,6 +46,24 @@ impossible to reproduce.
             --group-add $(I2P_GID) \
             --publish 443:8443 \
             --restart always \
+            --volume /PATH/TO/USER/I2P/HERE/netDb:/var/lib/i2p/i2p-config/netDb:z \
+            --volume /PATH/TO/USER/I2P/HERE/reseed-keys:/var/lib/i2p/i2p-config/reseed \
+            eyedeekay/reseed \
+                --signer $YOUR_EMAIL_HERE
+
+#### **Debian/Ubuntu and Docker**
+
+In many cases I2P will be running as the Debian system user ```i2psvc```. This
+is the case for all installs where Debian's Advanced Packaging Tool(apt) was
+used to peform the task. If you used ```apt-get install``` this command will
+work for you. In that case, just copy-and-paste:
+
+        docker run -itd \
+            --name reseed \
+            --user $(id -u i2psvc) \
+            --group-add $(id -g i2psvc) \
+            --publish 443:8443 \
+            --restart always \
             --volume /var/lib/i2p/i2p-config/netDb:/var/lib/i2p/i2p-config/netDb:z \
             --volume /var/lib/i2p/i2p-config/reseed-keys:/var/lib/i2p/i2p-config/reseed \
             eyedeekay/reseed \
