@@ -28,7 +28,7 @@ and group inside the container as I2P.
             --name reseed \
             --publish 443:8443 \
             --restart always \
-            --volume /var/lib/i2p/i2p-config/netDb:/var/lib/i2p/i2p-config/netDb:z \
+            --volume $HOME/.i2p/netDb:$HOME/.i2p/netDb:z \
             eyedeekay/reseed \
                 --signer $YOUR_EMAIL_HERE
 
@@ -43,6 +43,9 @@ and group inside the container as I2P.
             --volume /var/lib/i2p/i2p-config/netDb:/var/lib/i2p/i2p-config/netDb:z \
             eyedeekay/reseed \
                 --signer $YOUR_EMAIL_HERE
+
+When you run a reseed under Docker in this fashion, it will automatically
+generate a self-signed certificate for your reseed server in a Docker volume
 
 ### Locally behind a webserver (reverse proxy setup), preferred:
 

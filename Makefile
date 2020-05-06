@@ -97,23 +97,25 @@ docker-ls:
 		eyedeekay/reseed ls /var/lib/i2p/i2p-config -lah
 
 docker-server:
-	docker run -it \
+	docker run -itd \
 		--name reseed \
 		--user $(I2P_UID) \
 		--group-add $(I2P_GID) \
 		--publish 8443:8443 \
 		--restart=always \
 		--volume /var/lib/i2p/i2p-config/netDb:/var/lib/i2p/i2p-config/netDb:z \
+		--volume reseed-keys:/var/lib/i2p/i2p-config/reseed \
 		eyedeekay/reseed \
 			--signer=hankhill19580@gmail.com
 	docker logs -f reseed
 
 docker-run:
-	docker run --rm -it \
+	docker run --rm -itd \
 		--name reseed \
 		--user $(I2P_UID) \
 		--group-add $(I2P_GID) \
 		--publish 8443:8443 \
 		--volume /var/lib/i2p/i2p-config/netDb:/var/lib/i2p/i2p-config/netDb:z \
+		--volume reseed-keys:/var/lib/i2p/i2p-config/reseed \
 		eyedeekay/reseed \
 			--signer=hankhill19580@gmail.com
