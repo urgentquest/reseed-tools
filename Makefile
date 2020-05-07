@@ -109,7 +109,7 @@ docker-server:
 		--publish 8443:8443 \
 		--restart=always \
 		--volume /var/lib/i2p/i2p-config/netDb:/var/lib/i2p/i2p-config/netDb:z \
-		--volume /var/lib/i2p/i2p-config/reseed-keys:/var/lib/i2p/i2p-config/reseed \
+		--volume reseed-keyss:/var/lib/i2p/i2p-config/reseed \
 		eyedeekay/reseed \
 			--signer=hankhill19580@gmail.com
 	docker logs -f reseed
@@ -121,7 +121,7 @@ docker-run:
 		--group-add $(I2P_GID) \
 		--publish 8443:8443 \
 		--volume /var/lib/i2p/i2p-config/netDb:/var/lib/i2p/i2p-config/netDb:z \
-		--volume /var/lib/i2p/i2p-config/reseed-keys:/var/lib/i2p/i2p-config/reseed \
+		--volume reseed-keys:/var/lib/i2p/i2p-config/reseed \
 		eyedeekay/reseed \
 			--signer=hankhill19580@gmail.com
 
@@ -132,6 +132,6 @@ docker-homerun:
 		--group-add 1000 \
 		--publish 8443:8443 \
 		--volume $(HOME)/i2p/netDb:/var/lib/i2p/i2p-config/netDb:z \
-		--volume $(HOME)/i2p/reseed-keys:/var/lib/i2p/i2p-config/reseed:z \
+		--volume reseed-keys:/var/lib/i2p/i2p-config/reseed:z \
 		eyedeekay/reseed \
 			--signer=hankhill19580@gmail.com
