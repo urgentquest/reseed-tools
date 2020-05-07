@@ -1,5 +1,5 @@
 
-VERSION=v0.0.3
+VERSION=0.0.4
 APP=i2p-tools-1
 USER_GH=eyedeekay
 
