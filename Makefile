@@ -14,6 +14,8 @@ MIN_GO_VERSION?=1.13
 I2P_UID=$(shell id -u i2psvc)
 I2P_GID=$(shell id -g i2psvc)
 
+WHOAMI=$(shell whoami)
+
 echo:
 	@echo "type make version to do release $(APP) $(VERSION) $(GOOS) $(GOARCH) $(MIN_GO_VERSION) $(I2P_UID) $(I2P_GID)"
 
@@ -113,12 +115,23 @@ docker-server:
 	docker logs -f reseed
 
 docker-run:
-	docker run --rm -itd \
+	docker run -itd \
 		--name reseed \
 		--user $(I2P_UID) \
 		--group-add $(I2P_GID) \
 		--publish 8443:8443 \
 		--volume /var/lib/i2p/i2p-config/netDb:/var/lib/i2p/i2p-config/netDb:z \
 		--volume /var/lib/i2p/i2p-config/reseed-keys:/var/lib/i2p/i2p-config/reseed \
+		eyedeekay/reseed \
+			--signer=hankhill19580@gmail.com
+
+docker-homerun:
+	docker run -itd \
+		--name reseed \
+		--user 1000 \
+		--group-add 1000 \
+		--publish 8443:8443 \
+		--volume $(HOME)/i2p/netDb:/var/lib/i2p/i2p-config/netDb:z \
+		--volume $(HOME)/i2p/reseed-keys:/var/lib/i2p/i2p-config/reseed:z \
 		eyedeekay/reseed \
 			--signer=hankhill19580@gmail.com

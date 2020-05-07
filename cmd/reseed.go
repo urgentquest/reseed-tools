@@ -227,7 +227,7 @@ func reseedAction(c *cli.Context) {
 			}
 
 			// prompt to create tls keys if they don't exist?
-            auto := c.Bool("yes")
+			auto := c.Bool("yes")
 			err := checkOrNewTLSCert(i2pTlsHost, &i2pTlsCert, &i2pTlsKey, auto)
 			if nil != err {
 				log.Fatalln(err)
@@ -267,7 +267,7 @@ func reseedAction(c *cli.Context) {
 			}
 
 			// prompt to create tls keys if they don't exist?
-            auto := c.Bool("yes")
+			auto := c.Bool("yes")
 			err := checkOrNewTLSCert(onionTlsHost, &onionTlsCert, &onionTlsKey, auto)
 			if nil != err {
 				log.Fatalln(err)
@@ -289,7 +289,7 @@ func reseedAction(c *cli.Context) {
 		}
 
 		// prompt to create tls keys if they don't exist?
-        auto := c.Bool("yes")
+		auto := c.Bool("yes")
 		err := checkOrNewTLSCert(tlsHost, &tlsCert, &tlsKey, auto)
 		if nil != err {
 			log.Fatalln(err)
@@ -309,7 +309,7 @@ func reseedAction(c *cli.Context) {
 	}
 
 	// load our signing privKey
-    auto := c.Bool("yes")
+	auto := c.Bool("yes")
 	privKey, err := getOrNewSigningCert(&signerKey, signerID, auto)
 	if nil != err {
 		log.Fatalln(err)

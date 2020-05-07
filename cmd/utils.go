@@ -42,14 +42,14 @@ func signerFile(signerID string) string {
 func getOrNewSigningCert(signerKey *string, signerID string, auto bool) (*rsa.PrivateKey, error) {
 	if _, err := os.Stat(*signerKey); nil != err {
 		fmt.Printf("Unable to read signing key '%s'\n", *signerKey)
-        if !auto {
-		fmt.Printf("Would you like to generate a new signing key for %s? (y or n): ", signerID)
-		reader := bufio.NewReader(os.Stdin)
-		input, _ := reader.ReadString('\n')
-		if []byte(input)[0] != 'y' {
-			return nil, fmt.Errorf("A signing key is required")
+		if !auto {
+			fmt.Printf("Would you like to generate a new signing key for %s? (y or n): ", signerID)
+			reader := bufio.NewReader(os.Stdin)
+			input, _ := reader.ReadString('\n')
+			if []byte(input)[0] != 'y' {
+				return nil, fmt.Errorf("A signing key is required")
+			}
 		}
-        }
 		if err := createSigningCertificate(signerID); nil != err {
 			return nil, err
 		}
