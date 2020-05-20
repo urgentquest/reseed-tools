@@ -5,3 +5,5 @@
 i2pseeds.su3
 *.pem
 onion.key
+tmp/
+i2p-tools-*

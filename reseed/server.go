@@ -79,7 +79,7 @@ func NewServer(prefix string, trustProxy bool) *Server {
 	})
 
 	mux := http.NewServeMux()
-	mux.Handle("/", middlewareChain.Append(disableKeepAliveMiddleware, loggingMiddleware).Then(errorHandler))
+	mux.Handle("/", middlewareChain.Append(disableKeepAliveMiddleware, loggingMiddleware, browsingMiddleware).Then(errorHandler))
 	mux.Handle(prefix+"/i2pseeds.su3", middlewareChain.Append(disableKeepAliveMiddleware, loggingMiddleware, verifyMiddleware, th.Throttle).Then(http.HandlerFunc(server.reseedHandler)))
 	server.Handler = mux
 
@@ -289,6 +289,17 @@ func disableKeepAliveMiddleware(next http.Handler) http.Handler {
 
 func loggingMiddleware(next http.Handler) http.Handler {
 	return handlers.CombinedLoggingHandler(os.Stdout, next)
+}
+
+func browsingMiddleware(next http.Handler) http.Handler {
+	fn := func(w http.ResponseWriter, r *http.Request) {
+		if i2pUserAgent != r.UserAgent() {
+			HandleARealBrowser(w, r)
+			return
+		}
+		next.ServeHTTP(w, r)
+	}
+	return http.HandlerFunc(fn)
 }
 
 func verifyMiddleware(next http.Handler) http.Handler {
