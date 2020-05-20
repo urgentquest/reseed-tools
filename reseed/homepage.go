@@ -2,7 +2,6 @@ package reseed
 
 import (
 	"io/ioutil"
-	"log"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -26,7 +25,7 @@ var header = []byte(`<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>title</title>
+    <title>This is an I2P Reseed Server</title>
     <link rel="stylesheet" href="style.css">
     <script src="script.js"></script>
   </head>
@@ -34,7 +33,7 @@ var header = []byte(`<!DOCTYPE html>
 var footer = []byte(`  </body>
 </html>`)
 
-var md = markdown.New(markdown.XHTMLOutput(true))
+var md = markdown.New(markdown.XHTMLOutput(true), markdown.HTML(true))
 
 func ContentPath() (string, error) {
 	exPath, err := os.Getwd()
@@ -53,33 +52,27 @@ func HandleARealBrowser(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "403 Forbidden", http.StatusForbidden)
 		return
 	}
-	lang, err := r.Cookie("lang")
-	if err != nil {
-		log.Printf("Language cookie error: %s\n")
-	}
+	lang, _ := r.Cookie("lang")
 	accept := r.Header.Get("Accept-Language")
 	tag, _ := language.MatchStrings(matcher, lang.String(), accept)
 	base, _ := tag.Base()
 
 	switch r.URL.Path {
 	case "/style.css":
-		//		log.Printf("Showing CSS %s %s", BaseContentPath, r.URL.Path)
 		w.Header().Set("Content-Type", "text/css")
 		HandleAFile(w, "", "style.css")
 	case "/script.js":
-		//		log.Printf("Showing JAVASCRIPT %s %s", BaseContentPath, r.URL.Path)
 		w.Header().Set("Content-Type", "text/javascript")
 		HandleAFile(w, "", "script.js")
 	default:
 		image := strings.Replace(r.URL.Path, "/", "", -1)
 		if strings.HasPrefix(image, "images") {
-			//			log.Printf("Showing IMAGE %s %s", BaseContentPath, r.URL.Path)
 			w.Header().Set("Content-Type", "image/png")
 			HandleAFile(w, "images", strings.TrimPrefix(strings.TrimPrefix(r.URL.Path, "/"), "images"))
 		} else {
 			w.Header().Set("Content-Type", "text/html")
 			w.Write([]byte(header))
-			HandleALocalizedFile(w, base.String(), "homepage.md")
+			HandleALocalizedFile(w, base.String())
 			w.Write([]byte(footer))
 		}
 	}
@@ -92,6 +85,7 @@ func HandleAFile(w http.ResponseWriter, dirPath, file string) {
 		f, err := ioutil.ReadFile(path)
 		if err != nil {
 			w.Write([]byte("Oops! Something went wrong handling your language. Please file a bug at https://github.com/eyedeekay/i2p-tools-1\n\t" + err.Error()))
+			return
 		}
 		CachedDataPages[file] = f
 		w.Write([]byte(CachedDataPages[file]))
@@ -100,19 +94,32 @@ func HandleAFile(w http.ResponseWriter, dirPath, file string) {
 	}
 }
 
-func HandleALocalizedFile(w http.ResponseWriter, dirPath, file string) {
-	file = filepath.Join(dirPath, file)
-	if _, prs := CachedLanguagePages[file]; prs == false {
-		path := filepath.Join(BaseContentPath, "lang", file)
-		log.Printf("Showing HYPERTEXT %s", path)
-		f, err := ioutil.ReadFile(path)
+func HandleALocalizedFile(w http.ResponseWriter, dirPath string) {
+	if _, prs := CachedLanguagePages[dirPath]; prs == false {
+		dir := filepath.Join(BaseContentPath, "lang", dirPath)
+		files, err := ioutil.ReadDir(dir)
 		if err != nil {
 			w.Write([]byte("Oops! Something went wrong handling your language. Please file a bug at https://github.com/eyedeekay/i2p-tools-1\n\t" + err.Error()))
 		}
-		log.Printf("%b\n", f)
-		CachedLanguagePages[file] = md.RenderToString(f)
-		w.Write([]byte(CachedLanguagePages[file]))
+		var f []byte
+		for _, file := range files {
+			if !strings.HasSuffix(file.Name(), ".md") {
+				return
+			}
+			trimmedName := strings.TrimSuffix(file.Name(), ".md")
+			path := filepath.Join(dir, file.Name())
+			b, err := ioutil.ReadFile(path)
+			if err != nil {
+				w.Write([]byte("Oops! Something went wrong handling your language. Please file a bug at https://github.com/eyedeekay/i2p-tools-1\n\t" + err.Error()))
+				return
+			}
+			f = append(f, []byte(`<div id="`+trimmedName+`">`)...)
+			f = append(f, []byte(md.RenderToString(b))...)
+			f = append(f, []byte(`</div>`)...)
+		}
+		CachedLanguagePages[dirPath] = string(f)
+		w.Write([]byte(CachedLanguagePages[dirPath]))
 	} else {
-		w.Write([]byte(CachedLanguagePages[file]))
+		w.Write([]byte(CachedLanguagePages[dirPath]))
 	}
 }
