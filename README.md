@@ -1,7 +1,8 @@
 I2P Reseed Tools
 ==================
 
-This tool provides a secure and efficient reseed server for the I2P network. There are several utility commands to create, sign, and validate SU3 files.
+This tool provides a secure and efficient reseed server for the I2P network. There are several utility commands to
+create, sign, and validate SU3 files. Please note that this requires at least Go version 1.13, and uses Go Modules.
 
 ## Installation
 
@@ -108,7 +109,7 @@ fork, from anywhere:
 ### Without a webserver, standalone, self-supervising(Automatic restarts)
 
 ```
-./i2p-tools-1 reseed --signer=you@mail.i2p --netdb=/home/i2p/.i2p/netDb --restart=start
+./i2p-tools-1 reseed --signer=you@mail.i2p --netdb=/home/i2p/.i2p/netDb --littleboss=start
 ```
 
 ### Without a webserver, standalone, automatic OnionV3 with TLS support
@@ -125,7 +126,7 @@ fork, from anywhere:
 
 ### Without a webserver, standalone, upload a single signed .su3 to github
 
-* This one isn't working yet, look for it by ~Monday.
+* This one isn't working yet, I'll get to it eventually, I've got a cooler idea now.
 
 ```
 ./i2p-tools-1 reseed --signer=you@mail.i2p --netdb=/home/i2p/.i2p/netDb --github --ghrepo=i2p-tools-1 --ghuser=eyedeekay
@@ -152,5 +153,5 @@ fork, from anywhere:
 ### Without a webserver, standalone, Regular TLS, OnionV3 with TLS, I2P In-Network reseed, and LibP2P, self-supervising
 
 ```
-./i2p-tools-1 reseed --tlsHost=your-domain.tld --signer=you@mail.i2p --netdb=/home/i2p/.i2p/netDb --onion --p2p --restart=start
+./i2p-tools-1 reseed --tlsHost=your-domain.tld --signer=you@mail.i2p --netdb=/home/i2p/.i2p/netDb --onion --p2p --littleboss=start
 ```
