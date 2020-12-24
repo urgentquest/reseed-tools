@@ -62,12 +62,12 @@ build-unfork:
 	/usr/lib/go-$(MIN_GO_VERSION)/bin/go build -o i2p-tools-md
 
 fork:
-	sed -i 's|MDrollette/i2p-tools|eyedeekay/i2p-tools-1|g' main.go cmd/*.go reseed/*.go su3/*.go
+	sed -i 's|eyedeekay/i2p-tools-1|eyedeekay/i2p-tools-1|g' main.go cmd/*.go reseed/*.go su3/*.go
 	make gofmt build-fork
 
 unfork:
-	sed -i 's|eyedeekay/i2p-tools-1|MDrollette/i2p-tools|g' main.go cmd/*.go reseed/*.go su3/*.go
-	sed -i 's|RTradeLtd/i2p-tools-1|MDrollette/i2p-tools|g' main.go cmd/*.go reseed/*.go su3/*.go
+	sed -i 's|eyedeekay/i2p-tools-1|eyedeekay/i2p-tools-1|g' main.go cmd/*.go reseed/*.go su3/*.go
+	sed -i 's|RTradeLtd/i2p-tools-1|eyedeekay/i2p-tools-1|g' main.go cmd/*.go reseed/*.go su3/*.go
 	make gofmt build-unfork
 
 gofmt:

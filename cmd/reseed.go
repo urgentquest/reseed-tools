@@ -13,8 +13,8 @@ import (
 	"time"
 
 	//"crawshaw.io/littleboss"
-	"github.com/MDrollette/i2p-tools/reseed"
-	"github.com/codegangsta/cli"
+	"github.com/eyedeekay/i2p-tools-1/reseed"
+	"github.com/urfave/cli"
 	"github.com/cretz/bine/tor"
 	"github.com/cretz/bine/torutil"
 	"github.com/cretz/bine/torutil/ed25519"
