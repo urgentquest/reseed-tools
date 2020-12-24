@@ -1,4 +1,4 @@
-module github.com/eyedeekay/i2p-tools-1
+module i2pgit.org/idk/reseed-tools
 
 go 1.13
 
@@ -37,4 +37,3 @@ require (
 	golang.org/x/text v0.3.4
 )
 
-replace i2pgit.org/idk/reseed-tools v0.0.4 => github.com/eyedeekay/i2p-tools-1 v0.0.4
