@@ -16,8 +16,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/eyedeekay/i2p-tools-1/reseed"
-	"github.com/eyedeekay/i2p-tools-1/su3"
+	"github.com/idk/reseed-tools/reseed"
+	"github.com/idk/reseed-tools/su3"
 )
 
 func loadPrivateKey(path string) (*rsa.PrivateKey, error) {

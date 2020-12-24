@@ -15,7 +15,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/eyedeekay/i2p-tools-1/su3"
+	"github.com/idk/reseed-tools/su3"
 )
 
 type routerInfo struct {

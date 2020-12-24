@@ -4,7 +4,7 @@ import (
 	"os"
 	"runtime"
 
-	"github.com/eyedeekay/i2p-tools-1/cmd"
+	"github.com/idk/reseed-tools/cmd"
 	"github.com/urfave/cli"
 )
 
