@@ -13,15 +13,15 @@ import (
 	"time"
 
 	//"crawshaw.io/littleboss"
-	"github.com/eyedeekay/i2p-tools-1/reseed"
-	"github.com/urfave/cli"
 	"github.com/cretz/bine/tor"
 	"github.com/cretz/bine/torutil"
 	"github.com/cretz/bine/torutil/ed25519"
+	"github.com/eyedeekay/i2p-tools-1/reseed"
 	"github.com/eyedeekay/sam3"
 	"github.com/eyedeekay/sam3/i2pkeys"
 	"github.com/libp2p/go-libp2p"
 	"github.com/libp2p/go-libp2p-core/host"
+	"github.com/urfave/cli"
 )
 
 func NewReseedCommand() cli.Command {

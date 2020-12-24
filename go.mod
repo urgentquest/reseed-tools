@@ -37,6 +37,3 @@ require (
 	golang.org/x/text v0.3.4
 )
 
-replace github.com/eyedeekay/i2p-tools-1 v0.0.0 => github.com/eyedeekay/i2p-tools-1 v0.0.4
-
-//#replace github.com/urfave/cli v1.22.1 => github.com/urfave/cli v1.22.5
