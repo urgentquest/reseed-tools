@@ -1,8 +1,8 @@
 FROM debian:stable-backports
 ARG I2P_GID=1000
 ARG I2P_UID=1000
-COPY . /var/lib/i2p/go/src/github.com/idk/reseed-tools
-WORKDIR /var/lib/i2p/go/src/github.com/idk/reseed-tools
+COPY . /var/lib/i2p/go/src/i2pgit.org/idk/reseed-tools
+WORKDIR /var/lib/i2p/go/src/i2pgit.org/idk/reseed-tools
 RUN apt-get update && \
     apt-get dist-upgrade -y && \
     apt-get install -y git golang-1.13-go make && \
@@ -11,4 +11,4 @@ RUN apt-get update && \
 RUN /usr/lib/go-1.13/bin/go build -v -tags netgo -ldflags '-w -extldflags "-static"'
 USER $I2P_UID
 WORKDIR /var/lib/i2p/i2p-config/reseed
-ENTRYPOINT [ "/var/lib/i2p/go/src/github.com/idk/reseed-tools/entrypoint.sh" ]
+ENTRYPOINT [ "/var/lib/i2p/go/src/i2pgit.org/idk/reseed-tools/entrypoint.sh" ]

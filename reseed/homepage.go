@@ -84,7 +84,7 @@ func HandleAFile(w http.ResponseWriter, dirPath, file string) {
 		path := filepath.Join(BaseContentPath, file)
 		f, err := ioutil.ReadFile(path)
 		if err != nil {
-			w.Write([]byte("Oops! Something went wrong handling your language. Please file a bug at https://github.com/idk/reseed-tools\n\t" + err.Error()))
+			w.Write([]byte("Oops! Something went wrong handling your language. Please file a bug at https://i2pgit.org/idk/reseed-tools\n\t" + err.Error()))
 			return
 		}
 		CachedDataPages[file] = f
@@ -99,7 +99,7 @@ func HandleALocalizedFile(w http.ResponseWriter, dirPath string) {
 		dir := filepath.Join(BaseContentPath, "lang", dirPath)
 		files, err := ioutil.ReadDir(dir)
 		if err != nil {
-			w.Write([]byte("Oops! Something went wrong handling your language. Please file a bug at https://github.com/idk/reseed-tools\n\t" + err.Error()))
+			w.Write([]byte("Oops! Something went wrong handling your language. Please file a bug at https://i2pgit.org/idk/reseed-tools\n\t" + err.Error()))
 		}
 		var f []byte
 		for _, file := range files {
@@ -110,7 +110,7 @@ func HandleALocalizedFile(w http.ResponseWriter, dirPath string) {
 			path := filepath.Join(dir, file.Name())
 			b, err := ioutil.ReadFile(path)
 			if err != nil {
-				w.Write([]byte("Oops! Something went wrong handling your language. Please file a bug at https://github.com/idk/reseed-tools\n\t" + err.Error()))
+				w.Write([]byte("Oops! Something went wrong handling your language. Please file a bug at https://i2pgit.org/idk/reseed-tools\n\t" + err.Error()))
 				return
 			}
 			f = append(f, []byte(`<div id="`+trimmedName+`">`)...)

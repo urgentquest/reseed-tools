@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"io/ioutil"
 
-	"github.com/idk/reseed-tools/reseed"
-	"github.com/idk/reseed-tools/su3"
 	"github.com/urfave/cli"
+	"i2pgit.org/idk/reseed-tools/reseed"
+	"i2pgit.org/idk/reseed-tools/su3"
 )
 
 func NewSu3VerifyCommand() cli.Command {

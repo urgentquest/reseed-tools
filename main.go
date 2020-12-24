@@ -4,8 +4,8 @@ import (
 	"os"
 	"runtime"
 
-	"github.com/idk/reseed-tools/cmd"
 	"github.com/urfave/cli"
+	"i2pgit.org/idk/reseed-tools/cmd"
 )
 
 func main() {

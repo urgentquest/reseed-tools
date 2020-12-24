@@ -31,4 +31,4 @@
  * numRi per su3 file: 75 --> 77
 
 2016-01
- * fork from https://github.com/idk/reseed-tools
+ * fork from https://i2pgit.org/idk/reseed-tools

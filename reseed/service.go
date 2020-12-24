@@ -15,7 +15,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/idk/reseed-tools/su3"
+	"i2pgit.org/idk/reseed-tools/su3"
 )
 
 type routerInfo struct {

@@ -18,10 +18,10 @@ import (
 	"github.com/cretz/bine/torutil/ed25519"
 	"github.com/eyedeekay/sam3"
 	"github.com/eyedeekay/sam3/i2pkeys"
-	"github.com/idk/reseed-tools/reseed"
 	"github.com/libp2p/go-libp2p"
 	"github.com/libp2p/go-libp2p-core/host"
 	"github.com/urfave/cli"
+	"i2pgit.org/idk/reseed-tools/reseed"
 )
 
 func NewReseedCommand() cli.Command {

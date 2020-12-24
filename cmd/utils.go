@@ -16,8 +16,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/idk/reseed-tools/reseed"
-	"github.com/idk/reseed-tools/su3"
+	"i2pgit.org/idk/reseed-tools/reseed"
+	"i2pgit.org/idk/reseed-tools/su3"
 )
 
 func loadPrivateKey(path string) (*rsa.PrivateKey, error) {

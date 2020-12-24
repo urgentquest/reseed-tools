@@ -9,7 +9,7 @@ create, sign, and validate SU3 files. Please note that this requires at least Go
 If you have go installed you can download, build, and install this tool with `go get`
 
 ```
-go get github.com/idk/reseed-tools
+go get i2pgit.org/idk/reseed-tools
 i2p-tools -h
 ```
 
@@ -102,7 +102,7 @@ also a short guide and complete tech info.
 Requires ```go mod``` and at least go 1.13. To build the idk/reseed-tools
 fork, from anywhere:
 
-        git clone https://github.com/idk/reseed-tools
+        git clone https://i2pgit.org/idk/reseed-tools
         cd i2p-tools-1
         make build
 
