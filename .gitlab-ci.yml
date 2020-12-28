@@ -23,14 +23,14 @@ variables:
   # Use TLS https://docs.gitlab.com/ee/ci/docker/using_docker_build.html#tls-enabled
   DOCKER_HOST: tcp://docker:2376
 
+services:
+  - docker:19.03.12-dind
+
 .docker_cache:
   cache:
     key: "$CI_COMMIT_REF_SLUG"
     paths:
       - ci-exports/*.tar
-
-services:
-  - docker:19.03.12-dind
 
 # Make sure we can build a docker image
 # It's pushed to the pipeline-local registry which acts as a cache
