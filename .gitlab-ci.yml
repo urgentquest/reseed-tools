@@ -57,7 +57,7 @@ push_ci_registry:
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
   script:
     - cat ci-exports/$CI_COMMIT_REF_SLUG.tar | docker load
-    - docker build --cache-from $CI_REGISTRY_IMAGE:latest --tag $CI_REGISTRY_IMAGE:$CI_COMMIT_TAG --tag $CI_REGISTRY_IMAGE:latest .
+    - docker tag $CI_REGISTRY_IMAGE:latest $CI_REGISTRY_IMAGE:$CI_COMMIT_TAG
     - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_TAG
     - docker push $CI_REGISTRY_IMAGE:latest
   only:
@@ -81,7 +81,8 @@ push_dockerhub_registry:
     - docker login -u $DOCKERHUB_REGISTRY_USER -p $DOCKERHUB_REGISTRY_PASSWORD $DOCKERHUB_REGISTRY
   script:
     - cat ci-exports/$CI_COMMIT_REF_SLUG.tar | docker load
-    - docker build --cache-from $CI_REGISTRY_IMAGE:latest --tag $DOCKERHUB_REGISTRY_IMAGE:$CI_COMMIT_TAG --tag $DOCKERHUB_REGISTRY_IMAGE:latest .
+    - docker tag $CI_REGISTRY_IMAGE:latest $DOCKERHUB_REGISTRY_IMAGE:$CI_COMMIT_TAG
+    - docker tag $CI_REGISTRY_IMAGE:latest $DOCKERHUB_REGISTRY_IMAGE:latest
     - docker push $DOCKERHUB_REGISTRY_IMAGE:$CI_COMMIT_TAG
     - docker push $DOCKERHUB_REGISTRY_IMAGE:latest
   only:
