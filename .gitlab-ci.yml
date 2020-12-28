@@ -54,14 +54,14 @@ test_pull_local_docker:
     - .docker_cache
   stage: docker_push
   script:
-    - docker load exports/$CI_COMMIT_REF_SLUG.tar
+    - cat exports/$CI_COMMIT_REF_SLUG.tar | docker load
 
 push_docker:
   stage: docker_push
   extends:
     - .docker_cache
   script:
-    - docker load exports/$CI_COMMIT_REF_SLUG.tar
+    - cat exports/$CI_COMMIT_REF_SLUG.tar | docker load
     - docker build --cache-from $CI_REGISTRY_IMAGE:latest --tag $CI_REGISTRY_IMAGE:$CI_COMMIT_TAG --tag $CI_REGISTRY_IMAGE:latest .
     - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_TAG
     - docker push $CI_REGISTRY_IMAGE:latest
