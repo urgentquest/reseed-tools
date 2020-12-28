@@ -46,6 +46,7 @@ build_docker:
     # Try to load latest branch image from local tar or from registry
     - docker load exports/$CI_COMMIT_REF_SLUG.tar || docker pull $CI_REGISTRY_IMAGE:latest || true
     - docker build --cache-from $CI_REGISTRY_IMAGE:latest --tag $CI_REGISTRY_IMAGE:latest .
+    - mkdir -p exports
     - docker save $CI_REGISTRY_IMAGE:latest > exports/$CI_COMMIT_REF_SLUG.tar
 
 test_pull_local_docker:
