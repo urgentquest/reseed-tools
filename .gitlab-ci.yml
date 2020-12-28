@@ -32,7 +32,6 @@ variables:
 services:
   - docker:19.03.12-dind
 
-
 # Make sure we can build a docker image
 # It's pushed to the pipeline-local registry which acts as a cache
 build_docker:
