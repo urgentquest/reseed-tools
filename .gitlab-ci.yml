@@ -86,7 +86,7 @@ push_dockerhub_registry:
     - docker push $DOCKERHUB_REGISTRY_IMAGE:latest
   only:
     refs:
-      - master
+#      - master
       - tags
     variables:
       - $DOCKERHUB_REGISTRY_USER
