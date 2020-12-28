@@ -49,15 +49,10 @@ build_docker:
     - mkdir -p ci-exports/
     - docker save $CI_REGISTRY_IMAGE:latest > ci-exports/$CI_COMMIT_REF_SLUG.tar
 
-test_pull_local_docker:
-  extends:
-    - .docker_cache
-  stage: docker_push
-  script:
-    - cat ci-exports/$CI_COMMIT_REF_SLUG.tar | docker load
-
 push_docker:
   stage: docker_push
+  cache:
+    policy: pull
   extends:
     - .docker_cache
   script:
