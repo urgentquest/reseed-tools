@@ -1,6 +1,6 @@
-.git/
+.git
 .gitlab-ci.yml
 
 # CI cache folder storing docker images
-ci-exports/
+ci-exports
 
