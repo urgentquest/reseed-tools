@@ -48,7 +48,7 @@ start_registry:
 build_docker:
   stage: docker_test
   before_script:
-    - apk add --no-cache curl dig
+    - apk add --no-cache curl
   script:
     # Make sure we can connect to the registry service
     - curl http://docker:5000/v2/
