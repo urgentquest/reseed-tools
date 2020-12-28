@@ -23,7 +23,7 @@ variables:
   DOCKER_HOST: tcp://docker:2376
 
   # Support caching images between jobs
-  CI_LOCAL_REGISTRY_IMAGE: "registry:5000"
+  CI_LOCAL_REGISTRY_IMAGE: "registry:5000/reseed-tools"
 #  CI_LOCAL_REGISTRY_USER: registry
 #  CI_LOCAL_REGISTRY_PASSWORD: thisismyregistry
 
