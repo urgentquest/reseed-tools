@@ -1,5 +1,7 @@
+.idea
 .git
 .gitlab-ci.yml
+.vscode
 
 # CI cache folder storing docker images
 ci-exports
