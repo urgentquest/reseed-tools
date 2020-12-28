@@ -49,7 +49,7 @@ build_docker:
     - apk add --no-cache curl
   script:
     # Make sure we can connect to the registry service
-    - curl http://$CI_LOCAL_REGISTRY_NAME/v2/
+#    - curl http://$CI_LOCAL_REGISTRY_NAME/v2/
     - docker pull $CI_REGISTRY_IMAGE:latest || true
     - docker build --cache-from $CI_REGISTRY_IMAGE:latest --tag $CI_LOCAL_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA --tag $CI_LOCAL_REGISTRY_IMAGE:latest .
     - docker push $CI_LOCAL_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA
