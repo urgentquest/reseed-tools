@@ -63,7 +63,6 @@ push_ci_registry:
   only:
     refs:
       - master
-      - tags
     variables:
       - $CI_REGISTRY_USER
       - $CI_REGISTRY_PASSWORD
