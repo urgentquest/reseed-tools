@@ -21,7 +21,7 @@ variables:
   # container, thanks to volume mount from config.toml
   DOCKER_TLS_CERTDIR: "/certs"
   # Use TLS https://docs.gitlab.com/ee/ci/docker/using_docker_build.html#tls-enabled
-#  DOCKER_HOST: tcp://docker:2376
+  DOCKER_HOST: tcp://docker:2376
 
   # Support caching images between jobs
   CI_LOCAL_REGISTRY_IMAGE: "registry:5000/reseed-tools"
@@ -29,7 +29,10 @@ variables:
 #  CI_LOCAL_REGISTRY_PASSWORD: thisismyregistry
 
 services:
-  - docker:19.03.12-dind
+  - name: docker:19.03.12-dind
+    command:
+      - --insecure-registry
+      - myregistry:5000
   - name: registry:2
     alias: registry
 
