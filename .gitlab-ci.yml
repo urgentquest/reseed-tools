@@ -27,7 +27,7 @@ variables:
   cache:
     key: "$CI_COMMIT_REF_SLUG"
     paths:
-      - exports/*.tar
+      - ci-exports/*.tar
 
 services:
   - docker:19.03.12-dind
@@ -44,24 +44,24 @@ build_docker:
   stage: docker_test
   script:
     # Try to load latest branch image from local tar or from registry
-    - docker load exports/$CI_COMMIT_REF_SLUG.tar || docker pull $CI_REGISTRY_IMAGE:latest || true
+    - docker load ci-exports/$CI_COMMIT_REF_SLUG.tar || docker pull $CI_REGISTRY_IMAGE:latest || true
     - docker build --cache-from $CI_REGISTRY_IMAGE:latest --tag $CI_REGISTRY_IMAGE:latest .
-    - mkdir -p exports
-    - docker save $CI_REGISTRY_IMAGE:latest > exports/$CI_COMMIT_REF_SLUG.tar
+    - mkdir -p ci-exports/
+    - docker save $CI_REGISTRY_IMAGE:latest > ci-exports/$CI_COMMIT_REF_SLUG.tar
 
 test_pull_local_docker:
   extends:
     - .docker_cache
   stage: docker_push
   script:
-    - cat exports/$CI_COMMIT_REF_SLUG.tar | docker load
+    - cat ci-exports/$CI_COMMIT_REF_SLUG.tar | docker load
 
 push_docker:
   stage: docker_push
   extends:
     - .docker_cache
   script:
-    - cat exports/$CI_COMMIT_REF_SLUG.tar | docker load
+    - cat ci-exports/$CI_COMMIT_REF_SLUG.tar | docker load
     - docker build --cache-from $CI_REGISTRY_IMAGE:latest --tag $CI_REGISTRY_IMAGE:$CI_COMMIT_TAG --tag $CI_REGISTRY_IMAGE:latest .
     - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_TAG
     - docker push $CI_REGISTRY_IMAGE:latest

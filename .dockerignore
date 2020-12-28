@@ -1,0 +1,2 @@
+# CI cache folder storing docker images
+ci-exports/
