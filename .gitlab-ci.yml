@@ -32,9 +32,6 @@ variables:
 services:
   - docker:19.03.12-dind
 
-# Login to job registry and publish registry
-before_script:
-  - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
 
 # Make sure we can build a docker image
 # It's pushed to the pipeline-local registry which acts as a cache
@@ -49,17 +46,50 @@ build_docker:
     - mkdir -p ci-exports/
     - docker save $CI_REGISTRY_IMAGE:latest > ci-exports/$CI_COMMIT_REF_SLUG.tar
 
-push_docker:
+push_ci_registry:
+  extends:
+    - .docker_cache
   stage: docker_push
   cache:
     policy: pull
-  extends:
-    - .docker_cache
+  # Login to job registry and publish registry
+  before_script:
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
   script:
     - cat ci-exports/$CI_COMMIT_REF_SLUG.tar | docker load
     - docker build --cache-from $CI_REGISTRY_IMAGE:latest --tag $CI_REGISTRY_IMAGE:$CI_COMMIT_TAG --tag $CI_REGISTRY_IMAGE:latest .
     - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_TAG
     - docker push $CI_REGISTRY_IMAGE:latest
   only:
-    - master
-    - tags
+    refs:
+      - master
+      - tags
+    variables:
+      - $CI_REGISTRY_USER
+      - $CI_REGISTRY_PASSWORD
+      - $CI_REGISTRY
+      - $CI_REGISTRY_IMAGE
+
+push_dockerhub_registry:
+  extends:
+    - .docker_cache
+  stage: docker_push
+  cache:
+    policy: pull
+  # Login to job registry and publish registry
+  before_script:
+    - docker login -u $DOCKERHUB_REGISTRY_USER -p $DOCKERHUB_REGISTRY_PASSWORD $DOCKERHUB_REGISTRY
+  script:
+    - cat ci-exports/$CI_COMMIT_REF_SLUG.tar | docker load
+    - docker build --cache-from $DOCKERHUB_REGISTRY_IMAGE:latest --tag $DOCKERHUB_REGISTRY_IMAGE:$CI_COMMIT_TAG --tag $DOCKERHUB_REGISTRY_IMAGE:latest .
+    - docker push $DOCKERHUB_REGISTRY_IMAGE:$CI_COMMIT_TAG
+    - docker push $DOCKERHUB_REGISTRY_IMAGE:latest
+  only:
+    refs:
+      - master
+      - tags
+    variables:
+      - $DOCKERHUB_REGISTRY_USER
+      - $DOCKERHUB_REGISTRY_PASSWORD
+      - $DOCKERHUB_REGISTRY
+      - $DOCKERHUB_REGISTRY_IMAGE
