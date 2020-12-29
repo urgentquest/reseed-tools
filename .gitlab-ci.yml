@@ -88,9 +88,9 @@ push_dockerhub_registry:
     - docker push $DOCKERHUB_REGISTRY_IMAGE:latest
     # Push the readme to dockerhub
     - docker run -v $PWD:/workspace \
-      -e DOCKERHUB_USERNAME='$DOCKERHUB_REGISTRY_USER' \
-      -e DOCKERHUB_PASSWORD='$DOCKERHUB_REGISTRY_PASSWORD' \
-      -e DOCKERHUB_REPOSITORY='$DOCKERHUB_REGISTRY_IMAGE' \
+      -e DOCKERHUB_USERNAME="$DOCKERHUB_REGISTRY_USER" \
+      -e DOCKERHUB_PASSWORD="$DOCKERHUB_REGISTRY_PASSWORD" \
+      -e DOCKERHUB_REPOSITORY="$DOCKERHUB_REGISTRY_IMAGE" \
       -e README_FILEPATH='/workspace/README.md' \
       peterevans/dockerhub-description:2
   only:
