@@ -63,7 +63,8 @@ push_ci_registry:
   only:
     refs:
       # Make sure to protect these tags!
-      - /.+-release/
+      - /^v(\d+\.){2,3}\d+$/
+      - /.+-release$/
     variables:
       - $CI_REGISTRY
       - $CI_REGISTRY_USER
@@ -95,7 +96,8 @@ push_dockerhub_registry:
   only:
     refs:
       # Make sure to protect these tags!
-      - /.+-release/
+      - /^v(\d+\.){2,3}\d+$/
+      - /.+-release$/
     variables:
       - $DOCKERHUB_REGISTRY
       - $DOCKERHUB_REGISTRY_USER
