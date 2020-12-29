@@ -28,12 +28,13 @@ services:
 
 .docker_cache:
   cache:
+    # The same key should be used across branches
     key: "$CI_COMMIT_REF_SLUG"
     paths:
       - ci-exports/*.tar
 
 # Make sure we can build a docker image
-# It's pushed to the pipeline-local registry which acts as a cache
+# It's cached for later jobs
 build_docker:
   extends:
     - .docker_cache
