@@ -71,7 +71,7 @@ func checkOrNewTLSCert(tlsHost string, tlsCert, tlsKey *string, auto bool) error
 			fmt.Printf("Unable to read TLS key '%s'\n", *tlsKey)
 		}
 
-		if auto {
+		if !auto {
 			fmt.Printf("Would you like to generate a new self-signed certificate for '%s'? (y or n): ", tlsHost)
 			reader := bufio.NewReader(os.Stdin)
 			input, _ := reader.ReadString('\n')
