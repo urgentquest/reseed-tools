@@ -20,8 +20,8 @@ import (
 	"github.com/libp2p/go-libp2p-core/host"
 	gostream "github.com/libp2p/go-libp2p-gostream"
 	p2phttp "github.com/libp2p/go-libp2p-http"
-	"github.com/throttled/throttled"
-	"github.com/throttled/throttled/store"
+	throttled "github.com/throttled/throttled/v2"
+	"github.com/throttled/throttled/v2/store"
 )
 
 const (
@@ -34,7 +34,7 @@ type Server struct {
 	I2PSession    *sam3.StreamSession
 	I2PListener   *sam3.StreamListener
 	I2PKeys       i2pkeys.I2PKeys
-	Reseeder      Reseeder
+	Reseeder      *ReseederImpl
 	Blacklist     *Blacklist
 	OnionListener *tor.OnionService
 }

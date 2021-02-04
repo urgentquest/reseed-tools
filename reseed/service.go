@@ -33,13 +33,13 @@ func (p Peer) Hash() int {
 	return int(crc32.ChecksumIEEE(c))
 }
 
-type Reseeder interface {
+/*type Reseeder interface {
 	// get an su3 file (bytes) for a peer
 	PeerSu3Bytes(peer Peer) ([]byte, error)
-}
+}*/
 
 type ReseederImpl struct {
-	netdb NetDbProvider
+	netdb *LocalNetDbImpl
 	su3s  chan [][]byte
 
 	SigningKey      *rsa.PrivateKey
@@ -49,7 +49,7 @@ type ReseederImpl struct {
 	NumSu3          int
 }
 
-func NewReseeder(netdb NetDbProvider) *ReseederImpl {
+func NewReseeder(netdb *LocalNetDbImpl) *ReseederImpl {
 	return &ReseederImpl{
 		netdb:           netdb,
 		su3s:            make(chan [][]byte),
@@ -224,10 +224,10 @@ func (rs *ReseederImpl) createSu3(seeds []routerInfo) (*su3.File, error) {
 	return su3File, nil
 }
 
-type NetDbProvider interface {
+/*type NetDbProvider interface {
 	// Get all router infos
 	RouterInfos() ([]routerInfo, error)
-}
+}*/
 
 type LocalNetDbImpl struct {
 	Path string

@@ -362,7 +362,7 @@ func reseedAction(c *cli.Context) {
 	}
 }
 
-func reseedHTTPS(c *cli.Context, tlsCert, tlsKey string, reseeder reseed.Reseeder) {
+func reseedHTTPS(c *cli.Context, tlsCert, tlsKey string, reseeder *reseed.ReseederImpl) {
 	server := reseed.NewServer(c.String("prefix"), c.Bool("trustProxy"))
 	server.Reseeder = reseeder
 	server.Addr = net.JoinHostPort(c.String("ip"), c.String("port"))
@@ -391,7 +391,7 @@ func reseedHTTPS(c *cli.Context, tlsCert, tlsKey string, reseeder reseed.Reseede
 	}
 }
 
-func reseedHTTP(c *cli.Context, reseeder reseed.Reseeder) {
+func reseedHTTP(c *cli.Context, reseeder *reseed.ReseederImpl) {
 	server := reseed.NewServer(c.String("prefix"), c.Bool("trustProxy"))
 	server.Reseeder = reseeder
 	server.Addr = net.JoinHostPort(c.String("ip"), c.String("port"))
@@ -428,7 +428,7 @@ func makeRandomHost(port int) (host.Host, error) {
 	return host, nil
 }
 
-func reseedP2P(c *cli.Context, reseeder reseed.Reseeder) {
+func reseedP2P(c *cli.Context, reseeder *reseed.ReseederImpl) {
 	server := reseed.NewServer(c.String("prefix"), c.Bool("trustProxy"))
 	server.Reseeder = reseeder
 	server.Addr = net.JoinHostPort(c.String("ip"), c.String("port"))
@@ -466,7 +466,7 @@ func reseedP2P(c *cli.Context, reseeder reseed.Reseeder) {
 	}
 }
 
-func reseedOnion(c *cli.Context, onionTlsCert, onionTlsKey string, reseeder reseed.Reseeder) {
+func reseedOnion(c *cli.Context, onionTlsCert, onionTlsKey string, reseeder *reseed.ReseederImpl) {
 	server := reseed.NewServer(c.String("prefix"), c.Bool("trustProxy"))
 	server.Reseeder = reseeder
 	server.Addr = net.JoinHostPort(c.String("ip"), c.String("port"))
@@ -541,7 +541,7 @@ func reseedOnion(c *cli.Context, onionTlsCert, onionTlsKey string, reseeder rese
 	log.Printf("Onion server started on %s\n", server.Addr)
 }
 
-func reseedI2P(c *cli.Context, i2pTlsCert, i2pTlsKey string, i2pIdentKey i2pkeys.I2PKeys, reseeder reseed.Reseeder) {
+func reseedI2P(c *cli.Context, i2pTlsCert, i2pTlsKey string, i2pIdentKey i2pkeys.I2PKeys, reseeder *reseed.ReseederImpl) {
 	server := reseed.NewServer(c.String("prefix"), c.Bool("trustProxy"))
 	server.Reseeder = reseeder
 	server.Addr = net.JoinHostPort(c.String("ip"), c.String("port"))

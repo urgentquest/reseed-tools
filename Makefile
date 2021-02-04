@@ -135,3 +135,15 @@ docker-homerun:
 		--volume reseed-keys:/var/lib/i2p/i2p-config/reseed:z \
 		eyedeekay/reseed \
 			--signer=hankhill19580@gmail.com
+
+export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64/jre/
+export CGO_CFLAGS=-I/usr/lib/jvm/java-8-openjdk-amd64/include/ -I/usr/lib/jvm/java-8-openjdk-amd64/include/linux/
+
+gojava:
+	go get -u -v github.com/sridharv/gojava
+	cp -v ~/go/bin/gojava ./gojava
+
+jar: gojava
+	echo $(JAVA_HOME)
+	./gojava -v -o reseed.jar -s . build ./reseed
+
