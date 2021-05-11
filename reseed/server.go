@@ -3,6 +3,7 @@ package reseed
 import (
 	"bytes"
 	"context"
+	"crypto/rand"
 	"crypto/tls"
 	"io"
 	"log"
@@ -37,6 +38,7 @@ type Server struct {
 	Reseeder      *ReseederImpl
 	Blacklist     *Blacklist
 	OnionListener *tor.OnionService
+	acceptables   map[string]time.Time
 }
 
 func NewServer(prefix string, trustProxy bool) *Server {
@@ -65,6 +67,7 @@ func NewServer(prefix string, trustProxy bool) *Server {
 	server := Server{Server: h, Reseeder: nil}
 
 	th := throttled.RateLimit(throttled.PerHour(4), &throttled.VaryBy{RemoteAddr: true}, store.NewMemStore(200000))
+	thw := throttled.RateLimit(throttled.PerHour(30), &throttled.VaryBy{RemoteAddr: true}, store.NewMemStore(200000))
 
 	middlewareChain := alice.New()
 	if trustProxy {
@@ -79,11 +82,83 @@ func NewServer(prefix string, trustProxy bool) *Server {
 	})
 
 	mux := http.NewServeMux()
-	mux.Handle("/", middlewareChain.Append(disableKeepAliveMiddleware, loggingMiddleware, browsingMiddleware).Then(errorHandler))
+	mux.Handle("/", middlewareChain.Append(disableKeepAliveMiddleware, loggingMiddleware, thw.Throttle, server.browsingMiddleware).Then(errorHandler))
 	mux.Handle(prefix+"/i2pseeds.su3", middlewareChain.Append(disableKeepAliveMiddleware, loggingMiddleware, verifyMiddleware, th.Throttle).Then(http.HandlerFunc(server.reseedHandler)))
 	server.Handler = mux
 
 	return &server
+}
+
+// See use of crypto/rand on:
+// https://stackoverflow.com/questions/22892120/how-to-generate-a-random-string-of-a-fixed-length-in-go
+const (
+	letterBytes   = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ" // 52 possibilities
+	letterIdxBits = 6                                                      // 6 bits to represent 64 possibilities / indexes
+	letterIdxMask = 1<<letterIdxBits - 1                                   // All 1-bits, as many as letterIdxBits
+)
+
+func SecureRandomAlphaString() string {
+	length := 16
+	result := make([]byte, length)
+	bufferSize := int(float64(length) * 1.3)
+	for i, j, randomBytes := 0, 0, []byte{}; i < length; j++ {
+		if j%bufferSize == 0 {
+			randomBytes = SecureRandomBytes(bufferSize)
+		}
+		if idx := int(randomBytes[j%length] & letterIdxMask); idx < len(letterBytes) {
+			result[i] = letterBytes[idx]
+			i++
+		}
+	}
+	return string(result)
+}
+
+// SecureRandomBytes returns the requested number of bytes using crypto/rand
+func SecureRandomBytes(length int) []byte {
+	var randomBytes = make([]byte, length)
+	_, err := rand.Read(randomBytes)
+	if err != nil {
+		log.Fatal("Unable to generate random bytes")
+	}
+	return randomBytes
+}
+
+//
+
+func (srv *Server) Acceptable() string {
+	if srv.acceptables == nil {
+		srv.acceptables = make(map[string]time.Time)
+	}
+	if len(srv.acceptables) > 50 {
+		for val := range srv.acceptables {
+			srv.CheckAcceptable(val)
+		}
+		for val := range srv.acceptables {
+			if len(srv.acceptables) < 50 {
+				break
+			}
+			delete(srv.acceptables, val)
+		}
+	}
+	acceptme := SecureRandomAlphaString()
+	srv.acceptables[acceptme] = time.Now()
+	return acceptme
+}
+
+func (srv *Server) CheckAcceptable(val string) bool {
+	if srv.acceptables == nil {
+		srv.acceptables = make(map[string]time.Time)
+	}
+	if timeout, ok := srv.acceptables[val]; ok {
+		checktime := time.Now().Sub(timeout)
+		if checktime > (4 * time.Minute) {
+			delete(srv.acceptables, val)
+			return false
+		}
+		delete(srv.acceptables, val)
+		return true
+	}
+	return false
 }
 
 func (srv *Server) ListenAndServe() error {
@@ -245,7 +320,7 @@ func (srv *Server) ListenAndServeI2P(samaddr string, I2PKeys i2pkeys.I2PKeys) er
 	if err != nil {
 		return err
 	}
-	log.Printf("I2P server started on http://%v.onion\n", srv.OnionListener.ID)
+	log.Printf("I2P server started on http://%v.b32.i2p\n", srv.I2PListener.Addr().(i2pkeys.I2PAddr).Base32())
 	return srv.Serve(srv.I2PListener)
 }
 
@@ -291,10 +366,13 @@ func loggingMiddleware(next http.Handler) http.Handler {
 	return handlers.CombinedLoggingHandler(os.Stdout, next)
 }
 
-func browsingMiddleware(next http.Handler) http.Handler {
+func (srv *Server) browsingMiddleware(next http.Handler) http.Handler {
 	fn := func(w http.ResponseWriter, r *http.Request) {
+		if srv.CheckAcceptable(r.FormValue("onetime")) {
+			srv.reseedHandler(w, r)
+		}
 		if i2pUserAgent != r.UserAgent() {
-			HandleARealBrowser(w, r)
+			srv.HandleARealBrowser(w, r)
 			return
 		}
 		next.ServeHTTP(w, r)
