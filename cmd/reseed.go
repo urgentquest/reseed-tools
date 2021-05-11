@@ -133,6 +133,15 @@ func NewReseedCommand() cli.Command {
 				Value: "start",
 				Usage: "Self-Supervise this application",
 			},
+			cli.BoolFlag{
+				Name:  "acme",
+				Usage: "Automatically generate a TLS certificate with the ACME protocol, defaults to Let's Encrypt",
+			},
+			cli.StringFlag{
+				Name:  "acmeserver",
+				Value: "https://acme-staging-v02.api.letsencrypt.org/directory",
+				Usage: "Use this server to issue a certificate with the ACME protocol",
+			},
 		},
 	}
 }
@@ -229,10 +238,21 @@ func reseedAction(c *cli.Context) {
 
 		// prompt to create tls keys if they don't exist?
 		auto := c.Bool("yes")
-		err := checkOrNewTLSCert(tlsHost, &tlsCert, &tlsKey, auto)
-		if nil != err {
-			log.Fatalln(err)
+		// use ACME?
+		acme := c.Bool("acme")
+		if acme {
+			acmeserver := c.String("acmeserver")
+			err := checkUseAcmeCert(tlsHost, signerID, acmeserver, &tlsCert, &tlsKey, auto)
+			if nil != err {
+				log.Fatalln(err)
+			}
+		} else {
+			err := checkOrNewTLSCert(tlsHost, &tlsCert, &tlsKey, auto)
+			if nil != err {
+				log.Fatalln(err)
+			}
 		}
+
 	}
 
 	if c.Bool("i2p") {
