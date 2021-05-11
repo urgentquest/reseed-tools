@@ -163,8 +163,8 @@ func checkUseAcmeCert(tlsHost, signer, cadirurl string, tlsCert, tlsKey *string,
 	}
 
 	ioutil.WriteFile(tlsHost+".pem", certificates.PrivateKey, 0600)
-	ioutil.WriteFile(tlsHost+".crt", certificates.PrivateKey, 0600)
-	ioutil.WriteFile(tlsHost+".crl", certificates.PrivateKey, 0600)
+	ioutil.WriteFile(tlsHost+".crt", certificates.Certificate, 0600)
+	//	ioutil.WriteFile(tlsHost+".crl", certificates.PrivateKey, 0600)
 	*tlsCert = tlsHost + ".crt"
 	*tlsKey = tlsHost + ".pem"
 	return nil
