@@ -208,13 +208,42 @@ func reseedAction(c *cli.Context) {
 	var i2pTlsCert, i2pTlsKey string
 	var i2pkey i2pkeys.I2PKeys
 
+	if tlsHost != "" {
+		onionTlsHost = tlsHost
+		i2pTlsHost = tlsHost
+		tlsKey = c.String("tlsKey")
+		// if no key is specified, default to the host.pem in the current dir
+		if tlsKey == "" {
+			tlsKey = tlsHost + ".pem"
+			onionTlsKey = tlsHost + ".pem"
+			i2pTlsKey = tlsHost + ".pem"
+		}
+
+		tlsCert = c.String("tlsCert")
+		// if no certificate is specified, default to the host.crt in the current dir
+		if tlsCert == "" {
+			tlsCert = tlsHost + ".crt"
+			onionTlsCert = tlsHost + ".crt"
+			i2pTlsCert = tlsHost + ".crt"
+		}
+
+		// prompt to create tls keys if they don't exist?
+		auto := c.Bool("yes")
+		err := checkOrNewTLSCert(tlsHost, &tlsCert, &tlsKey, auto)
+		if nil != err {
+			log.Fatalln(err)
+		}
+	}
+
 	if c.Bool("i2p") {
 		var err error
 		i2pkey, err = LoadKeys("reseed.i2pkeys", c)
 		if err != nil {
 			log.Fatalln(err)
 		}
-		i2pTlsHost = i2pkey.Addr().Base32()
+		if i2pTlsHost == "" {
+			i2pTlsHost = i2pkey.Addr().Base32()
+		}
 		if i2pTlsHost != "" {
 			// if no key is specified, default to the host.pem in the current dir
 			if i2pTlsKey == "" {
@@ -250,7 +279,9 @@ func reseedAction(c *cli.Context) {
 			}
 			ok = []byte(key.PrivateKey())
 		}
-		onionTlsHost = torutil.OnionServiceIDFromPrivateKey(ed25519.PrivateKey(ok)) + ".onion"
+		if onionTlsHost == "" {
+			onionTlsHost = torutil.OnionServiceIDFromPrivateKey(ed25519.PrivateKey(ok)) + ".onion"
+		}
 		err = ioutil.WriteFile(c.String("onionKey"), ok, 0644)
 		if err != nil {
 			log.Fatalln(err.Error())
@@ -272,27 +303,6 @@ func reseedAction(c *cli.Context) {
 			if nil != err {
 				log.Fatalln(err)
 			}
-		}
-	}
-
-	if tlsHost != "" {
-		tlsKey = c.String("tlsKey")
-		// if no key is specified, default to the host.pem in the current dir
-		if tlsKey == "" {
-			tlsKey = tlsHost + ".pem"
-		}
-
-		tlsCert = c.String("tlsCert")
-		// if no certificate is specified, default to the host.crt in the current dir
-		if tlsCert == "" {
-			tlsCert = tlsHost + ".crt"
-		}
-
-		// prompt to create tls keys if they don't exist?
-		auto := c.Bool("yes")
-		err := checkOrNewTLSCert(tlsHost, &tlsCert, &tlsKey, auto)
-		if nil != err {
-			log.Fatalln(err)
 		}
 	}
 
