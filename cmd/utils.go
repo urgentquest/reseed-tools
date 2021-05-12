@@ -185,18 +185,18 @@ func renewAcmeIssuedCert(client *lego.Client, user MyUser, tlsHost string, tlsCe
 	}
 
 	// New users will need to register
-	if client.Registration == nil {
+	if user.Registration, err = client.Registration.QueryRegistration(); err != nil {
 		reg, err := client.Registration.Register(registration.RegisterOptions{TermsOfServiceAgreed: true})
 		if err != nil {
 			return err
 		}
 		user.Registration = reg
 	}
-	resource, err := client.Certificate.Get(tlsHost, false)
+	resource, err := client.Certificate.Get(tlsHost, true)
 	if err != nil {
 		return err
 	}
-	certificates, err := client.Certificate.Renew(*resource, false, false, "")
+	certificates, err := client.Certificate.Renew(*resource, true, false, "")
 	if err != nil {
 		return err
 	}
@@ -221,7 +221,7 @@ func newAcmeIssuedCert(client *lego.Client, user MyUser, tlsHost string, tlsCert
 	}
 
 	// New users will need to register
-	if client.Registration == nil {
+	if user.Registration, err = client.Registration.QueryRegistration(); err != nil {
 		reg, err := client.Registration.Register(registration.RegisterOptions{TermsOfServiceAgreed: true})
 		if err != nil {
 			return err

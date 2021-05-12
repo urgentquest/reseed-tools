@@ -139,7 +139,7 @@ func NewReseedCommand() cli.Command {
 			},
 			cli.StringFlag{
 				Name:  "acmeserver",
-				Value: "https://acme-v01.api.letsencrypt.org/directory",
+				Value: "https://acme-staging-v02.api.letsencrypt.org/directory",
 				Usage: "Use this server to issue a certificate with the ACME protocol",
 			},
 		},
