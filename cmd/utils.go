@@ -7,6 +7,7 @@ import (
 	"crypto/elliptic"
 	"crypto/rand"
 	"crypto/rsa"
+	"crypto/tls"
 	"crypto/x509"
 	"crypto/x509/pkix"
 	"encoding/asn1"
@@ -106,6 +107,39 @@ func checkUseAcmeCert(tlsHost, signer, cadirurl string, tlsCert, tlsKey *string,
 				return nil
 			}
 		}
+	} else {
+		TLSConfig := &tls.Config{}
+		TLSConfig.NextProtos = []string{"http/1.1"}
+		TLSConfig.Certificates = make([]tls.Certificate, 1)
+		var err error
+		TLSConfig.Certificates[0], err = tls.LoadX509KeyPair(*tlsCert, *tlsKey)
+		if err != nil {
+			return err
+		}
+		if time.Now().Sub(TLSConfig.Certificates[0].Leaf.NotAfter) < (time.Hour * 48) {
+			ecder, err := ioutil.ReadFile(tlsHost + signer + ".acme.key")
+			if err != nil {
+				return err
+			}
+			privateKey, err := x509.ParseECPrivateKey(ecder)
+			if err != nil {
+				return err
+			}
+			user := MyUser{
+				Email: signer,
+				key:   privateKey,
+			}
+			config := lego.NewConfig(&user)
+			config.CADirURL = cadirurl
+			config.Certificate.KeyType = certcrypto.RSA2048
+			client, err := lego.NewClient(config)
+			if err != nil {
+				return err
+			}
+			renewAcmeIssuedCert(client, user, tlsHost, tlsCert, tlsKey)
+		} else {
+			return nil
+		}
 	}
 	privateKey, err := ecdsa.GenerateKey(elliptic.P256(), rand.Reader)
 	if err != nil {
@@ -136,7 +170,11 @@ func checkUseAcmeCert(tlsHost, signer, cadirurl string, tlsCert, tlsKey *string,
 	if err != nil {
 		return err
 	}
+	return newAcmeIssuedCert(client, user, tlsHost, tlsCert, tlsKey)
+}
 
+func renewAcmeIssuedCert(client *lego.Client, user MyUser, tlsHost string, tlsCert, tlsKey *string) error {
+	var err error
 	err = client.Challenge.SetHTTP01Provider(http01.NewProviderServer("", "8000"))
 	if err != nil {
 		return err
@@ -147,11 +185,49 @@ func checkUseAcmeCert(tlsHost, signer, cadirurl string, tlsCert, tlsKey *string,
 	}
 
 	// New users will need to register
-	reg, err := client.Registration.Register(registration.RegisterOptions{TermsOfServiceAgreed: true})
+	if client.Registration == nil {
+		reg, err := client.Registration.Register(registration.RegisterOptions{TermsOfServiceAgreed: true})
+		if err != nil {
+			return err
+		}
+		user.Registration = reg
+	}
+	resource, err := client.Certificate.Get(tlsHost, false)
 	if err != nil {
 		return err
 	}
-	user.Registration = reg
+	certificates, err := client.Certificate.Renew(*resource, false, false, "")
+	if err != nil {
+		return err
+	}
+
+	ioutil.WriteFile(tlsHost+".pem", certificates.PrivateKey, 0600)
+	ioutil.WriteFile(tlsHost+".crt", certificates.Certificate, 0600)
+	//	ioutil.WriteFile(tlsHost+".crl", certificates.PrivateKey, 0600)
+	*tlsCert = tlsHost + ".crt"
+	*tlsKey = tlsHost + ".pem"
+	return nil
+}
+
+func newAcmeIssuedCert(client *lego.Client, user MyUser, tlsHost string, tlsCert, tlsKey *string) error {
+	var err error
+	err = client.Challenge.SetHTTP01Provider(http01.NewProviderServer("", "8000"))
+	if err != nil {
+		return err
+	}
+	err = client.Challenge.SetTLSALPN01Provider(tlsalpn01.NewProviderServer("", "8443"))
+	if err != nil {
+		return err
+	}
+
+	// New users will need to register
+	if client.Registration == nil {
+		reg, err := client.Registration.Register(registration.RegisterOptions{TermsOfServiceAgreed: true})
+		if err != nil {
+			return err
+		}
+		user.Registration = reg
+	}
 
 	request := certificate.ObtainRequest{
 		Domains: []string{tlsHost},
