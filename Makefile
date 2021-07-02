@@ -109,7 +109,7 @@ docker-server:
 		--publish 8443:8443 \
 		--restart=always \
 		--volume /var/lib/i2p/i2p-config/netDb:/var/lib/i2p/i2p-config/netDb:z \
-		--volume reseed-keyss:/var/lib/i2p/i2p-config/reseed \
+		--volume reseed-keys:/var/lib/i2p/i2p-config/reseed \
 		eyedeekay/reseed \
 			--signer=hankhill19580@gmail.com
 	docker logs -f reseed

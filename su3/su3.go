@@ -28,11 +28,15 @@ const (
 	ContentTypePlugin  = uint8(2)
 	ContentTypeReseed  = uint8(3)
 	ContentTypeNews    = uint8(4)
+	ContentTypeBlocklist    = uint8(5)
 
 	FileTypeZIP   = uint8(0)
 	FileTypeXML   = uint8(1)
 	FileTypeHTML  = uint8(2)
 	FileTypeXMLGZ = uint8(3)
+	FileTypeTXTGZ = uint8(4)
+	FileTypeDMG = uint8(5)
+	FileTypeEXE = uint8(6)
 
 	magicBytes = "I2Psu3"
 )
