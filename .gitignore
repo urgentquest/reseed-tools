@@ -7,3 +7,6 @@ i2pseeds.su3
 onion.key
 tmp/
 i2p-tools-*
+*.crl
+*.crt
+*.pem
