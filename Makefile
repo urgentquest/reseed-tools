@@ -43,6 +43,7 @@ binary:
 	GOOS=openbsd GOARCH=amd64 make build
 	GOOS=freebsd GOARCH=386 make build
 	GOOS=freebsd GOARCH=amd64 make build
+	GOOS=windows GOARCH=amd64 make build
 
 tar:
 	tar --exclude="./.git" --exclude="./tmp"  -cvf ../reseed-tools.tar.xz .
@@ -156,6 +157,7 @@ plugins: binary
 	GOOS=openbsd GOARCH=amd64 make su3s
 	GOOS=freebsd GOARCH=386 make su3s
 	GOOS=freebsd GOARCH=amd64 make su3s
+	GOOS=windows GOARCH=amd64 make su3s
 
 su3s:
 	i2p.plugin.native -name=reseed-tools-$(GOOS)-$(GOARCH) \
@@ -164,11 +166,12 @@ su3s:
 		-author=hankhill19580@gmail.com \
 		-autostart=true \
 		-clientname=reseed-tools-$(GOOS)-$(GOARCH) \
-		-command="\$$PLUGIN/lib/reseed-tools-$(GOOS)-$(GOARCH)s -dir=\$$PLUGIN/lib reseed --signer=you@mail.i2p --netdb=\$$CONFIG/.i2p/netDb --onion --i2p" \
+		-command="\$$PLUGIN/lib/reseed-tools-$(GOOS)-$(GOARCH)s -dir=\$$PLUGIN/lib reseed --signer=you@mail.i2p --netdb=\$$CONFIG/netDb --onion --i2p" \
 		-consolename="Reseed Tools" \
 		-delaystart="200" \
 		-desc="Reseed Tools Plugin" \
 		-exename=reseed-tools-$(GOOS)-$(GOARCH) \
+		-targetos="$(GOOS)" \
 		-license=MIT
 	unzip -o reseed-tools-$(GOOS)-$(GOARCH).zip -d reseed-tools-$(GOOS)-$(GOARCH)-zip
 
