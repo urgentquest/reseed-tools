@@ -10,3 +10,4 @@ i2p-tools-*
 *.crl
 *.crt
 *.pem
+plugin
