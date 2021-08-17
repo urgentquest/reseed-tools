@@ -2,10 +2,12 @@ package cmd
 
 import (
 	"bufio"
+	"crypto"
 	"crypto/ecdsa"
 	"crypto/elliptic"
 	"crypto/rand"
 	"crypto/rsa"
+	"crypto/tls"
 	"crypto/x509"
 	"crypto/x509/pkix"
 	"encoding/asn1"
@@ -18,6 +20,13 @@ import (
 
 	"i2pgit.org/idk/reseed-tools/reseed"
 	"i2pgit.org/idk/reseed-tools/su3"
+
+	"github.com/go-acme/lego/v4/certcrypto"
+	"github.com/go-acme/lego/v4/certificate"
+	"github.com/go-acme/lego/v4/challenge/http01"
+	"github.com/go-acme/lego/v4/challenge/tlsalpn01"
+	"github.com/go-acme/lego/v4/lego"
+	"github.com/go-acme/lego/v4/registration"
 )
 
 func loadPrivateKey(path string) (*rsa.PrivateKey, error) {
@@ -33,6 +42,24 @@ func loadPrivateKey(path string) (*rsa.PrivateKey, error) {
 	}
 
 	return privKey, nil
+}
+
+// Taken directly from the lego example, since we need very minimal support
+// https://go-acme.github.io/lego/usage/library/
+type MyUser struct {
+	Email        string
+	Registration *registration.Resource
+	key          crypto.PrivateKey
+}
+
+func (u *MyUser) GetEmail() string {
+	return u.Email
+}
+func (u MyUser) GetRegistration() *registration.Resource {
+	return u.Registration
+}
+func (u *MyUser) GetPrivateKey() crypto.PrivateKey {
+	return u.key
 }
 
 func signerFile(signerID string) string {
@@ -58,6 +85,165 @@ func getOrNewSigningCert(signerKey *string, signerID string, auto bool) (*rsa.Pr
 	}
 
 	return loadPrivateKey(*signerKey)
+}
+
+func checkUseAcmeCert(tlsHost, signer, cadirurl string, tlsCert, tlsKey *string, auto bool) error {
+	_, certErr := os.Stat(*tlsCert)
+	_, keyErr := os.Stat(*tlsKey)
+	if certErr != nil || keyErr != nil {
+		if certErr != nil {
+			fmt.Printf("Unable to read TLS certificate '%s'\n", *tlsCert)
+		}
+		if keyErr != nil {
+			fmt.Printf("Unable to read TLS key '%s'\n", *tlsKey)
+		}
+
+		if !auto {
+			fmt.Printf("Would you like to generate a new certificate with Let's Encrypt or a custom ACME server? '%s'? (y or n): ", tlsHost)
+			reader := bufio.NewReader(os.Stdin)
+			input, _ := reader.ReadString('\n')
+			if []byte(input)[0] != 'y' {
+				fmt.Println("Continuing without TLS")
+				return nil
+			}
+		}
+	} else {
+		TLSConfig := &tls.Config{}
+		TLSConfig.NextProtos = []string{"http/1.1"}
+		TLSConfig.Certificates = make([]tls.Certificate, 1)
+		var err error
+		TLSConfig.Certificates[0], err = tls.LoadX509KeyPair(*tlsCert, *tlsKey)
+		if err != nil {
+			return err
+		}
+		if time.Now().Sub(TLSConfig.Certificates[0].Leaf.NotAfter) < (time.Hour * 48) {
+			ecder, err := ioutil.ReadFile(tlsHost + signer + ".acme.key")
+			if err != nil {
+				return err
+			}
+			privateKey, err := x509.ParseECPrivateKey(ecder)
+			if err != nil {
+				return err
+			}
+			user := MyUser{
+				Email: signer,
+				key:   privateKey,
+			}
+			config := lego.NewConfig(&user)
+			config.CADirURL = cadirurl
+			config.Certificate.KeyType = certcrypto.RSA2048
+			client, err := lego.NewClient(config)
+			if err != nil {
+				return err
+			}
+			renewAcmeIssuedCert(client, user, tlsHost, tlsCert, tlsKey)
+		} else {
+			return nil
+		}
+	}
+	privateKey, err := ecdsa.GenerateKey(elliptic.P256(), rand.Reader)
+	if err != nil {
+		return err
+	}
+	ecder, err := x509.MarshalECPrivateKey(privateKey)
+	if err != nil {
+		return err
+	}
+	filename := tlsHost + signer + ".acme.key"
+	keypem, err := os.OpenFile(filename, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0600)
+	if err != nil {
+		return err
+	}
+	defer keypem.Close()
+	err = pem.Encode(keypem, &pem.Block{Type: "EC PRIVATE KEY", Bytes: ecder})
+	if err != nil {
+		return err
+	}
+	user := MyUser{
+		Email: signer,
+		key:   privateKey,
+	}
+	config := lego.NewConfig(&user)
+	config.CADirURL = cadirurl
+	config.Certificate.KeyType = certcrypto.RSA2048
+	client, err := lego.NewClient(config)
+	if err != nil {
+		return err
+	}
+	return newAcmeIssuedCert(client, user, tlsHost, tlsCert, tlsKey)
+}
+
+func renewAcmeIssuedCert(client *lego.Client, user MyUser, tlsHost string, tlsCert, tlsKey *string) error {
+	var err error
+	err = client.Challenge.SetHTTP01Provider(http01.NewProviderServer("", "8000"))
+	if err != nil {
+		return err
+	}
+	err = client.Challenge.SetTLSALPN01Provider(tlsalpn01.NewProviderServer("", "8443"))
+	if err != nil {
+		return err
+	}
+
+	// New users will need to register
+	if user.Registration, err = client.Registration.QueryRegistration(); err != nil {
+		reg, err := client.Registration.Register(registration.RegisterOptions{TermsOfServiceAgreed: true})
+		if err != nil {
+			return err
+		}
+		user.Registration = reg
+	}
+	resource, err := client.Certificate.Get(tlsHost, true)
+	if err != nil {
+		return err
+	}
+	certificates, err := client.Certificate.Renew(*resource, true, false, "")
+	if err != nil {
+		return err
+	}
+
+	ioutil.WriteFile(tlsHost+".pem", certificates.PrivateKey, 0600)
+	ioutil.WriteFile(tlsHost+".crt", certificates.Certificate, 0600)
+	//	ioutil.WriteFile(tlsHost+".crl", certificates.PrivateKey, 0600)
+	*tlsCert = tlsHost + ".crt"
+	*tlsKey = tlsHost + ".pem"
+	return nil
+}
+
+func newAcmeIssuedCert(client *lego.Client, user MyUser, tlsHost string, tlsCert, tlsKey *string) error {
+	var err error
+	err = client.Challenge.SetHTTP01Provider(http01.NewProviderServer("", "8000"))
+	if err != nil {
+		return err
+	}
+	err = client.Challenge.SetTLSALPN01Provider(tlsalpn01.NewProviderServer("", "8443"))
+	if err != nil {
+		return err
+	}
+
+	// New users will need to register
+	if user.Registration, err = client.Registration.QueryRegistration(); err != nil {
+		reg, err := client.Registration.Register(registration.RegisterOptions{TermsOfServiceAgreed: true})
+		if err != nil {
+			return err
+		}
+		user.Registration = reg
+	}
+
+	request := certificate.ObtainRequest{
+		Domains: []string{tlsHost},
+		Bundle:  true,
+	}
+	certificates, err := client.Certificate.Obtain(request)
+	if err != nil {
+		return err
+	}
+
+	ioutil.WriteFile(tlsHost+".pem", certificates.PrivateKey, 0600)
+	ioutil.WriteFile(tlsHost+".crt", certificates.Certificate, 0600)
+	//	ioutil.WriteFile(tlsHost+".crl", certificates.PrivateKey, 0600)
+	*tlsCert = tlsHost + ".crt"
+	*tlsKey = tlsHost + ".pem"
+	return nil
 }
 
 func checkOrNewTLSCert(tlsHost string, tlsCert, tlsKey *string, auto bool) error {

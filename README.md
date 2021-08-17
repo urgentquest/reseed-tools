@@ -10,7 +10,7 @@ If you have go installed you can download, build, and install this tool with `go
 
 ```
 go get i2pgit.org/idk/reseed-tools
-i2p-tools -h
+reseed-tools -h
 ```
 
 ## Usage
@@ -76,13 +76,13 @@ work for you. In that case, just copy-and-paste:
 ### Locally behind a webserver (reverse proxy setup), preferred:
 
 ```
-i2p-tools reseed --signer=you@mail.i2p --netdb=/home/i2p/.i2p/netDb --port=8443 --ip=127.0.0.1 --trustProxy
+reseed-tools reseed --signer=you@mail.i2p --netdb=/home/i2p/.i2p/netDb --port=8443 --ip=127.0.0.1 --trustProxy
 ```
 
 ### Without a webserver, standalone with TLS support
 
 ```
-i2p-tools reseed --signer=you@mail.i2p --netdb=/home/i2p/.i2p/netDb --tlsHost=your-domain.tld
+reseed-tools reseed --signer=you@mail.i2p --netdb=/home/i2p/.i2p/netDb --tlsHost=your-domain.tld
 ```
 
 If this is your first time running a reseed server (ie. you don't have any existing keys),
@@ -103,25 +103,25 @@ Requires ```go mod``` and at least go 1.13. To build the idk/reseed-tools
 fork, from anywhere:
 
         git clone https://i2pgit.org/idk/reseed-tools
-        cd i2p-tools-1
+        cd reseed-tools
         make build
 
 ### Without a webserver, standalone, self-supervising(Automatic restarts)
 
 ```
-./i2p-tools-1 reseed --signer=you@mail.i2p --netdb=/home/i2p/.i2p/netDb --littleboss=start
+./reseed-tools reseed --signer=you@mail.i2p --netdb=/home/i2p/.i2p/netDb --littleboss=start
 ```
 
 ### Without a webserver, standalone, automatic OnionV3 with TLS support
 
 ```
-./i2p-tools-1 reseed --signer=you@mail.i2p --netdb=/home/i2p/.i2p/netDb --onion --i2p --p2p
+./reseed-tools reseed --signer=you@mail.i2p --netdb=/home/i2p/.i2p/netDb --onion --i2p --p2p
 ```
 
 ### Without a webserver, standalone, serve P2P with LibP2P
 
 ```
-./i2p-tools-1 reseed --signer=you@mail.i2p --netdb=/home/i2p/.i2p/netDb --p2p
+./reseed-tools reseed --signer=you@mail.i2p --netdb=/home/i2p/.i2p/netDb --p2p
 ```
 
 ### Without a webserver, standalone, upload a single signed .su3 to github
@@ -129,29 +129,29 @@ fork, from anywhere:
 * This one isn't working yet, I'll get to it eventually, I've got a cooler idea now.
 
 ```
-./i2p-tools-1 reseed --signer=you@mail.i2p --netdb=/home/i2p/.i2p/netDb --github --ghrepo=i2p-tools-1 --ghuser=eyedeekay
+./reseed-tools reseed --signer=you@mail.i2p --netdb=/home/i2p/.i2p/netDb --github --ghrepo=reseed-tools --ghuser=eyedeekay
 ```
 
 ### Without a webserver, standalone, in-network reseed
 
 ```
-./i2p-tools-1 reseed --signer=you@mail.i2p --netdb=/home/i2p/.i2p/netDb --i2p
+./reseed-tools reseed --signer=you@mail.i2p --netdb=/home/i2p/.i2p/netDb --i2p
 ```
 
 ### Without a webserver, standalone, Regular TLS, OnionV3 with TLS
 
 ```
-./i2p-tools-1 reseed --tlsHost=your-domain.tld --signer=you@mail.i2p --netdb=/home/i2p/.i2p/netDb --onion
+./reseed-tools reseed --tlsHost=your-domain.tld --signer=you@mail.i2p --netdb=/home/i2p/.i2p/netDb --onion
 ```
 
 ### Without a webserver, standalone, Regular TLS, OnionV3 with TLS, and LibP2P
 
 ```
-./i2p-tools-1 reseed --tlsHost=your-domain.tld --signer=you@mail.i2p --netdb=/home/i2p/.i2p/netDb --onion --p2p
+./reseed-tools reseed --tlsHost=your-domain.tld --signer=you@mail.i2p --netdb=/home/i2p/.i2p/netDb --onion --p2p
 ```
 
 ### Without a webserver, standalone, Regular TLS, OnionV3 with TLS, I2P In-Network reseed, and LibP2P, self-supervising
 
 ```
-./i2p-tools-1 reseed --tlsHost=your-domain.tld --signer=you@mail.i2p --netdb=/home/i2p/.i2p/netDb --onion --p2p --littleboss=start
+./reseed-tools reseed --tlsHost=your-domain.tld --signer=you@mail.i2p --netdb=/home/i2p/.i2p/netDb --onion --p2p --littleboss=start
 ```
