@@ -39,7 +39,10 @@ upload-bin:
 	gothub upload -s $(GITHUB_TOKEN) -u $(USER_GH) -r $(APP) -t v$(VERSION) -f reseed-tools-linux-arm -n "reseed-tools-linux-arm"
 	gothub upload -s $(GITHUB_TOKEN) -u $(USER_GH) -r $(APP) -t v$(VERSION) -f reseed-tools-linux-arm64 -n "reseed-tools-linux-arm64"
 
-build: gofmt
+build:
+	go build $(ARG) -o reseed-tools-$(GOOS)-$(GOARCH)
+
+1.15-build: gofmt
 	/usr/lib/go-$(MIN_GO_VERSION)/bin/go build $(ARG) -o reseed-tools-$(GOOS)-$(GOARCH)
 
 clean:
@@ -60,8 +63,8 @@ tar:
 	tar --exclude="./.git" --exclude="./tmp"  -cvf ../reseed-tools.tar.xz .
 
 install:
-	install -m755 reseed-tools-$(GOOS)-$(GOARCH) /usr/local/bin/reseed-tools
-	install -m755 etc/init.d/reseed /etc/init.d/reseed
+	install -m755 reseed-tools-$(GOOS)-$(GOARCH) /usr/bin/reseed-tools
+#	install -m755 etc/init.d/reseed /etc/init.d/reseed
 
 ### You shouldn't need to use these now that the go mod require rule is fixed,
 ## but I'm leaving them in here because it made it easier to test that both

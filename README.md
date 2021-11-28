@@ -16,16 +16,84 @@ In order to install the build-dependencies on Ubuntu or Debian, you may use:
 sudo apt-get install golang-go git make
 ```
 
-## Installation
-
-If you have go installed you can download, build, and install this tool with `go get`
+## Installation(From Source)
 
 ```
-go get i2pgit.org/idk/reseed-tools
-reseed-tools -h
+git clone https://i2pgit.org/idk/reseed-tools
+cd reseed-tools
+make build
+# Optionally, if you want to install to /usr/bin/reseed-tools
+sudo make install
 ```
 
 ## Usage
+
+### Without a webserver, standalone with TLS support
+
+If this is your first time running a reseed server (ie. you don't have any existing keys),
+you can simply run the command and follow the prompts to create the appropriate keys, crl and certificates.
+Afterwards an HTTPS reseed server will start on the default port and generate 6 files in your current directory
+(a TLS key, certificate and crl, and a su3-file signing key, certificate and crl).
+
+```
+reseed-tools reseed --signer=you@mail.i2p --netdb=/home/i2p/.i2p/netDb --tlsHost=your-domain.tld
+```
+
+### Locally behind a webserver (reverse proxy setup), preferred:
+
+```
+reseed-tools reseed --signer=you@mail.i2p --netdb=/home/i2p/.i2p/netDb --port=8443 --ip=127.0.0.1 --trustProxy
+```
+
+### Without a webserver, standalone, self-supervising(Automatic restarts)
+
+```
+./reseed-tools reseed --signer=you@mail.i2p --netdb=/home/i2p/.i2p/netDb --littleboss=start
+```
+
+### Without a webserver, standalone, automatic OnionV3 with TLS support
+
+```
+./reseed-tools reseed --signer=you@mail.i2p --netdb=/home/i2p/.i2p/netDb --onion --i2p --p2p
+```
+
+### Without a webserver, standalone, serve P2P with LibP2P
+
+```
+./reseed-tools reseed --signer=you@mail.i2p --netdb=/home/i2p/.i2p/netDb --p2p
+```
+
+### Without a webserver, standalone, upload a single signed .su3 to github
+
+* This one isn't working yet, I'll get to it eventually, I've got a cooler idea now.
+
+```
+./reseed-tools reseed --signer=you@mail.i2p --netdb=/home/i2p/.i2p/netDb --github --ghrepo=reseed-tools --ghuser=eyedeekay
+```
+
+### Without a webserver, standalone, in-network reseed
+
+```
+./reseed-tools reseed --signer=you@mail.i2p --netdb=/home/i2p/.i2p/netDb --i2p
+```
+
+### Without a webserver, standalone, Regular TLS, OnionV3 with TLS
+
+```
+./reseed-tools reseed --tlsHost=your-domain.tld --signer=you@mail.i2p --netdb=/home/i2p/.i2p/netDb --onion
+```
+
+### Without a webserver, standalone, Regular TLS, OnionV3 with TLS, and LibP2P
+
+```
+./reseed-tools reseed --tlsHost=your-domain.tld --signer=you@mail.i2p --netdb=/home/i2p/.i2p/netDb --onion --p2p
+```
+
+### Without a webserver, standalone, Regular TLS, OnionV3 with TLS, I2P In-Network reseed, and LibP2P, self-supervising
+
+```
+./reseed-tools reseed --tlsHost=your-domain.tld --signer=you@mail.i2p --netdb=/home/i2p/.i2p/netDb --onion --p2p --littleboss=start
+```
 
 ### Docker!
 
@@ -84,86 +152,3 @@ work for you. In that case, just copy-and-paste:
             --volume reseed-keys:/var/lib/i2p/i2p-config/reseed \
             eyedeekay/reseed \
                 --signer $YOUR_EMAIL_HERE
-
-### Locally behind a webserver (reverse proxy setup), preferred:
-
-```
-reseed-tools reseed --signer=you@mail.i2p --netdb=/home/i2p/.i2p/netDb --port=8443 --ip=127.0.0.1 --trustProxy
-```
-
-### Without a webserver, standalone with TLS support
-
-```
-reseed-tools reseed --signer=you@mail.i2p --netdb=/home/i2p/.i2p/netDb --tlsHost=your-domain.tld
-```
-
-If this is your first time running a reseed server (ie. you don't have any existing keys),
-you can simply run the command and follow the prompts to create the appropriate keys, crl and certificates.
-Afterwards an HTTPS reseed server will start on the default port and generate 6 files in your current directory
-(a TLS key, certificate and crl, and a su3-file signing key, certificate and crl).
-
-Get the source code here on github or a pre-build binary anonymously on
-
-http://reseed.i2p/
-http://j7xszhsjy7orrnbdys7yykrssv5imkn4eid7n5ikcnxuhpaaw6cq.b32.i2p/
-
-also a short guide and complete tech info.
-
-## Experimental, currently only available from idk/reseed-tools fork
-
-Requires ```go mod``` and at least go 1.13. To build the idk/reseed-tools
-fork, from anywhere:
-
-        git clone https://i2pgit.org/idk/reseed-tools
-        cd reseed-tools
-        make build
-
-### Without a webserver, standalone, self-supervising(Automatic restarts)
-
-```
-./reseed-tools reseed --signer=you@mail.i2p --netdb=/home/i2p/.i2p/netDb --littleboss=start
-```
-
-### Without a webserver, standalone, automatic OnionV3 with TLS support
-
-```
-./reseed-tools reseed --signer=you@mail.i2p --netdb=/home/i2p/.i2p/netDb --onion --i2p --p2p
-```
-
-### Without a webserver, standalone, serve P2P with LibP2P
-
-```
-./reseed-tools reseed --signer=you@mail.i2p --netdb=/home/i2p/.i2p/netDb --p2p
-```
-
-### Without a webserver, standalone, upload a single signed .su3 to github
-
-* This one isn't working yet, I'll get to it eventually, I've got a cooler idea now.
-
-```
-./reseed-tools reseed --signer=you@mail.i2p --netdb=/home/i2p/.i2p/netDb --github --ghrepo=reseed-tools --ghuser=eyedeekay
-```
-
-### Without a webserver, standalone, in-network reseed
-
-```
-./reseed-tools reseed --signer=you@mail.i2p --netdb=/home/i2p/.i2p/netDb --i2p
-```
-
-### Without a webserver, standalone, Regular TLS, OnionV3 with TLS
-
-```
-./reseed-tools reseed --tlsHost=your-domain.tld --signer=you@mail.i2p --netdb=/home/i2p/.i2p/netDb --onion
-```
-
-### Without a webserver, standalone, Regular TLS, OnionV3 with TLS, and LibP2P
-
-```
-./reseed-tools reseed --tlsHost=your-domain.tld --signer=you@mail.i2p --netdb=/home/i2p/.i2p/netDb --onion --p2p
-```
-
-### Without a webserver, standalone, Regular TLS, OnionV3 with TLS, I2P In-Network reseed, and LibP2P, self-supervising
-
-```
-./reseed-tools reseed --tlsHost=your-domain.tld --signer=you@mail.i2p --netdb=/home/i2p/.i2p/netDb --onion --p2p --littleboss=start
-```
