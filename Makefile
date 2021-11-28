@@ -28,6 +28,17 @@ edit:
 upload: binary tar
 	gothub upload -s $(GITHUB_TOKEN) -u $(USER_GH) -r $(APP) -t v$(VERSION) -f ../reseed-tools.tar.xz -n "reseed-tools.tar.xz"
 
+upload-bin:
+	gothub upload -s $(GITHUB_TOKEN) -u $(USER_GH) -r $(APP) -t v$(VERSION) -f reseed-tools-darwin-amd64 -n "reseed-tools-darwin-amd64"
+	gothub upload -s $(GITHUB_TOKEN) -u $(USER_GH) -r $(APP) -t v$(VERSION) -f reseed-tools-freebsd-amd64 -n "reseed-tools-freebsd-amd64"
+	gothub upload -s $(GITHUB_TOKEN) -u $(USER_GH) -r $(APP) -t v$(VERSION) -f reseed-tools-linux-amd64 -n "reseed-tools-linux-amd64"
+	gothub upload -s $(GITHUB_TOKEN) -u $(USER_GH) -r $(APP) -t v$(VERSION) -f reseed-tools-openbsd-amd64 -n "reseed-tools-openbsd-amd64"
+	gothub upload -s $(GITHUB_TOKEN) -u $(USER_GH) -r $(APP) -t v$(VERSION) -f reseed-tools-windows-amd64 -n "reseed-tools-windows-amd64"
+	gothub upload -s $(GITHUB_TOKEN) -u $(USER_GH) -r $(APP) -t v$(VERSION) -f reseed-tools-freebsd-386 -n "reseed-tools-freebsd-386"
+	gothub upload -s $(GITHUB_TOKEN) -u $(USER_GH) -r $(APP) -t v$(VERSION) -f reseed-tools-linux-386 -n "reseed-tools-linux-386"
+	gothub upload -s $(GITHUB_TOKEN) -u $(USER_GH) -r $(APP) -t v$(VERSION) -f reseed-tools-linux-arm -n "reseed-tools-linux-arm"
+	gothub upload -s $(GITHUB_TOKEN) -u $(USER_GH) -r $(APP) -t v$(VERSION) -f reseed-tools-linux-arm64 -n "reseed-tools-linux-arm64"
+
 build: gofmt
 	/usr/lib/go-$(MIN_GO_VERSION)/bin/go build $(ARG) -o reseed-tools-$(GOOS)-$(GOARCH)
 

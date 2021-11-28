@@ -4,6 +4,18 @@ I2P Reseed Tools
 This tool provides a secure and efficient reseed server for the I2P network. There are several utility commands to
 create, sign, and validate SU3 files. Please note that this requires at least Go version 1.13, and uses Go Modules.
 
+## Dependencies
+
+`go`, `git`, and optionally `make` are required to build the project.
+Precompiled binaries for most platforms are available at my github mirror
+https://github.com/eyedeekay/i2p-tools-1.
+
+In order to install the build-dependencies on Ubuntu or Debian, you may use:
+
+```sh
+sudo apt-get install golang-go git make
+```
+
 ## Installation
 
 If you have go installed you can download, build, and install this tool with `go get`
