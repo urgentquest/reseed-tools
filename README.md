@@ -28,6 +28,13 @@ sudo make install
 
 ## Usage
 
+#### Debian/Ubuntu note:
+
+Debian users who are running I2P as a system service must also run the 
+`reseed-tools` as the same user. This is so that the reseed-tools can access
+the I2P service's netDb directory. On Debian and Ubuntu, that user is `i2psvc`
+and the netDb directory is: `/var/lib/i2p/i2p-config/netDb`.
+
 ### Without a webserver, standalone with TLS support
 
 If this is your first time running a reseed server (ie. you don't have any existing keys),
@@ -40,6 +47,8 @@ reseed-tools reseed --signer=you@mail.i2p --netdb=/home/i2p/.i2p/netDb --tlsHost
 ```
 
 ### Locally behind a webserver (reverse proxy setup), preferred:
+
+If you are using a reverse proxy server it may provide the TLS certificate instead.
 
 ```
 reseed-tools reseed --signer=you@mail.i2p --netdb=/home/i2p/.i2p/netDb --port=8443 --ip=127.0.0.1 --trustProxy
@@ -95,7 +104,7 @@ reseed-tools reseed --signer=you@mail.i2p --netdb=/home/i2p/.i2p/netDb --port=84
 ./reseed-tools reseed --tlsHost=your-domain.tld --signer=you@mail.i2p --netdb=/home/i2p/.i2p/netDb --onion --p2p --littleboss=start
 ```
 
-### Docker!
+### Docker
 
 To make it easier to deploy reseeds, it is possible to run this software as a
 Docker image. Because the software requires access to a network database to host
