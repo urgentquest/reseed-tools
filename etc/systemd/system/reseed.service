@@ -1,0 +1,16 @@
+[Unit]
+Description=I2P reseed service
+After=network.target
+StartLimitIntervalSec=0
+Requires=i2p.service
+
+[Service]
+User=i2psvc
+WorkingDirectory=/var/lib/i2p/i2p-config/netDb
+ExecStart=/usr/bin/reseed-tools
+Restart=always
+RestartSec=10
+RuntimeMaxSec=43200
+
+[Install]
+WantedBy=multi-user.target
