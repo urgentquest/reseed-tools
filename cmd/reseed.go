@@ -12,7 +12,6 @@ import (
 	"strconv"
 	"time"
 
-	//"crawshaw.io/littleboss"
 	"github.com/cretz/bine/tor"
 	"github.com/cretz/bine/torutil"
 	"github.com/cretz/bine/torutil/ed25519"
@@ -128,11 +127,6 @@ func NewReseedCommand() cli.Command {
 				Value: "127.0.0.1:7656",
 				Usage: "Use this SAM address to set up I2P connections for in-network reseed",
 			},
-			cli.StringFlag{
-				Name:  "littleboss",
-				Value: "start",
-				Usage: "Self-Supervise this application",
-			},
 			cli.BoolFlag{
 				Name:  "acme",
 				Usage: "Automatically generate a TLS certificate with the ACME protocol, defaults to Let's Encrypt",
@@ -192,11 +186,6 @@ func LoadKeys(keysPath string, c *cli.Context) (i2pkeys.I2PKeys, error) {
 }
 
 func reseedAction(c *cli.Context) {
-	// validate flags
-	if c.String("littleboss") != "start" {
-		log.Println("--littleboss", c.String("littleboss"))
-		return
-	}
 	netdbDir := c.String("netdb")
 	if netdbDir == "" {
 		fmt.Println("--netdb is required")

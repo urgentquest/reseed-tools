@@ -15,35 +15,25 @@ RUNDIR=/var/lib/i2p/i2p-config/reseed
 SIGNER=you@mail.i2p
 MORE_OPTIONS=""
 if [ -f /etc/default/reseed ]; then
-    source /etc/default/reseed
+    . /etc/default/reseed
 fi
 RUNOPTS=" reseed --signer=$SIGNER --netdb=$NETDBDIR $MORE_OPTIONS "
 
-rundir(){
-    if [ !-d $RUNDIR ]; then
-        install -d -oi2psvc -m2770 $RUNDIR
-    fi
-    cd $RUNDIR
-}
-
 start() {
-    rundir
-    su - $RUNAS $SCRIPT $RUNOPTS --restart=start
+    start-stop-daemon --user $RUNAS --exec $SCRIPT --chdir $RUNDIR --make-pidfile $RUNDIR/reseed.pid --start -- $RUNOPTS
 }
 
 stop() {
-    rundir
-    su - $RUNAS $SCRIPT $RUNOPTS --restart=stop
-}
-
-start() {
-    rundir
-    su - $RUNAS $SCRIPT $RUNOPTS --restart=restart
+    start-stop-daemon --user $RUNAS --exec $SCRIPT --chdir $RUNDIR --remove-pidfile $RUNDIR/reseed.pid --stop
 }
 
 status() {
-    rundir
-    su - $RUNAS $SCRIPT $RUNOPTS --restart=status
+    start-stop-daemon --user $RUNAS --exec $SCRIPT --chdir $RUNDIR --remove-pidfile $RUNDIR/reseed.pid --status
+}
+
+restart() {
+    stop
+    start
 }
 
 uninstall() {
