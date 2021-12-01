@@ -6,8 +6,8 @@ Requires=i2p.service
 
 [Service]
 User=i2psvc
-WorkingDirectory=/var/lib/i2p/i2p-config/netDb
-ExecStart=/usr/bin/reseed-tools
+WorkingDirectory=/var/lib/i2p/i2p-config/reseed
+ExecStart=/usr/bin/reseed-tools --signer=you@mail.i2p --netdb=/var/lib/i2p/i2p-config/netDb
 Restart=always
 RestartSec=10
 RuntimeMaxSec=43200

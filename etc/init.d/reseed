@@ -8,7 +8,7 @@
 # Description:       <DESCRIPTION>
 ### END INIT INFO
 
-SCRIPT='/usr/local/bin/i2p-tools'
+SCRIPT='/usr/bin/reseed-tools'
 RUNAS=i2psvc
 NETDBDIR=/var/lib/i2p/i2p-config/netDb
 RUNDIR=/var/lib/i2p/i2p-config/reseed
