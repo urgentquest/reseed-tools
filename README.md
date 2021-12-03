@@ -43,10 +43,15 @@ when reseed-tools is installed in `/usr/bin/reseed-tools`. If you install with
 bundles to regenerate every 12 hours.
 
 The contact email for your reseed should be added in:
-`/etc/systemd/system/reseed.service`.
+`/etc/systemd/system/reseed.d/reseed.conf`.
 
 Self-signed certificates will be auto-generated for these services. To change
-this you should edit the `/etc/systemd/system/reseed.service`.
+this you should edit the `/etc/systemd/system/reseed.d/reseed.service`.
+
+- To enable starting the reseed service automatically with the system: `sudo systemctl enable reseed.service`
+- To run the service manually: `sudo sysctl start reseed.service`  
+- To reload the systemd services: `sudo systemctl daemon-reload`
+- To view the status/logs: `sudo journalctl -u reseed.service`
 
 ##### SysV Service
 
@@ -70,6 +75,8 @@ Afterwards an HTTPS reseed server will start on the default port and generate 6 
 ```
 reseed-tools reseed --signer=you@mail.i2p --netdb=/home/i2p/.i2p/netDb --tlsHost=your-domain.tld
 ```
+
+## Example Commands:
 
 ### Locally behind a webserver (reverse proxy setup), preferred:
 
