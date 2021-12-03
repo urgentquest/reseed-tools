@@ -28,17 +28,6 @@ edit:
 upload: binary tar
 	gothub upload -s $(GITHUB_TOKEN) -u $(USER_GH) -r $(APP) -t v$(VERSION) -f ../reseed-tools.tar.xz -n "reseed-tools.tar.xz"
 
-upload-bin:
-	gothub upload -s $(GITHUB_TOKEN) -u $(USER_GH) -r $(APP) -t v$(VERSION) -f reseed-tools-darwin-amd64 -n "reseed-tools-darwin-amd64"
-	gothub upload -s $(GITHUB_TOKEN) -u $(USER_GH) -r $(APP) -t v$(VERSION) -f reseed-tools-freebsd-amd64 -n "reseed-tools-freebsd-amd64"
-	gothub upload -s $(GITHUB_TOKEN) -u $(USER_GH) -r $(APP) -t v$(VERSION) -f reseed-tools-linux-amd64 -n "reseed-tools-linux-amd64"
-	gothub upload -s $(GITHUB_TOKEN) -u $(USER_GH) -r $(APP) -t v$(VERSION) -f reseed-tools-openbsd-amd64 -n "reseed-tools-openbsd-amd64"
-	gothub upload -s $(GITHUB_TOKEN) -u $(USER_GH) -r $(APP) -t v$(VERSION) -f reseed-tools-windows-amd64 -n "reseed-tools-windows-amd64"
-	gothub upload -s $(GITHUB_TOKEN) -u $(USER_GH) -r $(APP) -t v$(VERSION) -f reseed-tools-freebsd-386 -n "reseed-tools-freebsd-386"
-	gothub upload -s $(GITHUB_TOKEN) -u $(USER_GH) -r $(APP) -t v$(VERSION) -f reseed-tools-linux-386 -n "reseed-tools-linux-386"
-	gothub upload -s $(GITHUB_TOKEN) -u $(USER_GH) -r $(APP) -t v$(VERSION) -f reseed-tools-linux-arm -n "reseed-tools-linux-arm"
-	gothub upload -s $(GITHUB_TOKEN) -u $(USER_GH) -r $(APP) -t v$(VERSION) -f reseed-tools-linux-arm64 -n "reseed-tools-linux-arm64"
-
 build:
 	go build $(ARG) -o reseed-tools-$(GOOS)-$(GOARCH)
 
@@ -176,6 +165,34 @@ plugins: binary
 	GOOS=freebsd GOARCH=386 make su3s
 	GOOS=freebsd GOARCH=amd64 make su3s
 	GOOS=windows GOARCH=amd64 make su3s
+
+upload-bin:
+	GOOS=darwin GOARCH=amd64 make upload-single-bin
+	GOOS=linux GOARCH=386 make upload-single-bin
+	GOOS=linux GOARCH=amd64 make upload-single-bin
+	GOOS=linux GOARCH=arm make upload-single-bin
+	GOOS=linux GOARCH=arm64 make upload-single-bin
+	GOOS=openbsd GOARCH=amd64 make upload-single-bin
+	GOOS=freebsd GOARCH=386 make upload-single-bin
+	GOOS=freebsd GOARCH=amd64 make upload-single-bin
+	GOOS=windows GOARCH=amd64 make upload-single-bin
+
+upload-su3s:
+	GOOS=darwin GOARCH=amd64 make upload-single-su3
+	GOOS=linux GOARCH=386 make upload-single-su3
+	GOOS=linux GOARCH=amd64 make upload-single-su3
+	GOOS=linux GOARCH=arm make upload-single-su3
+	GOOS=linux GOARCH=arm64 make upload-single-su3
+	GOOS=openbsd GOARCH=amd64 make upload-single-su3
+	GOOS=freebsd GOARCH=386 make upload-single-su3
+	GOOS=freebsd GOARCH=amd64 make upload-single-su3
+	GOOS=windows GOARCH=amd64 make upload-single-su3
+
+upload-single-bin:
+	gothub upload -s $(GITHUB_TOKEN) -u $(USER_GH) -r $(APP) -t v$(VERSION) -f reseed-tools-"$(GOOS)"-"$(GOARCH)" -n "reseed-tools-$(GOOS)"-"$(GOARCH)"
+
+upload-single-su3:
+	gothub upload -s $(GITHUB_TOKEN) -u $(USER_GH) -r $(APP) -t v$(VERSION) -f reseed-tools-"$(GOOS)"-"$(GOARCH).su3" -n "reseed-tools-$(GOOS)"-"$(GOARCH).su3"
 
 su3s:
 	i2p.plugin.native -name=reseed-tools-$(GOOS)-$(GOARCH) \
