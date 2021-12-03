@@ -58,6 +58,7 @@ install:
 	install -m644 etc/default/reseed /etc/default/reseed
 	install -m755 etc/init.d/reseed /etc/init.d/reseed
 	mkdir -p /etc/systemd/system/reseed.d/
+	install -d -g i2psvc -u i2psvc /var/lib/i2p/i2p-config/reseed
 	install -m644 etc/systemd/system/reseed.d/reseed.conf /etc/systemd/system/reseed.d/reseed.conf
 	install -m644 etc/systemd/system/reseed.d/reseed.service /etc/systemd/system/reseed.d/reseed.service
 
