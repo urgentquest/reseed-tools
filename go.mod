@@ -4,6 +4,7 @@ go 1.13
 
 require (
 	github.com/cretz/bine v0.1.0
+	github.com/eyedeekay/checki2cp v0.0.21 // indirect
 	github.com/eyedeekay/sam3 v0.32.32
 	github.com/go-acme/lego/v4 v4.3.1
 	github.com/gorilla/handlers v1.5.1

@@ -21,9 +21,15 @@ import (
 	"github.com/libp2p/go-libp2p-core/host"
 	"github.com/urfave/cli"
 	"i2pgit.org/idk/reseed-tools/reseed"
+
+	"github.com/eyedeekay/checki2cp/getmeanetdb"
 )
 
 func NewReseedCommand() cli.Command {
+	ndb, err := getmeanetdb.WhereIstheNetDB()
+	if err != nil {
+		log.Fatal(err)
+	}
 	return cli.Command{
 		Name:   "reseed",
 		Usage:  "Start a reseed server",
@@ -56,6 +62,7 @@ func NewReseedCommand() cli.Command {
 			},
 			cli.StringFlag{
 				Name:  "netdb",
+				Value: ndb,
 				Usage: "Path to NetDB directory containing routerInfos",
 			},
 			cli.StringFlag{
@@ -83,7 +90,7 @@ func NewReseedCommand() cli.Command {
 			},
 			cli.IntFlag{
 				Name:  "numSu3",
-				Value: 0,
+				Value: 50,
 				Usage: "Number of su3 files to build (0 = automatic based on size of netdb)",
 			},
 			cli.StringFlag{
