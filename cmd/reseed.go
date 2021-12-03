@@ -25,6 +25,18 @@ import (
 	"github.com/eyedeekay/checki2cp/getmeanetdb"
 )
 
+func getDefaultSigner() string {
+	intentionalsigner := os.Getenv("RESEED_EMAIL")
+	if intentionalsigner == "" {
+		adminsigner := os.Getenv("MAILTO")
+		if adminsigner != "" {
+			return adminsigner
+		}
+		return ""
+	}
+	return intentionalsigner
+}
+
 func NewReseedCommand() cli.Command {
 	ndb, err := getmeanetdb.WhereIstheNetDB()
 	if err != nil {
@@ -37,6 +49,7 @@ func NewReseedCommand() cli.Command {
 		Flags: []cli.Flag{
 			cli.StringFlag{
 				Name:  "signer",
+				Value: getDefaultSigner(),
 				Usage: "Your su3 signing ID (ex. something@mail.i2p)",
 			},
 			cli.StringFlag{
