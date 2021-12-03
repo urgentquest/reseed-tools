@@ -17,7 +17,7 @@ MORE_OPTIONS=""
 if [ -f /etc/default/reseed ]; then
     . /etc/default/reseed
 fi
-RUNOPTS=" reseed --signer=$SIGNER --netdb=$NETDBDIR $MORE_OPTIONS "
+RUNOPTS=" reseed --yes=true --signer=$SIGNER --netdb=$NETDBDIR $MORE_OPTIONS "
 
 start() {
     start-stop-daemon --user $RUNAS --exec $SCRIPT --chdir $RUNDIR --make-pidfile $RUNDIR/reseed.pid --start -- $RUNOPTS

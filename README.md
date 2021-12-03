@@ -35,6 +35,31 @@ Debian users who are running I2P as a system service must also run the
 the I2P service's netDb directory. On Debian and Ubuntu, that user is `i2psvc`
 and the netDb directory is: `/var/lib/i2p/i2p-config/netDb`.
 
+##### Systemd Service
+
+A systemd service is provided which should work with the I2P Debian package
+when reseed-tools is installed in `/usr/bin/reseed-tools`. If you install with
+`make install` this service is also installed. This service will cause the
+bundles to regenerate every 12 hours.
+
+The contact email for your reseed should be added in:
+`/etc/systemd/system/reseed.service`.
+
+Self-signed certificates will be auto-generated for these services. To change
+this you should edit the `/etc/systemd/system/reseed.service`.
+
+##### SysV Service
+
+An initscript is also provided. The initscript, unlike the systemd service,
+cannot schedule itself to restart. You should restart the service roughly once
+a day to ensure that the information does not expire.
+
+The contact email for your reseed should be added in:
+`/etc/init.d/reseed`.
+
+Self-signed certificates will be auto-generated for these services. To change
+this you should edit the `/etc/init.d/reseed`.
+
 ### Without a webserver, standalone with TLS support
 
 If this is your first time running a reseed server (ie. you don't have any existing keys),
