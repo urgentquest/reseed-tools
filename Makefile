@@ -58,9 +58,28 @@ install:
 	install -m644 etc/default/reseed /etc/default/reseed
 	install -m755 etc/init.d/reseed /etc/init.d/reseed
 	mkdir -p /etc/systemd/system/reseed.d/
-	install -d -g i2psvc -o i2psvc /var/lib/i2p/i2p-config/reseed
+	mkdir -p /var/lib/i2p
+	install -g i2psvc -o i2psvc -d /var/lib/i2p/i2p-config/reseed/
 	install -m644 etc/systemd/system/reseed.d/reseed.conf /etc/systemd/system/reseed.d/reseed.conf
 	install -m644 etc/systemd/system/reseed.d/reseed.service /etc/systemd/system/reseed.d/reseed.service
+
+checkinstall:
+	fakeroot checkinstall \
+		--default \
+		--install=no \
+		--fstrans=yes \
+		--pkgname=reseed-tools \
+		--pkgversion=$(VERSION) \
+		--pkggroup=net \
+		--pkgrelease=1 \
+		--pkgsource="https://i2pgit.org/idk/reseed-tools" \
+		--maintainer="$(SIGNER)" \
+		--requires="i2p,i2p-router" \
+		--suggests="i2p,i2p-router,syndie,tor,tsocks" \
+		--nodoc \
+		--deldoc=yes \
+		--deldesc=yes \
+		--backup=no
 
 ### You shouldn't need to use these now that the go mod require rule is fixed,
 ## but I'm leaving them in here because it made it easier to test that both
