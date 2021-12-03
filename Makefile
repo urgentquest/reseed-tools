@@ -37,19 +37,6 @@ build:
 clean:
 	rm reseed-tools-* *.key *.i2pKeys *.crt *.crl *.pem tmp -rfv
 
-binary:
-	GOOS=darwin GOARCH=amd64 make build
-	GOOS=darwin GOARCH=arm64 make build
-	GOOS=linux GOARCH=386 make build
-	GOOS=linux GOARCH=amd64 make build
-	GOOS=linux GOARCH=arm make build
-	GOOS=linux GOARCH=arm64 make build
-	GOOS=openbsd GOARCH=amd64 make build
-	GOOS=freebsd GOARCH=386 make build
-	GOOS=freebsd GOARCH=amd64 make build
-	GOOS=windows GOARCH=amd64 make build
-	GOOS=windows GOARCH=386 make build
-
 tar:
 	tar --exclude="./.git" --exclude="./tmp"  -cvf ../reseed-tools.tar.xz .
 
@@ -176,6 +163,20 @@ gojava:
 jar: gojava
 	echo $(JAVA_HOME)
 	./gojava -v -o reseed.jar -s . build ./reseed
+
+binary:
+	GOOS=darwin GOARCH=amd64 make build
+	GOOS=darwin GOARCH=arm64 make build
+	GOOS=linux GOARCH=386 make build
+	GOOS=linux GOARCH=amd64 make build
+	GOOS=linux GOARCH=arm make build
+	GOOS=linux GOARCH=arm64 make build
+	GOOS=openbsd GOARCH=amd64 make build
+	GOOS=freebsd GOARCH=386 make build
+	GOOS=freebsd GOARCH=amd64 make build
+	GOOS=windows GOARCH=amd64 make build
+	GOOS=windows GOARCH=386 make build
+
 
 plugins: binary
 	GOOS=darwin GOARCH=amd64 make su3s
