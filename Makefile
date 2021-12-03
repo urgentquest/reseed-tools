@@ -1,5 +1,5 @@
 
-VERSION=0.0.9
+VERSION=0.1.9
 APP=reseed-tools
 USER_GH=eyedeekay
 
@@ -215,6 +215,9 @@ upload-su3s:
 	GOOS=freebsd GOARCH=amd64 make upload-single-su3
 	GOOS=windows GOARCH=amd64 make upload-single-su3
 	GOOS=windows GOARCH=386 make upload-single-su3
+
+upload-single-deb:
+	gothub upload -s $(GITHUB_TOKEN) -u $(USER_GH) -r $(APP) -t v$(VERSION) -f reseed-tools_$(VERSION)-1_amd64.deb -n "reseed-tools_$(VERSION)-1_amd64.deb"
 
 upload-single-bin:
 	gothub upload -s $(GITHUB_TOKEN) -u $(USER_GH) -r $(APP) -t v$(VERSION) -f reseed-tools-"$(GOOS)"-"$(GOARCH)" -n "reseed-tools-$(GOOS)"-"$(GOARCH)"
