@@ -64,8 +64,11 @@ tar:
 
 install:
 	install -m755 reseed-tools-$(GOOS)-$(GOARCH) /usr/bin/reseed-tools
+	install -m644 etc/default/reseed /etc/default/reseed
 	install -m755 etc/init.d/reseed /etc/init.d/reseed
-	install -m644 etc/systemd/system/reseed.service /etc/systemd/system/reseed.service
+	mkdir -p /etc/systemd/system/reseed.d/
+	install -m644 etc/systemd/system/reseed.d/reseed.conf /etc/systemd/system/reseed.d/reseed.conf
+	install -m644 etc/systemd/system/reseed.d/reseed.service /etc/systemd/system/reseed.d/reseed.service
 
 ### You shouldn't need to use these now that the go mod require rule is fixed,
 ## but I'm leaving them in here because it made it easier to test that both

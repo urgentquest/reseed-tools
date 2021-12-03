@@ -1,0 +1,2 @@
+#Edit the contact/signing email used by your reseed server here
+export RESEED_EMAIL=""
