@@ -177,7 +177,6 @@ binary:
 	GOOS=windows GOARCH=amd64 make build
 	GOOS=windows GOARCH=386 make build
 
-
 plugins: binary
 	GOOS=darwin GOARCH=amd64 make su3s
 	GOOS=darwin GOARCH=arm64 make su3s
@@ -233,7 +232,7 @@ su3s:
 		-author=hankhill19580@gmail.com \
 		-autostart=true \
 		-clientname=reseed-tools-$(GOOS)-$(GOARCH) \
-		-command="\$$PLUGIN/lib/reseed-tools-$(GOOS)-$(GOARCH)s -dir=\$$PLUGIN/lib reseed --signer=you@mail.i2p --netdb=\$$CONFIG/netDb --onion --i2p" \
+		-command="\$$PLUGIN/lib/reseed-tools-$(GOOS)-$(GOARCH) -dir=\$$PLUGIN/lib reseed --signer=you@mail.i2p --netdb=\$$CONFIG/netDb --onion --i2p" \
 		-consolename="Reseed Tools" \
 		-consoleurl="http://127.0.0.1:8443" \
 		-icondata="content/images/reseed.png" \
