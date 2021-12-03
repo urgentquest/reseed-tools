@@ -8,7 +8,7 @@ Requires=i2p.service
 User=i2psvc
 RuntimeDirectory=/var/lib/i2p/i2p-config/reseed
 WorkingDirectory=/var/lib/i2p/i2p-config/reseed
-ExecStart=/usr/bin/reseed-tools --yes=true --netdb=/var/lib/i2p/i2p-config/netDb
+ExecStart=/usr/bin/reseed-tools reseed --yes=true --netdb=/var/lib/i2p/i2p-config/netDb
 Restart=always
 RestartSec=10
 RuntimeMaxSec=43200
