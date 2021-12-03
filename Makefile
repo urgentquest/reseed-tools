@@ -232,11 +232,11 @@ su3s:
 		-author=hankhill19580@gmail.com \
 		-autostart=true \
 		-clientname=reseed-tools-$(GOOS)-$(GOARCH) \
-		-command="\$$PLUGIN/lib/reseed-tools-$(GOOS)-$(GOARCH) -dir=\$$PLUGIN/lib reseed --signer=you@mail.i2p --netdb=\$$CONFIG/netDb --onion --i2p" \
+		-command="reseed-tools-$(GOOS)-$(GOARCH) reseed --yes --signer=you@mail.i2p --netdb=\$$CONFIG/netDb" \
 		-consolename="Reseed Tools" \
 		-consoleurl="http://127.0.0.1:8443" \
 		-icondata="content/images/reseed.png" \
-		-delaystart="200" \
+		-delaystart="3" \
 		-desc="Reseed Tools Plugin" \
 		-exename=reseed-tools-$(GOOS)-$(GOARCH) \
 		-targetos="$(GOOS)" \
