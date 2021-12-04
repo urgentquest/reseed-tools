@@ -1,5 +1,5 @@
 
-VERSION=0.2.0
+VERSION=0.2.1
 APP=reseed-tools
 USER_GH=eyedeekay
 
@@ -155,7 +155,7 @@ jar: gojava
 	echo $(JAVA_HOME)
 	./gojava -v -o reseed.jar -s . build ./reseed
 
-release: version upload checkinstall upload-single-deb binary upload-bin plguins upload-plugins
+release: version upload checkinstall upload-single-deb plugins upload-su3s upload-bin 
 
 version:
 	cat README.md | gothub release -s $(GITHUB_TOKEN) -u $(USER_GH) -r $(APP) -t v$(VERSION) -d -
@@ -231,7 +231,11 @@ tmp/content:
 	mkdir -p tmp
 	cp -rv content tmp/content
 
-su3s: tmp/content
+tmp/lib:
+	mkdir -p tmp/lib
+	cp $(HOME)/i2p/lib/i2p.jar tmp/lib/i2p.jar
+
+su3s: tmp/content tmp/lib
 	i2p.plugin.native -name=reseed-tools-$(GOOS)-$(GOARCH) \
 		-signer=hankhill19580@gmail.com \
 		-version "$(VERSION)" \
