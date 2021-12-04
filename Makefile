@@ -1,5 +1,5 @@
 
-VERSION=0.2.1
+VERSION=0.2.0
 APP=reseed-tools
 USER_GH=eyedeekay
 
@@ -217,6 +217,19 @@ upload-bin:
 	GOOS=windows GOARCH=amd64 make upload-single-bin
 	GOOS=windows GOARCH=386 make upload-single-bin
 
+download-su3s:
+	GOOS=darwin GOARCH=amd64 make download-single-su3
+	GOOS=darwin GOARCH=arm64 make download-single-su3
+	GOOS=linux GOARCH=386 make download-single-su3
+	GOOS=linux GOARCH=amd64 make download-single-su3
+	GOOS=linux GOARCH=arm make download-single-su3
+	GOOS=linux GOARCH=arm64 make download-single-su3
+	GOOS=openbsd GOARCH=amd64 make download-single-su3
+	GOOS=freebsd GOARCH=386 make download-single-su3
+	GOOS=freebsd GOARCH=amd64 make download-single-su3
+	GOOS=windows GOARCH=amd64 make download-single-su3
+	GOOS=windows GOARCH=386 make download-single-su3
+
 upload-su3s:
 	GOOS=darwin GOARCH=amd64 make upload-single-su3
 	GOOS=darwin GOARCH=arm64 make upload-single-su3
@@ -229,6 +242,9 @@ upload-su3s:
 	GOOS=freebsd GOARCH=amd64 make upload-single-su3
 	GOOS=windows GOARCH=amd64 make upload-single-su3
 	GOOS=windows GOARCH=386 make upload-single-su3
+
+download-single-su3:
+	gothub download -u $(USER_GH) -r $(APP) -t v$(VERSION) -n "reseed-tools-$(GOOS)"-"$(GOARCH).su3"
 
 upload-single-deb:
 	gothub upload -R -s $(GITHUB_TOKEN) -u $(USER_GH) -r $(APP) -t v$(VERSION) -f reseed-tools_$(VERSION)-1_amd64.deb -l "`sha256sum reseed-tools_$(VERSION)-1_amd64.deb`" -n "reseed-tools_$(VERSION)-1_amd64.deb"
