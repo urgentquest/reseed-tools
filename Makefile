@@ -41,7 +41,7 @@ install:
 	install -m644 etc/systemd/system/reseed.d/reseed.conf /etc/systemd/system/reseed.d/reseed.conf
 	install -m644 etc/systemd/system/reseed.d/reseed.service /etc/systemd/system/reseed.d/reseed.service
 
-checkinstall:
+checkinstall: build
 	fakeroot checkinstall \
 		--default \
 		--install=no \
@@ -155,7 +155,7 @@ jar: gojava
 	echo $(JAVA_HOME)
 	./gojava -v -o reseed.jar -s . build ./reseed
 
-release: version upload binary upload-bin plguins upload-plugins checkinstall upload-single-deb
+release: version upload checkinstall upload-single-deb binary upload-bin plguins upload-plugins
 
 version:
 	cat README.md | gothub release -s $(GITHUB_TOKEN) -u $(USER_GH) -r $(APP) -t v$(VERSION) -d -
