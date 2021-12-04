@@ -155,7 +155,7 @@ jar: gojava
 	echo $(JAVA_HOME)
 	./gojava -v -o reseed.jar -s . build ./reseed
 
-release: version plugins upload upload-bin upload-plugins upload-single-deb
+release: plugins version upload upload-bin upload-plugins upload-single-deb
 
 version:
 	cat README.md | gothub release -s $(GITHUB_TOKEN) -u $(USER_GH) -r $(APP) -t v$(VERSION) -d -
