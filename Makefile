@@ -231,7 +231,6 @@ tmp/content:
 
 su3s: tmp/content
 	i2p.plugin.native -name=reseed-tools-$(GOOS)-$(GOARCH) \
-		-displayname="Reseed Tools" \
 		-signer=hankhill19580@gmail.com \
 		-version "$(VERSION)" \
 		-author=hankhill19580@gmail.com \
@@ -244,7 +243,7 @@ su3s: tmp/content
 		-website="http://idk.i2p/reseed-tools/" \
 		-icondata="content/images/reseed.png" \
 		-delaystart="3" \
-		-desc="Reseed Tools Plugin" \
+		-desc="`cat description-pak`" \
 		-exename=reseed-tools-$(GOOS)-$(GOARCH) \
 		-targetos="$(GOOS)" \
 		-res=tmp/ \
