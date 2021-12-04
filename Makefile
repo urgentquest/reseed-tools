@@ -172,6 +172,9 @@ release: version upload checkinstall upload-single-deb plugins upload-su3s uploa
 version:
 	cat README.md | gothub release -s $(GITHUB_TOKEN) -u $(USER_GH) -r $(APP) -t v$(VERSION) -d -
 
+delete-version:
+	gothub delete -s $(GITHUB_TOKEN) -u $(USER_GH) -r $(APP) -t v$(VERSION)
+
 edit:
 	cat README.md | gothub edit -s $(GITHUB_TOKEN) -u $(USER_GH) -r $(APP) -t v$(VERSION) -d -
 
