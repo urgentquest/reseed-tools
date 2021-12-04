@@ -244,7 +244,7 @@ upload-su3s:
 	GOOS=windows GOARCH=386 make upload-single-su3
 
 download-single-su3:
-	gothub download -u $(USER_GH) -r $(APP) -t v$(VERSION) -n "reseed-tools-$(GOOS)"-"$(GOARCH).su3"
+	wget -c "https://github.com/eyedeekay/reseed-tools/releases/download/v$(VERSION)/reseed-tools-$(GOOS)-$(GOARCH).su3"
 
 upload-single-deb:
 	gothub upload -R -s $(GITHUB_TOKEN) -u $(USER_GH) -r $(APP) -t v$(VERSION) -f reseed-tools_$(VERSION)-1_amd64.deb -l "`sha256sum reseed-tools_$(VERSION)-1_amd64.deb`" -n "reseed-tools_$(VERSION)-1_amd64.deb"
