@@ -225,14 +225,18 @@ upload-single-bin:
 upload-single-su3:
 	gothub upload -s $(GITHUB_TOKEN) -u $(USER_GH) -r $(APP) -t v$(VERSION) -f reseed-tools-"$(GOOS)"-"$(GOARCH).su3" -n "reseed-tools-$(GOOS)"-"$(GOARCH).su3"
 
-su3s:
+tmp/content:
+	mkdir -p tmp
+	cp -rv content tmp/content
+
+su3s: tmp/content
 	i2p.plugin.native -name=reseed-tools-$(GOOS)-$(GOARCH) \
 		-signer=hankhill19580@gmail.com \
 		-version "$(VERSION)" \
 		-author=hankhill19580@gmail.com \
 		-autostart=true \
 		-clientname=reseed-tools-$(GOOS)-$(GOARCH) \
-		-command="reseed-tools-$(GOOS)-$(GOARCH) reseed --yes --trustProxy --signer=you@mail.i2p --netdb=\$$CONFIG/netDb" \
+		-command="reseed-tools-$(GOOS)-$(GOARCH) reseed --yes --signer=you@mail.i2p --netdb=\$$CONFIG/netDb" \
 		-consolename="Reseed Tools" \
 		-consoleurl="http://127.0.0.1:8443" \
 		-icondata="content/images/reseed.png" \
@@ -240,8 +244,12 @@ su3s:
 		-desc="Reseed Tools Plugin" \
 		-exename=reseed-tools-$(GOOS)-$(GOARCH) \
 		-targetos="$(GOOS)" \
+		-res=tmp/ \
 		-license=MIT
 	unzip -o reseed-tools-$(GOOS)-$(GOARCH).zip -d reseed-tools-$(GOOS)-$(GOARCH)-zip
 
 #export sumbblinux=`sha256sum "../reseed-tools-linux.su3"`
 #export sumbbwindows=`sha256sum "../reseed-tools-windows.su3"`
+
+try:
+	./reseed-tools-$(GOOS)-$(GOARCH) reseed --yes --trustProxy --signer=you@mail.i2p --netdb=$(HOME)/.i2p/netDb
