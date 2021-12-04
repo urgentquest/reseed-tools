@@ -254,6 +254,3 @@ su3s: tmp/content
 
 #export sumbblinux=`sha256sum "../reseed-tools-linux.su3"`
 #export sumbbwindows=`sha256sum "../reseed-tools-windows.su3"`
-
-try:
-	./reseed-tools-$(GOOS)-$(GOARCH) reseed --yes --trustProxy --signer=you@mail.i2p --netdb=$(HOME)/.i2p/netDb
