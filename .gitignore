@@ -11,3 +11,4 @@ i2p-tools-*
 *.crt
 *.pem
 plugin
+reseed-tools*

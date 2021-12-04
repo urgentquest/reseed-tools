@@ -1,0 +1,35 @@
+#! /usr/bin/env sh
+RESEED_MESSAGE="Reseed Tools requires you to set an email for contact purposes.
+This is in case your reseed goes down.
+Please enter your email below."
+
+RESEED_CONF="# Use this file to configure the contact/signer email used for the reseed service.
+# without it the reseed will fail to start.
+
+[Service]
+Environment=\"RESEED_EMAIL="
+
+RESEED_DEFAULT="#Edit the contact/signing email used by your reseed server here
+export RESEED_EMAIL=\""
+
+mkdir -p /etc/systemd/system/reseed.d/
+
+if [ -f /usr/bin/zenity ]; then
+    RESEED_EMAIL=$(zenity --entry --title "Reseed Configuration" --text "$RESEED_MESSAGE" 10 30 3>&1 1>&2 2>&3)
+    echo "$RESEED_DEFAULT$RESEED_EMAIL\"" >> /etc/default/reseed
+    echo "$RESEED_CONF$RESEED_EMAIL\"" >> /etc/systemd/system/reseed.d/reseed.conf
+    exit 0
+fi
+
+if [ -t 1 ] ; then 
+    echo "proceeding with terminal"; 
+else 
+    exit 0
+fi
+
+if [ -f /usr/bin/whiptail ]; then    
+    RESEED_EMAIL=$(whiptail --inputbox "$RESEED_MESSAGE" 10 30 3>&1 1>&2 2>&3)
+    echo "$RESEED_DEFAULT$RESEED_EMAIL\"" >> /etc/default/reseed
+    echo "$RESEED_CONF$RESEED_EMAIL\"" >> /etc/systemd/system/reseed.d/reseed.conf
+    exit 0
+fi
