@@ -232,7 +232,7 @@ su3s:
 		-author=hankhill19580@gmail.com \
 		-autostart=true \
 		-clientname=reseed-tools-$(GOOS)-$(GOARCH) \
-		-command="reseed-tools-$(GOOS)-$(GOARCH) reseed --yes --signer=you@mail.i2p --netdb=\$$CONFIG/netDb" \
+		-command="reseed-tools-$(GOOS)-$(GOARCH) reseed --yes --trustProxy --signer=you@mail.i2p --netdb=\$$CONFIG/netDb" \
 		-consolename="Reseed Tools" \
 		-consoleurl="http://127.0.0.1:8443" \
 		-icondata="content/images/reseed.png" \
