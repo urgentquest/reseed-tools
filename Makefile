@@ -239,6 +239,8 @@ su3s: tmp/content
 		-command="reseed-tools-$(GOOS)-$(GOARCH) reseed --yes --signer=you@mail.i2p --netdb=\$$CONFIG/netDb" \
 		-consolename="Reseed Tools" \
 		-consoleurl="http://127.0.0.1:8443" \
+		-updateurl="http://idk.i2p/reseed-tools/reseed-tools-$(GOOS)-$(GOARCH).su3" \
+		-website="http://idk.i2p/reseed-tools/" \
 		-icondata="content/images/reseed.png" \
 		-delaystart="3" \
 		-desc="Reseed Tools Plugin" \
