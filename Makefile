@@ -264,7 +264,7 @@ tmp/content:
 
 tmp/lib:
 	mkdir -p tmp/lib
-	cp "$(HOME)/Workspace/GIT_WORK/i2p.i2p/build/i2p.jar" tmp/lib/i2p.jar
+	cp "$(HOME)/Workspace/GIT_WORK/i2p.i2p/build/shellservice.jar" tmp/lib/shellservice.jar
 
 su3s: tmp/content tmp/lib
 	i2p.plugin.native -name=reseed-tools-$(GOOS)-$(GOARCH) \
