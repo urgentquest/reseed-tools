@@ -155,7 +155,7 @@ jar: gojava
 	echo $(JAVA_HOME)
 	./gojava -v -o reseed.jar -s . build ./reseed
 
-release: plugins version upload upload-bin upload-plugins upload-single-deb
+release: version upload binary upload-bin plguins upload-plugins checkinstall upload-single-deb
 
 version:
 	cat README.md | gothub release -s $(GITHUB_TOKEN) -u $(USER_GH) -r $(APP) -t v$(VERSION) -d -
@@ -163,8 +163,8 @@ version:
 edit:
 	cat README.md | gothub edit -s $(GITHUB_TOKEN) -u $(USER_GH) -r $(APP) -t v$(VERSION) -d -
 
-upload: binary tar
-	gothub upload -s $(GITHUB_TOKEN) -u $(USER_GH) -r $(APP) -t v$(VERSION) -f ../reseed-tools.tar.xz -n "reseed-tools.tar.xz"
+upload: tar
+	gothub upload -R -s $(GITHUB_TOKEN) -u $(USER_GH) -r $(APP) -t v$(VERSION) -f ../reseed-tools.tar.xz -n "reseed-tools.tar.xz"
 
 binary:
 	GOOS=darwin GOARCH=amd64 make build
@@ -219,13 +219,13 @@ upload-su3s:
 	GOOS=windows GOARCH=386 make upload-single-su3
 
 upload-single-deb:
-	gothub upload -s $(GITHUB_TOKEN) -u $(USER_GH) -r $(APP) -t v$(VERSION) -f reseed-tools_$(VERSION)-1_amd64.deb -l "`sha256sum reseed-tools_$(VERSION)-1_amd64.deb`" -n "reseed-tools_$(VERSION)-1_amd64.deb"
+	gothub upload -R -s $(GITHUB_TOKEN) -u $(USER_GH) -r $(APP) -t v$(VERSION) -f reseed-tools_$(VERSION)-1_amd64.deb -l "`sha256sum reseed-tools_$(VERSION)-1_amd64.deb`" -n "reseed-tools_$(VERSION)-1_amd64.deb"
 
 upload-single-bin:
-	gothub upload -s $(GITHUB_TOKEN) -u $(USER_GH) -r $(APP) -t v$(VERSION) -f reseed-tools-"$(GOOS)"-"$(GOARCH)" -l "`sha256sum reseed-tools-$(GOOS)-$(GOARCH)`" -n "reseed-tools-$(GOOS)"-"$(GOARCH)"
+	gothub upload -R -s $(GITHUB_TOKEN) -u $(USER_GH) -r $(APP) -t v$(VERSION) -f reseed-tools-"$(GOOS)"-"$(GOARCH)" -l "`sha256sum reseed-tools-$(GOOS)-$(GOARCH)`" -n "reseed-tools-$(GOOS)"-"$(GOARCH)"
 
 upload-single-su3:
-	gothub upload -s $(GITHUB_TOKEN) -u $(USER_GH) -r $(APP) -t v$(VERSION) -f reseed-tools-"$(GOOS)"-"$(GOARCH).su3" -l "`sha256sum reseed-tools-$(GOOS)-$(GOARCH).su3`" -n "reseed-tools-$(GOOS)"-"$(GOARCH).su3"
+	gothub upload -R -s $(GITHUB_TOKEN) -u $(USER_GH) -r $(APP) -t v$(VERSION) -f reseed-tools-"$(GOOS)"-"$(GOARCH).su3" -l "`sha256sum reseed-tools-$(GOOS)-$(GOARCH).su3`" -n "reseed-tools-$(GOOS)"-"$(GOARCH).su3"
 
 tmp/content:
 	mkdir -p tmp
