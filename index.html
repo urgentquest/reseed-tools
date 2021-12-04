@@ -11,7 +11,24 @@
 <p><code>go</code>, <code>git</code>, and optionally <code>make</code> are required to build the project. Precompiled binaries for most platforms are available at my github mirror https://github.com/eyedeekay/i2p-tools-1.</p>
 <p>In order to install the build-dependencies on Ubuntu or Debian, you may use:</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true"></a><span class="fu">sudo</span> apt-get install golang-go git make</span></code></pre></div>
-<h2 id="installationfrom-source">Installation(From Source)</h2>
+<h2 id="installation">Installation</h2>
+<p>Reseed-tools can be run as a user, as a freestanding service, or be installed as an I2P Plugin. It will attempt to configure itself automatically. You should make sure to set the <code>--signer</code> flag or the <code>RESEED_EMAIL</code> environment variable to configure your signing keys/contact info.</p>
+<h4 id="plugin-install-urls">Plugin install URL’s</h4>
+<p>Plugin releases are available inside of i2p at http://idk.i2p/reseed-tools/ and via the github mirror at https://github.com/eyedeekay/reseed-tools/releases. These can be installed by adding them on the <a href="http://127.0.0.1:7657/configplugins">http://127.0.0.1:7657/configplugins</a>.</p>
+<ul>
+<li>darwin/amd64: <a href="http://idk.i2p/reseed-tools/reseed-tools-darwin-amd64.su3">http://idk.i2p/reseed-tools/reseed-tools-darwin-amd64.su3</a></li>
+<li>darwin/arm64: <a href="http://idk.i2p/reseed-tools/reseed-tools-darwin-arm64.su3">http://idk.i2p/reseed-tools/reseed-tools-darwin-arm64.su3</a></li>
+<li>linux/386: <a href="http://idk.i2p/reseed-tools/reseed-tools-linux-386.su3">http://idk.i2p/reseed-tools/reseed-tools-linux-386.su3</a></li>
+<li>linux/amd64: <a href="http://idk.i2p/reseed-tools/reseed-tools-linux-amd64.su3">http://idk.i2p/reseed-tools/reseed-tools-linux-amd64.su3</a></li>
+<li>linux/arm: <a href="http://idk.i2p/reseed-tools/reseed-tools-linux-arm.su3">http://idk.i2p/reseed-tools/reseed-tools-linux-arm.su3</a></li>
+<li>linux/arm64: <a href="http://idk.i2p/reseed-tools/reseed-tools-linux-arm64.su3">http://idk.i2p/reseed-tools/reseed-tools-linux-arm64.su3</a></li>
+<li>openbsd/amd64: <a href="http://idk.i2p/reseed-tools/reseed-tools-openbsd-amd64.su3">http://idk.i2p/reseed-tools/reseed-tools-openbsd-amd64.su3</a></li>
+<li>freebsd/386: <a href="http://idk.i2p/reseed-tools/reseed-tools-freebsd-386.su3">http://idk.i2p/reseed-tools/reseed-tools-freebsd-386.su3</a></li>
+<li>freebsd/amd64: <a href="http://idk.i2p/reseed-tools/reseed-tools-freebsd-amd64.su3">http://idk.i2p/reseed-tools/reseed-tools-freebsd-amd64.su3</a></li>
+<li>windows/amd64: <a href="http://idk.i2p/reseed-tools/reseed-tools-windows-amd64.su3">http://idk.i2p/reseed-tools/reseed-tools-windows-amd64.su3</a></li>
+<li>windows/386: <a href="http://idk.i2p/reseed-tools/reseed-tools-windows-386.su3">http://idk.i2p/reseed-tools/reseed-tools-windows-386.su3</a></li>
+</ul>
+<h3 id="installationfrom-source">Installation(From Source)</h3>
 <pre><code>git clone https://i2pgit.org/idk/reseed-tools
 cd reseed-tools
 make build

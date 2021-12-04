@@ -17,7 +17,33 @@ In order to install the build-dependencies on Ubuntu or Debian, you may use:
 sudo apt-get install golang-go git make
 ```
 
-## Installation(From Source)
+## Installation
+
+Reseed-tools can be run as a user, as a freestanding service, or be installed
+as an I2P Plugin. It will attempt to configure itself automatically. You should
+make sure to set the `--signer` flag or the `RESEED_EMAIL` environment variable
+to configure your signing keys/contact info.
+
+#### Plugin install URL's
+
+Plugin releases are available inside of i2p at http://idk.i2p/reseed-tools/
+and via the github mirror at https://github.com/eyedeekay/reseed-tools/releases.
+These can be installed by adding them on the 
+[http://127.0.0.1:7657/configplugins](http://127.0.0.1:7657/configplugins).
+
+- darwin/amd64: [http://idk.i2p/reseed-tools/reseed-tools-darwin-amd64.su3](http://idk.i2p/reseed-tools/reseed-tools-darwin-amd64.su3)
+- darwin/arm64: [http://idk.i2p/reseed-tools/reseed-tools-darwin-arm64.su3](http://idk.i2p/reseed-tools/reseed-tools-darwin-arm64.su3)
+- linux/386: [http://idk.i2p/reseed-tools/reseed-tools-linux-386.su3](http://idk.i2p/reseed-tools/reseed-tools-linux-386.su3)
+- linux/amd64: [http://idk.i2p/reseed-tools/reseed-tools-linux-amd64.su3](http://idk.i2p/reseed-tools/reseed-tools-linux-amd64.su3)
+- linux/arm: [http://idk.i2p/reseed-tools/reseed-tools-linux-arm.su3](http://idk.i2p/reseed-tools/reseed-tools-linux-arm.su3)
+- linux/arm64: [http://idk.i2p/reseed-tools/reseed-tools-linux-arm64.su3](http://idk.i2p/reseed-tools/reseed-tools-linux-arm64.su3)
+- openbsd/amd64: [http://idk.i2p/reseed-tools/reseed-tools-openbsd-amd64.su3](http://idk.i2p/reseed-tools/reseed-tools-openbsd-amd64.su3)
+- freebsd/386: [http://idk.i2p/reseed-tools/reseed-tools-freebsd-386.su3](http://idk.i2p/reseed-tools/reseed-tools-freebsd-386.su3)
+- freebsd/amd64: [http://idk.i2p/reseed-tools/reseed-tools-freebsd-amd64.su3](http://idk.i2p/reseed-tools/reseed-tools-freebsd-amd64.su3)
+- windows/amd64: [http://idk.i2p/reseed-tools/reseed-tools-windows-amd64.su3](http://idk.i2p/reseed-tools/reseed-tools-windows-amd64.su3)
+- windows/386: [http://idk.i2p/reseed-tools/reseed-tools-windows-386.su3](http://idk.i2p/reseed-tools/reseed-tools-windows-386.su3)
+
+### Installation(From Source)
 
 ```
 git clone https://i2pgit.org/idk/reseed-tools
