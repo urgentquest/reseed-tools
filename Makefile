@@ -1,5 +1,5 @@
 
-VERSION=0.2.0
+VERSION=0.2.1
 APP=reseed-tools
 USER_GH=eyedeekay
 
@@ -217,7 +217,10 @@ upload-bin:
 	GOOS=windows GOARCH=amd64 make upload-single-bin
 	GOOS=windows GOARCH=386 make upload-single-bin
 
-download-su3s:
+rm-su3s:
+	rm *.su3
+
+download-su3s: rm-su3s
 	GOOS=darwin GOARCH=amd64 make download-single-su3
 	GOOS=darwin GOARCH=arm64 make download-single-su3
 	GOOS=linux GOARCH=386 make download-single-su3
