@@ -19,6 +19,18 @@ WHOAMI=$(shell whoami)
 echo:
 	@echo "type make version to do release $(APP) $(VERSION) $(GOOS) $(GOARCH) $(MIN_GO_VERSION) $(I2P_UID) $(I2P_GID)"
 
+index:
+	@echo "<!DOCTYPE html>" > index.html
+	@echo "<html>" >> index.html
+	@echo "<head>" >> index.html
+	@echo "  <title>Reseed Tools</title>" >> index.html
+	@echo "  <link rel=\"stylesheet\" type=\"text/css\" href =\"/style.css\" />" >> index.html
+	@echo "</head>" >> index.html
+	@echo "<body>" >> index.html
+	pandoc README.md >> index.html
+	@echo "</body>" >> index.html
+	@echo "</html>" >> index.html
+
 build:
 	go build $(ARG) -o reseed-tools-$(GOOS)-$(GOARCH)
 
