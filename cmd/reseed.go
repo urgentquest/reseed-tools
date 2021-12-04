@@ -37,6 +37,14 @@ func getDefaultSigner() string {
 	return intentionalsigner
 }
 
+func getHostName() string {
+	hostname := os.Getenv("RESEED_HOSTNAME")
+	if hostname == "" {
+		hostname, _ = os.Hostname()
+	}
+	return hostname
+}
+
 func NewReseedCommand() cli.Command {
 	ndb, err := getmeanetdb.WhereIstheNetDB()
 	if err != nil {
@@ -54,6 +62,7 @@ func NewReseedCommand() cli.Command {
 			},
 			cli.StringFlag{
 				Name:  "tlsHost",
+				Value: getHostName(),
 				Usage: "The public hostname used on your TLS certificate",
 			},
 			cli.BoolFlag{
