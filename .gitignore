@@ -12,3 +12,4 @@ i2p-tools-*
 *.pem
 plugin
 reseed-tools*
+data-dir*
