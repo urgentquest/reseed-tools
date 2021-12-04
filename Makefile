@@ -19,15 +19,6 @@ WHOAMI=$(shell whoami)
 echo:
 	@echo "type make version to do release $(APP) $(VERSION) $(GOOS) $(GOARCH) $(MIN_GO_VERSION) $(I2P_UID) $(I2P_GID)"
 
-version:
-	cat README.md | gothub release -s $(GITHUB_TOKEN) -u $(USER_GH) -r $(APP) -t v$(VERSION) -d -
-
-edit:
-	cat README.md | gothub edit -s $(GITHUB_TOKEN) -u $(USER_GH) -r $(APP) -t v$(VERSION) -d -
-
-upload: binary tar
-	gothub upload -s $(GITHUB_TOKEN) -u $(USER_GH) -r $(APP) -t v$(VERSION) -f ../reseed-tools.tar.xz -n "reseed-tools.tar.xz"
-
 build:
 	go build $(ARG) -o reseed-tools-$(GOOS)-$(GOARCH)
 
@@ -163,6 +154,17 @@ gojava:
 jar: gojava
 	echo $(JAVA_HOME)
 	./gojava -v -o reseed.jar -s . build ./reseed
+
+release: version plugins upload upload-bin upload-plugins upload-single-deb
+
+version:
+	cat README.md | gothub release -s $(GITHUB_TOKEN) -u $(USER_GH) -r $(APP) -t v$(VERSION) -d -
+
+edit:
+	cat README.md | gothub edit -s $(GITHUB_TOKEN) -u $(USER_GH) -r $(APP) -t v$(VERSION) -d -
+
+upload: binary tar
+	gothub upload -s $(GITHUB_TOKEN) -u $(USER_GH) -r $(APP) -t v$(VERSION) -f ../reseed-tools.tar.xz -n "reseed-tools.tar.xz"
 
 binary:
 	GOOS=darwin GOARCH=amd64 make build
