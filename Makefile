@@ -38,7 +38,7 @@ build:
 	/usr/lib/go-$(MIN_GO_VERSION)/bin/go build $(ARG) -o reseed-tools-$(GOOS)-$(GOARCH)
 
 clean:
-	rm reseed-tools-* *.key *.i2pKeys *.crt *.crl *.pem tmp -rfv
+	rm reseed-tools-* tmp -rfv
 
 tar:
 	tar --exclude="./.git" --exclude="./tmp"  -cvf ../reseed-tools.tar.xz .
@@ -221,7 +221,7 @@ upload-bin:
 	GOOS=windows GOARCH=386 make upload-single-bin
 
 rm-su3s:
-	rm *.su3
+	rm *.su3 -f
 
 download-su3s: rm-su3s
 	GOOS=darwin GOARCH=amd64 make download-single-su3
