@@ -38,10 +38,10 @@ build:
 	/usr/lib/go-$(MIN_GO_VERSION)/bin/go build $(ARG) -o reseed-tools-$(GOOS)-$(GOARCH)
 
 clean:
-	rm reseed-tools-* tmp -rfv
+	rm reseed-tools-* tmp -rfv *.deb plugin reseed-tools
 
 tar:
-	tar --exclude="./.git" --exclude="./tmp"  -cvf ../reseed-tools.tar.xz .
+	tar --exclude="./.git" --exclude="./tmp" --exclude=".vscode" --exclude="./*.pem" --exclude="./*.crl" --exclude="./*.crt" -cvf ../reseed-tools.tar.xz .
 
 install:
 	install -m755 reseed-tools-$(GOOS)-$(GOARCH) /usr/bin/reseed-tools
