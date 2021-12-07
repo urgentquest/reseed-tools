@@ -19,7 +19,7 @@ fi
 RUNOPTS=" reseed --yes=true --netdb=$NETDBDIR $MORE_OPTIONS "
 
 start() {
-    start-stop-daemon --user $RUNAS --exec $SCRIPT --chdir $RUNDIR --make-pidfile --pidfile $RUNDIR/reseed.pid --start -- $RUNOPTS
+    start-stop-daemon --user $RUNAS --chuid $RUNAS --exec $SCRIPT --chdir $RUNDIR --make-pidfile --pidfile $RUNDIR/reseed.pid --start -- $RUNOPTS
 }
 
 stop() {
