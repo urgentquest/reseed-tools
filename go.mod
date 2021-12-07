@@ -4,7 +4,7 @@ go 1.13
 
 require (
 	github.com/cretz/bine v0.1.0
-	github.com/eyedeekay/checki2cp v0.0.21 // indirect
+	github.com/eyedeekay/checki2cp v0.0.21
 	github.com/eyedeekay/sam3 v0.32.32
 	github.com/go-acme/lego/v4 v4.3.1
 	github.com/gorilla/handlers v1.5.1
@@ -18,3 +18,8 @@ require (
 	gitlab.com/golang-commonmark/markdown v0.0.0-20191127184510-91b5b3c99c19
 	golang.org/x/text v0.3.5
 )
+
+replace github.com/libp2p/go-libp2p => github.com/libp2p/go-libp2p v0.13.0
+replace github.com/libp2p/go-libp2p-core => github.com/libp2p/go-libp2p-core v0.8.0
+replace github.com/libp2p/go-libp2p-gostream => github.com/libp2p/go-libp2p-gostream v0.3.1
+replace github.com/libp2p/go-libp2p-http => github.com/libp2p/go-libp2p-http v0.2.0
