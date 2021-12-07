@@ -20,6 +20,9 @@ require (
 )
 
 replace github.com/libp2p/go-libp2p => github.com/libp2p/go-libp2p v0.13.0
+
 replace github.com/libp2p/go-libp2p-core => github.com/libp2p/go-libp2p-core v0.8.0
+
 replace github.com/libp2p/go-libp2p-gostream => github.com/libp2p/go-libp2p-gostream v0.3.1
+
 replace github.com/libp2p/go-libp2p-http => github.com/libp2p/go-libp2p-http v0.2.0
