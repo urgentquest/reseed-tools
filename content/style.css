@@ -4,24 +4,22 @@ body {
 	text-align: justify;
 	background-color: #D9D9D9;
 }
-* {
-	float: right;
-}
 h1 {
-	text-align: center;
 	width: 55%;
+	margin-left: 45%;
 }
 h2 {
-	text-align: center;
 	width: 55%;
+	margin-left: 45%;
 }
 h3 {
-	text-align: center;
 	width: 55%;
+	margin-left: 45%;
 }
 ul {
 	width: 55%;
 	display: block;
+	margin-left: 40%;
 }
 li {
 	margin-top: 1%;
@@ -29,6 +27,9 @@ li {
 }
 p {
 	max-width: 55%;
+}
+#homepage > p:nth-child(2){
+	margin-left: 45%;
 }
 
 img {
@@ -49,8 +50,6 @@ img {
 	color: blue;
 	text-decoration: underline;
 	cursor: pointer;
-	font-size: 1em;
-	font-family: serif;
 }
 
 .link-button:focus {
