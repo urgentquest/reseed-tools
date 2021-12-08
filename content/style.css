@@ -6,6 +6,7 @@ body {
 h1 {
 	width: 55%;
 	margin-left: 45%;
+	margin-top: 5%;
 }
 h2 {
 	width: 55%;
@@ -30,6 +31,7 @@ li {
 p {
 	max-width: 55%;
 	font-size: 1.2em;
+	margin-right: 2%;
 }
 #homepage > p:nth-child(2){
 	margin-left: 45%;
@@ -37,6 +39,7 @@ p {
 
 img {
 	position: absolute;
+	margin-top: 3%;
 	top: 5%;
 	left: 5%;
 	width: 35%;
