@@ -24,7 +24,7 @@ index:
 	@echo "<html>" >> index.html
 	@echo "<head>" >> index.html
 	@echo "  <title>Reseed Tools</title>" >> index.html
-	@echo "  <link rel=\"stylesheet\" type=\"text/css\" href =\"content/style.css\" />" >> index.html
+	@echo "  <link rel=\"stylesheet\" type=\"text/css\" href =\"/style.css\" />" >> index.html
 	@echo "</head>" >> index.html
 	@echo "<body>" >> index.html
 	pandoc README.md >> index.html
