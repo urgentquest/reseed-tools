@@ -76,7 +76,7 @@ func (srv *Server) HandleARealBrowser(w http.ResponseWriter, r *http.Request) {
 			w.Write([]byte(`<ul><li><form method="post" action="/i2pseeds" class="inline">
 			<input type="hidden" name="onetime" value="` + srv.Acceptable() + `">
 			<button type="submit" name="submit_param" value="submit_value" class="link-button">
-			Bundle
+			Reseed
 			</button>
 			</form></li></ul>`))
 			w.Write([]byte(footer))
