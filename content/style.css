@@ -1,6 +1,5 @@
 body {
-	font-family: "Roboto";
-	font-family: monospace;
+	font-family: "Roboto", monospace;
 	text-align: justify;
 	background-color: #D9D9D9;
 }
@@ -11,6 +10,9 @@ h1 {
 h2 {
 	width: 55%;
 	margin-left: 45%;
+}
+#homepage > h2:nth-child(3) > a:nth-child(1) {
+	text-decoration: none;
 }
 h3 {
 	width: 55%;
@@ -27,6 +29,7 @@ li {
 }
 p {
 	max-width: 55%;
+	font-size: 1.2em;
 }
 #homepage > p:nth-child(2){
 	margin-left: 45%;
@@ -42,6 +45,16 @@ img {
 
 .inline {
 	display: inline;
+}
+
+.link-button {
+	margin-top: 3%;
+	padding: 2%;
+	padding-left: 5%;
+	padding-right: 5%;
+	margin-left: -3%;
+	border-radius: 20%;
+	border-style: groove;
 }
 
 .link-button:focus {
