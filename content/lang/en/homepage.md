@@ -1,4 +1,4 @@
-You have found an I2P Reseed
+This is an I2P Reseed Server
 ============================
 
 I2P is a peer-to-peer network which uses “Garlic Routing” to maintain privacy.

@@ -1,5 +1,5 @@
 
-VERSION=0.2.4
+VERSION=0.2.5
 APP=reseed-tools
 USER_GH=eyedeekay
 
