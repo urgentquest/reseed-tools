@@ -106,12 +106,12 @@ gofmt:
 try:
 	mkdir -p tmp && \
 		cd tmp && \
-		../reseed-tools-$(GOOS)-$(GOARCH) reseed --signer=you@mail.i2p --netdb=/home/idk/.i2p/netDb --tlsHost=your-domain.tld --onion --p2p --i2p --littleboss=start
+		../reseed-tools-$(GOOS)-$(GOARCH) reseed --signer=you@mail.i2p --netdb=/home/idk/.i2p/netDb --tlsHost=your-domain.tld --onion --p2p --i2p
 
 stop:
 	mkdir -p tmp && \
 		cd tmp && \
-		../reseed-tools-$(GOOS)-$(GOARCH) reseed --signer=you@mail.i2p --netdb=/home/idk/.i2p/netDb --tlsHost=your-domain.tld --onion --p2p --i2p --littleboss=stop
+		../reseed-tools-$(GOOS)-$(GOARCH) reseed --signer=you@mail.i2p --netdb=/home/idk/.i2p/netDb --tlsHost=your-domain.tld --onion --p2p --i2p
 
 docker:
 	docker build -t eyedeekay/reseed .

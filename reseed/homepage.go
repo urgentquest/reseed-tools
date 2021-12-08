@@ -2,6 +2,7 @@ package reseed
 
 import (
 	"io/ioutil"
+	"log"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -13,6 +14,18 @@ import (
 
 var SupportedLanguages = []language.Tag{
 	language.English,
+	language.Russian,
+	language.SimplifiedChinese,
+	language.Arabic,
+	language.Portuguese,
+	language.German,
+	language.French,
+	language.Spanish,
+	language.Indonesian,
+	language.Hindi,
+	language.Japanese,
+	language.Korean,
+	language.Bengali,
 }
 var CachedLanguagePages = map[string]string{}
 var CachedDataPages = map[string][]byte{}
@@ -54,8 +67,17 @@ func (srv *Server) HandleARealBrowser(w http.ResponseWriter, r *http.Request) {
 	}
 	lang, _ := r.Cookie("lang")
 	accept := r.Header.Get("Accept-Language")
+	log.Printf("lang: '%s', accept: '%s'\n", lang, accept)
+	for name, values := range r.Header {
+		// Loop over all values for the name.
+		for _, value := range values {
+			log.Printf("name: '%s', value: '%s'\n", name, value)
+		}
+	}
 	tag, _ := language.MatchStrings(matcher, lang.String(), accept)
+	log.Printf("tag: '%s'\n", tag)
 	base, _ := tag.Base()
+	log.Printf("base: '%s'\n", base)
 
 	switch r.URL.Path {
 	case "/style.css":
