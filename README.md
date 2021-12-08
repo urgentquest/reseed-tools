@@ -5,6 +5,9 @@ This tool provides a secure and efficient reseed server for the I2P network.
 There are several utility commands to create, sign, and validate SU3 files.
 Please note that this requires at least Go version 1.13, and uses Go Modules.
 
+Standard reseeds are distributed with the I2P packages. To get your reseed
+included, apply on [zzz.i2p](http://zzz.i2p).
+
 ## Dependencies
 
 `go`, `git`, and optionally `make` are required to build the project.
@@ -114,4 +117,4 @@ reseed-tools reseed --signer=you@mail.i2p --netdb=/home/i2p/.i2p/netDb --port=84
 ```
 
 - **Usage** [More examples can be found here.](EXAMPLES.md)
-- **Docker** [Eocker examples can be found here](DOCKER.md)
+- **Docker** [Docker examples can be found here](DOCKER.md)
