@@ -256,18 +256,21 @@ func reseedAction(c *cli.Context) {
 
 		// prompt to create tls keys if they don't exist?
 		auto := c.Bool("yes")
-		// use ACME?
-		acme := c.Bool("acme")
-		if acme {
-			acmeserver := c.String("acmeserver")
-			err := checkUseAcmeCert(tlsHost, signerID, acmeserver, &tlsCert, &tlsKey, auto)
-			if nil != err {
-				log.Fatalln(err)
-			}
-		} else {
-			err := checkOrNewTLSCert(tlsHost, &tlsCert, &tlsKey, auto)
-			if nil != err {
-				log.Fatalln(err)
+		ignore := c.Bool("ignore")
+		if !ignore {
+			// use ACME?
+			acme := c.Bool("acme")
+			if acme {
+				acmeserver := c.String("acmeserver")
+				err := checkUseAcmeCert(tlsHost, signerID, acmeserver, &tlsCert, &tlsKey, auto)
+				if nil != err {
+					log.Fatalln(err)
+				}
+			} else {
+				err := checkOrNewTLSCert(tlsHost, &tlsCert, &tlsKey, auto)
+				if nil != err {
+					log.Fatalln(err)
+				}
 			}
 		}
 
@@ -295,9 +298,12 @@ func reseedAction(c *cli.Context) {
 
 			// prompt to create tls keys if they don't exist?
 			auto := c.Bool("yes")
-			err := checkOrNewTLSCert(i2pTlsHost, &i2pTlsCert, &i2pTlsKey, auto)
-			if nil != err {
-				log.Fatalln(err)
+			ignore := c.Bool("trustProxy")
+			if !ignore {
+				err := checkOrNewTLSCert(i2pTlsHost, &i2pTlsCert, &i2pTlsKey, auto)
+				if nil != err {
+					log.Fatalln(err)
+				}
 			}
 		}
 	}
@@ -337,9 +343,12 @@ func reseedAction(c *cli.Context) {
 
 			// prompt to create tls keys if they don't exist?
 			auto := c.Bool("yes")
-			err := checkOrNewTLSCert(onionTlsHost, &onionTlsCert, &onionTlsKey, auto)
-			if nil != err {
-				log.Fatalln(err)
+			ignore := c.Bool("trustProxy")
+			if !ignore {
+				err := checkOrNewTLSCert(onionTlsHost, &onionTlsCert, &onionTlsKey, auto)
+				if nil != err {
+					log.Fatalln(err)
+				}
 			}
 		}
 	}
