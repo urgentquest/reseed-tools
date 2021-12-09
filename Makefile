@@ -182,7 +182,7 @@ jar: gojava
 release: version upload checkinstall upload-single-deb plugins upload-su3s upload-bin 
 
 version:
-	cat README.md | gothub release -s $(GITHUB_TOKEN) -u $(USER_GH) -r $(APP) -t v$(VERSION) -d -
+	cat README.md | gothub release -s $(GITHUB_TOKEN) -u $(USER_GH) -r $(APP) -t v$(VERSION) -d -; true
 
 delete-version:
 	gothub delete -s $(GITHUB_TOKEN) -u $(USER_GH) -r $(APP) -t v$(VERSION)
