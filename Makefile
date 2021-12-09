@@ -3,6 +3,7 @@ VERSION=0.2.5
 APP=reseed-tools
 USER_GH=eyedeekay
 CGO_ENABLED=0
+export CGO_ENABLED=0
 
 GOOS?=$(shell uname -s | tr A-Z a-z)
 GOARCH?="amd64"
