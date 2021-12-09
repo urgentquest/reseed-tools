@@ -27,6 +27,7 @@ func NewKeygenCommand() cli.Command {
 func keygenAction(c *cli.Context) {
 	signerID := c.String("signer")
 	tlsHost := c.String("tlsHost")
+	trustProxy := c.Bool("trustProxy")
 
 	if signerID == "" && tlsHost == "" {
 		fmt.Println("You must specify either --tlsHost or --signer")
@@ -40,10 +41,12 @@ func keygenAction(c *cli.Context) {
 		}
 	}
 
-	if tlsHost != "" {
-		if err := createTLSCertificate(tlsHost); nil != err {
-			fmt.Println(err)
-			return
+	if trustProxy {
+		if tlsHost != "" {
+			if err := createTLSCertificate(tlsHost); nil != err {
+				fmt.Println(err)
+				return
+			}
 		}
 	}
 }

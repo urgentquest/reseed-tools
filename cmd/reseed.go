@@ -257,7 +257,7 @@ func reseedAction(c *cli.Context) {
 		// prompt to create tls keys if they don't exist?
 		auto := c.Bool("yes")
 		ignore := c.Bool("ignore")
-		if ignore {
+		if !ignore {
 			// use ACME?
 			acme := c.Bool("acme")
 			if acme {
@@ -299,7 +299,7 @@ func reseedAction(c *cli.Context) {
 			// prompt to create tls keys if they don't exist?
 			auto := c.Bool("yes")
 			ignore := c.Bool("trustProxy")
-			if ignore {
+			if !ignore {
 				err := checkOrNewTLSCert(i2pTlsHost, &i2pTlsCert, &i2pTlsKey, auto)
 				if nil != err {
 					log.Fatalln(err)
@@ -344,7 +344,7 @@ func reseedAction(c *cli.Context) {
 			// prompt to create tls keys if they don't exist?
 			auto := c.Bool("yes")
 			ignore := c.Bool("trustProxy")
-			if ignore {
+			if !ignore {
 				err := checkOrNewTLSCert(onionTlsHost, &onionTlsCert, &onionTlsKey, auto)
 				if nil != err {
 					log.Fatalln(err)
@@ -410,7 +410,7 @@ func reseedAction(c *cli.Context) {
 			reseedP2P(c, reseeder)
 		}
 	}
-	if tlsHost != "" && tlsCert != "" && tlsKey != "" {
+	if !c.Bool("trustProxy") {
 		log.Printf("HTTPS server starting\n")
 		reseedHTTPS(c, tlsCert, tlsKey, reseeder)
 	} else {
