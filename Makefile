@@ -286,11 +286,11 @@ su3s: tmp/content tmp/lib
 		-signer=hankhill19580@gmail.com \
 		-version "$(VERSION)" \
 		-author=hankhill19580@gmail.com \
-		-autostart=true \
+		-autostart=false \
 		-clientname=reseed-tools-$(GOOS)-$(GOARCH) \
 		-command="reseed-tools-$(GOOS)-$(GOARCH) reseed --yes --signer=you@mail.i2p --netdb=\$$CONFIG/netDb" \
 		-consolename="Reseed Tools" \
-		-consoleurl="http://127.0.0.1:8443" \
+		-consoleurl="https://127.0.0.1:8443" \
 		-updateurl="http://idk.i2p/reseed-tools/reseed-tools-$(GOOS)-$(GOARCH).su3" \
 		-website="http://idk.i2p/reseed-tools/" \
 		-icondata="content/images/reseed-icon.png" \
