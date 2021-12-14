@@ -34,6 +34,36 @@ and via the github mirror at https://github.com/eyedeekay/reseed-tools/releases.
 These can be installed by adding them on the 
 [http://127.0.0.1:7657/configplugins](http://127.0.0.1:7657/configplugins).
 
+After installing the plugin, you should immediately edit the `clients.config`
+file in order to set your `--signer` email, which is used to name your keys.
+For example, change:
+
+```
+clientApp.0.main=net.i2p.app.CorrectedShellService
+clientApp.0.name=reseed-tools-linux-amd64
+clientApp.0.args=$PLUGIN/lib/reseed-tools-linux-amd64 -shellservice.name "reseed-tools-linux-amd64" -shellservice.displayname "Reseed Tools" reseed --yes --signer=you@mail.i2p --port=7671
+^ change this line
+clientApp.0.delay=86400
+clientApp.0.startOnLoad=true
+clientApp.0.classpath=$PLUGIN/lib/shellservice.jar
+```
+
+into:
+
+```
+clientApp.0.main=net.i2p.app.CorrectedShellService
+clientApp.0.name=reseed-tools-linux-amd64
+clientApp.0.args=$PLUGIN/lib/reseed-tools-linux-amd64 -shellservice.name "reseed-tools-linux-amd64" -shellservice.displayname "Reseed Tools" reseed --yes --signer=hankhill19580@gmail.com --port=7671
+^ fill in your email
+clientApp.0.delay=86400
+^ remove this line when you're done
+clientApp.0.startOnLoad=true
+clientApp.0.classpath=$PLUGIN/lib/shellservice.jar
+```
+
+This will allow the developers to contact you if your reseed has issues
+and authenticate your reseed.
+
 - darwin/amd64: [http://idk.i2p/reseed-tools/reseed-tools-darwin-amd64.su3](http://idk.i2p/reseed-tools/reseed-tools-darwin-amd64.su3)
 - darwin/arm64: [http://idk.i2p/reseed-tools/reseed-tools-darwin-arm64.su3](http://idk.i2p/reseed-tools/reseed-tools-darwin-arm64.su3)
 - linux/386: [http://idk.i2p/reseed-tools/reseed-tools-linux-386.su3](http://idk.i2p/reseed-tools/reseed-tools-linux-386.su3)
