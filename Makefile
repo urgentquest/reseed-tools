@@ -288,7 +288,7 @@ su3s: tmp/content tmp/lib
 		-signer=hankhill19580@gmail.com \
 		-version "$(VERSION)" \
 		-author=hankhill19580@gmail.com \
-		-autostart=false \
+		-autostart=true \
 		-clientname=reseed-tools-$(GOOS)-$(GOARCH) \
 		-command="reseed-tools-$(GOOS)-$(GOARCH) reseed --yes --signer=you@mail.i2p --port=$(PLUGIN_PORT)" \
 		-consolename="Reseed Tools" \
@@ -296,7 +296,7 @@ su3s: tmp/content tmp/lib
 		-updateurl="http://idk.i2p/reseed-tools/reseed-tools-$(GOOS)-$(GOARCH).su3" \
 		-website="http://idk.i2p/reseed-tools/" \
 		-icondata="content/images/reseed-icon.png" \
-		-delaystart="3" \
+		-delaystart="86400" \
 		-desc="`cat description-pak`" \
 		-exename=reseed-tools-$(GOOS)-$(GOARCH) \
 		-targetos="$(GOOS)" \
