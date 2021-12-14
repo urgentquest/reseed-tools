@@ -1,9 +1,11 @@
 
-VERSION=0.2.8
+VERSION=0.2.9
 APP=reseed-tools
 USER_GH=eyedeekay
 CGO_ENABLED=0
 export CGO_ENABLED=0
+PLUGIN_PORT=7671
+export PLUGIN_PORT=7671
 
 GOOS?=$(shell uname -s | tr A-Z a-z)
 GOARCH?="amd64"
@@ -288,9 +290,9 @@ su3s: tmp/content tmp/lib
 		-author=hankhill19580@gmail.com \
 		-autostart=false \
 		-clientname=reseed-tools-$(GOOS)-$(GOARCH) \
-		-command="reseed-tools-$(GOOS)-$(GOARCH) reseed --yes --signer=you@mail.i2p --netdb=\$$CONFIG/netDb" \
+		-command="reseed-tools-$(GOOS)-$(GOARCH) reseed --yes --signer=you@mail.i2p --port=$(PLUGIN_PORT)" \
 		-consolename="Reseed Tools" \
-		-consoleurl="https://127.0.0.1:8443" \
+		-consoleurl="https://127.0.0.1:$(PLUGIN_PORT)" \
 		-updateurl="http://idk.i2p/reseed-tools/reseed-tools-$(GOOS)-$(GOARCH).su3" \
 		-website="http://idk.i2p/reseed-tools/" \
 		-icondata="content/images/reseed-icon.png" \
