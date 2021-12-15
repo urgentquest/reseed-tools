@@ -2,6 +2,8 @@ package cmd
 
 import (
 	"context"
+	"strings"
+
 	//"flag"
 	"fmt"
 	"io/ioutil"
@@ -214,6 +216,16 @@ func LoadKeys(keysPath string, c *cli.Context) (i2pkeys.I2PKeys, error) {
 	}
 }
 
+// fileExists checks if a file exists and is not a directory before we
+// try using it to prevent further errors.
+func fileExists(filename string) bool {
+	info, err := os.Stat(filename)
+	if os.IsNotExist(err) {
+		return false
+	}
+	return !info.IsDir()
+}
+
 func reseedAction(c *cli.Context) {
 	netdbDir := c.String("netdb")
 	if netdbDir == "" {
@@ -225,6 +237,18 @@ func reseedAction(c *cli.Context) {
 	if signerID == "" || signerID == "you@mail.i2p" {
 		fmt.Println("--signer is required")
 		return
+	}
+	if !strings.Contains(signerID, "@") {
+		if !fileExists(signerID) {
+			fmt.Println("--signer must be an email address or a file containing an email address.")
+			return
+		}
+		bytes, err := ioutil.ReadFile(signerID)
+		if err != nil {
+			fmt.Println("--signer must be an email address or a file containing an email address.")
+			return
+		}
+		signerID = string(bytes)
 	}
 
 	var tlsCert, tlsKey string

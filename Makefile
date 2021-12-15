@@ -290,7 +290,7 @@ su3s: tmp/content tmp/lib
 		-author=hankhill19580@gmail.com \
 		-autostart=true \
 		-clientname=reseed-tools-$(GOOS)-$(GOARCH) \
-		-command="reseed-tools-$(GOOS)-$(GOARCH) reseed --yes --signer=you@mail.i2p --port=$(PLUGIN_PORT)" \
+		-command="reseed-tools-$(GOOS)-$(GOARCH) reseed --yes --signer=\$$PLUGIN/signer --port=$(PLUGIN_PORT)" \
 		-consolename="Reseed Tools" \
 		-consoleurl="https://127.0.0.1:$(PLUGIN_PORT)" \
 		-updateurl="http://idk.i2p/reseed-tools/reseed-tools-$(GOOS)-$(GOARCH).su3" \

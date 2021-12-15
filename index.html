@@ -16,24 +16,8 @@
 <p>Reseed-tools can be run as a user, as a freestanding service, or be installed as an I2P Plugin. It will attempt to configure itself automatically. You should make sure to set the <code>--signer</code> flag or the <code>RESEED_EMAIL</code> environment variable to configure your signing keys/contact info.</p>
 <h4 id="plugin-install-urls">Plugin install URL’s</h4>
 <p>Plugin releases are available inside of i2p at http://idk.i2p/reseed-tools/ and via the github mirror at https://github.com/eyedeekay/reseed-tools/releases. These can be installed by adding them on the <a href="http://127.0.0.1:7657/configplugins">http://127.0.0.1:7657/configplugins</a>.</p>
-<p>After installing the plugin, you should immediately edit the <code>clients.config</code> file in order to set your <code>--signer</code> email, which is used to name your keys. For example, change:</p>
-<pre><code>clientApp.0.main=net.i2p.app.CorrectedShellService
-clientApp.0.name=reseed-tools-linux-amd64
-clientApp.0.args=$PLUGIN/lib/reseed-tools-linux-amd64 -shellservice.name &quot;reseed-tools-linux-amd64&quot; -shellservice.displayname &quot;Reseed Tools&quot; reseed --yes --signer=you@mail.i2p --port=7671
-^ change this line
-clientApp.0.delay=86400
-clientApp.0.startOnLoad=true
-clientApp.0.classpath=$PLUGIN/lib/shellservice.jar</code></pre>
-<p>into:</p>
-<pre><code>clientApp.0.main=net.i2p.app.CorrectedShellService
-clientApp.0.name=reseed-tools-linux-amd64
-clientApp.0.args=$PLUGIN/lib/reseed-tools-linux-amd64 -shellservice.name &quot;reseed-tools-linux-amd64&quot; -shellservice.displayname &quot;Reseed Tools&quot; reseed --yes --signer=hankhill19580@gmail.com --port=7671
-^ fill in your email
-clientApp.0.delay=86400
-^ remove this line when you&#39;re done
-clientApp.0.startOnLoad=true
-clientApp.0.classpath=$PLUGIN/lib/shellservice.jar</code></pre>
-<p>This will allow the developers to contact you if your reseed has issues and authenticate your reseed.</p>
+<p>After installing the plugin, you should immediately edit the <code>$PLUGIN/signer</code> file in order to set your <code>--signer</code> email, which is used to name your keys. You can find the <code>$PLUGIN</code> directory in your I2P config directory, which is usually <code>$HOME/.i2p</code> on Unixes.</p>
+<p>This will allow the developers to contact you if your reseed has issues and will authenticate your reseed to the I2P routers that use it.</p>
 <ul>
 <li>darwin/amd64: <a href="http://idk.i2p/reseed-tools/reseed-tools-darwin-amd64.su3">http://idk.i2p/reseed-tools/reseed-tools-darwin-amd64.su3</a></li>
 <li>darwin/arm64: <a href="http://idk.i2p/reseed-tools/reseed-tools-darwin-arm64.su3">http://idk.i2p/reseed-tools/reseed-tools-darwin-arm64.su3</a></li>
