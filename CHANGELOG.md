@@ -1,3 +1,8 @@
+2021-12-14
+ * app.Version = "0.2.10"
+ * restart changelog
+ * fix websiteURL in plugin.config
+
 2019-04-21
  * app.Version = "0.1.7"
  * enabling TLS 1.3 *only*
