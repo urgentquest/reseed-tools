@@ -278,6 +278,7 @@ upload-single-su3:
 tmp/content:
 	mkdir -p tmp
 	cp -rv content tmp/content
+	echo "you@mail.i2p" > tmp/signer
 
 tmp/lib:
 	mkdir -p tmp/lib
