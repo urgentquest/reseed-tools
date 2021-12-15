@@ -1,5 +1,5 @@
 
-VERSION=0.2.10
+VERSION=0.2.11
 APP=reseed-tools
 USER_GH=eyedeekay
 CGO_ENABLED=0
@@ -296,7 +296,7 @@ su3s: tmp/content tmp/lib
 		-updateurl="http://idk.i2p/reseed-tools/reseed-tools-$(GOOS)-$(GOARCH).su3" \
 		-website="http://idk.i2p/reseed-tools/" \
 		-icondata="content/images/reseed-icon.png" \
-		-delaystart="86400" \
+		-delaystart="1" \
 		-desc="`cat description-pak`" \
 		-exename=reseed-tools-$(GOOS)-$(GOARCH) \
 		-targetos="$(GOOS)" \

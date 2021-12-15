@@ -222,7 +222,7 @@ func reseedAction(c *cli.Context) {
 	}
 
 	signerID := c.String("signer")
-	if signerID == "" {
+	if signerID == "" || signerID == "you@mail.i2p" {
 		fmt.Println("--signer is required")
 		return
 	}
