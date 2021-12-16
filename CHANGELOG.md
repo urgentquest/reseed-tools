@@ -1,3 +1,7 @@
+2021-12-16
+ * app.Version = "0.2.11"
+ * include license file in plugin
+
 2021-12-14
  * app.Version = "0.2.10"
  * restart changelog
