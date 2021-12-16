@@ -284,7 +284,10 @@ tmp/lib:
 	mkdir -p tmp/lib
 	cp "$(HOME)/Workspace/GIT_WORK/i2p.i2p/build/shellservice.jar" tmp/lib/shellservice.jar
 
-su3s: tmp/content tmp/lib
+tmp/LICENSE:
+	cp LICENSE.md tmp/LICENSE
+
+su3s: tmp/content tmp/lib tmp/LICENSE
 	i2p.plugin.native -name=reseed-tools-$(GOOS)-$(GOARCH) \
 		-signer=hankhill19580@gmail.com \
 		-version "$(VERSION)" \
