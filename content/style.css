@@ -70,3 +70,8 @@ img {
 .link-button:active {
 	color:red;
 }
+
+figure > img {
+    max-width: 35%;
+    display: inline;
+}
