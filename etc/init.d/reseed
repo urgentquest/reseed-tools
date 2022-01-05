@@ -19,15 +19,15 @@ fi
 RUNOPTS=" reseed --yes=true --netdb=$NETDBDIR $MORE_OPTIONS "
 
 start() {
-    start-stop-daemon --user $RUNAS --chuid $RUNAS --exec $SCRIPT --chdir $RUNDIR --make-pidfile --pidfile $RUNDIR/reseed.pid --start -- $RUNOPTS
+    start-stop-daemon --background --user $RUNAS --chuid $RUNAS --exec $SCRIPT --chdir $RUNDIR --make-pidfile --pidfile $RUNDIR/reseed.pid --start -- $RUNOPTS
 }
 
 stop() {
-    start-stop-daemon --user $RUNAS --exec $SCRIPT --chdir $RUNDIR --remove-pidfile --pidfile $RUNDIR/reseed.pid --stop
+    start-stop-daemon --background --user $RUNAS --exec $SCRIPT --chdir $RUNDIR --remove-pidfile --pidfile $RUNDIR/reseed.pid --stop
 }
 
 status() {
-    start-stop-daemon --user $RUNAS --exec $SCRIPT --chdir $RUNDIR --remove-pidfile --pidfile $RUNDIR/reseed.pid --status
+    start-stop-daemon --background --user $RUNAS --exec $SCRIPT --chdir $RUNDIR --pidfile $RUNDIR/reseed.pid --status
 }
 
 restart() {
