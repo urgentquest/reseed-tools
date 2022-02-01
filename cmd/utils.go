@@ -347,6 +347,10 @@ func createSigningCertificate(signerID string) error {
 }
 
 func createTLSCertificate(host string) error {
+	return CreateTLSCertificate(host)
+}
+
+func CreateTLSCertificate(host string) error {
 	fmt.Println("Generating TLS keys. This may take a minute...")
 	priv, err := ecdsa.GenerateKey(elliptic.P384(), rand.Reader)
 	if err != nil {

@@ -32,11 +32,11 @@ func getDefaultSigner() string {
 	if intentionalsigner == "" {
 		adminsigner := os.Getenv("MAILTO")
 		if adminsigner != "" {
-			return adminsigner
+			return strings.Replace(adminsigner, "\n", "", -1)
 		}
 		return ""
 	}
-	return intentionalsigner
+	return strings.Replace(intentionalsigner, "\n", "", -1)
 }
 
 func getHostName() string {
@@ -44,7 +44,7 @@ func getHostName() string {
 	if hostname == "" {
 		hostname, _ = os.Hostname()
 	}
-	return hostname
+	return strings.Replace(hostname, "\n", "", -1)
 }
 
 func NewReseedCommand() cli.Command {

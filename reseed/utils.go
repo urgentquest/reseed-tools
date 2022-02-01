@@ -34,8 +34,16 @@ func SignerFilename(signer string) string {
 }
 
 func NewTLSCertificate(host string, priv *ecdsa.PrivateKey) ([]byte, error) {
+	return NewTLSCertificateAltNames(priv, host)
+}
+
+func NewTLSCertificateAltNames(priv *ecdsa.PrivateKey, hosts ...string) ([]byte, error) {
 	notBefore := time.Now()
 	notAfter := notBefore.Add(5 * 365 * 24 * time.Hour)
+	host := ""
+	if len(hosts) > 0 {
+		host = hosts[0]
+	}
 
 	serialNumberLimit := new(big.Int).Lsh(big.NewInt(1), 128)
 	serialNumber, err := rand.Int(rand.Reader, serialNumberLimit)
@@ -61,9 +69,10 @@ func NewTLSCertificate(host string, priv *ecdsa.PrivateKey) ([]byte, error) {
 		ExtKeyUsage:           []x509.ExtKeyUsage{x509.ExtKeyUsageServerAuth},
 		BasicConstraintsValid: true,
 		IsCA:                  true,
+		DNSNames:              hosts[1:],
 	}
 
-	hosts := strings.Split(host, ",")
+	hosts = strings.Split(host, ",")
 	for _, h := range hosts {
 		if ip := net.ParseIP(h); ip != nil {
 			template.IPAddresses = append(template.IPAddresses, ip)
