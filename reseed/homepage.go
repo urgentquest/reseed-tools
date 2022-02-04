@@ -88,9 +88,23 @@ func (srv *Server) HandleARealBrowser(w http.ResponseWriter, r *http.Request) {
 		HandleAFile(w, "", "script.js")
 	default:
 		image := strings.Replace(r.URL.Path, "/", "", -1)
+		log.Printf("PAGE CHECK: %s", image)
 		if strings.HasPrefix(image, "images") {
 			w.Header().Set("Content-Type", "image/png")
 			HandleAFile(w, "images", strings.TrimPrefix(strings.TrimPrefix(r.URL.Path, "/"), "images"))
+		} else if strings.HasPrefix(image, "ping") {
+			successes := PingEverybody()
+			w.Header().Set("Content-Type", "text/html")
+			w.Write([]byte("<html><body><h1>PING RESULTS</h1><ul>"))
+			for _, success := range successes {
+				w.Write([]byte("<li>" + success + "</li>"))
+			}
+			w.Write([]byte("</ul></body></html>"))
+		} else if strings.HasPrefix(image, "readout") {
+			w.Header().Set("Content-Type", "text/html")
+			w.Write([]byte(header))
+			ReadOut(w)
+			w.Write([]byte(footer))
 		} else {
 			w.Header().Set("Content-Type", "text/html")
 			w.Write([]byte(header))
@@ -101,6 +115,7 @@ func (srv *Server) HandleARealBrowser(w http.ResponseWriter, r *http.Request) {
 			Reseed
 			</button>
 			</form></li></ul>`))
+			ReadOut(w)
 			w.Write([]byte(footer))
 		}
 	}
@@ -108,7 +123,7 @@ func (srv *Server) HandleARealBrowser(w http.ResponseWriter, r *http.Request) {
 
 func HandleAFile(w http.ResponseWriter, dirPath, file string) {
 	file = filepath.Join(dirPath, file)
-	if _, prs := CachedDataPages[file]; prs == false {
+	if _, prs := CachedDataPages[file]; !prs {
 		path := filepath.Join(BaseContentPath, file)
 		f, err := ioutil.ReadFile(path)
 		if err != nil {
@@ -123,7 +138,7 @@ func HandleAFile(w http.ResponseWriter, dirPath, file string) {
 }
 
 func HandleALocalizedFile(w http.ResponseWriter, dirPath string) {
-	if _, prs := CachedLanguagePages[dirPath]; prs == false {
+	if _, prs := CachedLanguagePages[dirPath]; !prs {
 		dir := filepath.Join(BaseContentPath, "lang", dirPath)
 		files, err := ioutil.ReadDir(dir)
 		if err != nil {
