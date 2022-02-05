@@ -88,18 +88,12 @@ func (srv *Server) HandleARealBrowser(w http.ResponseWriter, r *http.Request) {
 		HandleAFile(w, "", "script.js")
 	default:
 		image := strings.Replace(r.URL.Path, "/", "", -1)
-		log.Printf("PAGE CHECK: %s", image)
 		if strings.HasPrefix(image, "images") {
 			w.Header().Set("Content-Type", "image/png")
 			HandleAFile(w, "images", strings.TrimPrefix(strings.TrimPrefix(r.URL.Path, "/"), "images"))
 		} else if strings.HasPrefix(image, "ping") {
-			successes := PingEverybody()
-			w.Header().Set("Content-Type", "text/html")
-			w.Write([]byte("<html><body><h1>PING RESULTS</h1><ul>"))
-			for _, success := range successes {
-				w.Write([]byte("<li>" + success + "</li>"))
-			}
-			w.Write([]byte("</ul></body></html>"))
+			PingEverybody()
+			http.Redirect(w, r, "/readout", http.StatusFound)
 		} else if strings.HasPrefix(image, "readout") {
 			w.Header().Set("Content-Type", "text/html")
 			w.Write([]byte(header))
