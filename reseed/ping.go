@@ -104,7 +104,7 @@ func ReadOut(w http.ResponseWriter) {
 	pinglist, err := GetPingFiles()
 	if err == nil {
 		fmt.Fprintf(w, "<h3>Reseed Server Statuses</h3>")
-		fmt.Fprintf(w, "<p>This feature is experimental and may not always provide accurate results.</p>")
+		fmt.Fprintf(w, "<div><p>This feature is experimental and may not always provide accurate results.</p></div>")
 		fmt.Fprintf(w, "</div><p><ul>")
 		for _, file := range pinglist {
 			ping, err := ioutil.ReadFile(file)
