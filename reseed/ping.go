@@ -84,11 +84,12 @@ func PingEverybody() []string {
 // Get a list of all files ending in ping in the BaseContentPath
 func GetPingFiles() ([]string, error) {
 	var files []string
+	date := time.Now().Format("2006-01-02")
 	err := filepath.Walk(BaseContentPath, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
 			return err
 		}
-		if strings.HasSuffix(path, ".ping") {
+		if strings.HasSuffix(path, ".ping") && strings.Contains(path, date) {
 			files = append(files, path)
 		}
 		return nil
