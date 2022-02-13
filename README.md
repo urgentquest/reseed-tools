@@ -75,7 +75,12 @@ Debian users who are running I2P as a system service must also run the
 the I2P service's netDb directory. On Debian and Ubuntu, that user is `i2psvc`
 and the netDb directory is: `/var/lib/i2p/i2p-config/netDb`.
 
-##### Systemd Service
+##### Service Integration
+
+Support for running as a system service as part of the reseed package
+is new. PR's that improve integration are welcome.
+
+###### Systemd Service
 
 A systemd service is provided which should work with the I2P Debian package
 when reseed-tools is installed in `/usr/bin/reseed-tools`. If you install with
@@ -93,7 +98,7 @@ this you should edit the `/etc/systemd/system/reseed.d/reseed.service`.
 - To reload the systemd services: `sudo systemctl daemon-reload`
 - To view the status/logs: `sudo journalctl -u reseed.service`
 
-##### SysV Service
+###### SysV Service
 
 An initscript is also provided. The initscript, unlike the systemd service,
 cannot schedule itself to restart. You should restart the service roughly once
