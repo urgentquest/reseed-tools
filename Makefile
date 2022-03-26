@@ -282,7 +282,7 @@ tmp/content:
 
 tmp/lib:
 	mkdir -p tmp/lib
-	cp "$(HOME)/build/shellservice.jar" tmp/lib/shellservice.jar
+#	cp "$(HOME)/build/shellservice.jar" tmp/lib/shellservice.jar
 
 tmp/LICENSE:
 	cp LICENSE.md tmp/LICENSE
