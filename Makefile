@@ -287,9 +287,12 @@ tmp/lib:
 tmp/LICENSE:
 	cp LICENSE.md tmp/LICENSE
 
+SIGNER_DIR=$(HOME)/i2p-go-keys/
+
 su3s: tmp/content tmp/lib tmp/LICENSE
 	i2p.plugin.native -name=reseed-tools-$(GOOS)-$(GOARCH) \
 		-signer=hankhill19580@gmail.com \
+		-signer-dir=$(SIGNER_DIR) \
 		-version "$(VERSION)" \
 		-author=hankhill19580@gmail.com \
 		-autostart=true \
