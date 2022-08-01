@@ -14,8 +14,8 @@ import (
 	"time"
 
 	"github.com/cretz/bine/tor"
+	"github.com/eyedeekay/i2pkeys"
 	"github.com/eyedeekay/sam3"
-	"github.com/eyedeekay/sam3/i2pkeys"
 	"github.com/gorilla/handlers"
 	"github.com/justinas/alice"
 	"github.com/libp2p/go-libp2p-core/host"
