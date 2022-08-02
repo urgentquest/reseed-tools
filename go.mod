@@ -7,7 +7,7 @@ require (
 	github.com/eyedeekay/checki2cp v0.0.21
 	github.com/eyedeekay/go-i2pd v0.0.0-20220213070306-9807541b2dfc
 	github.com/eyedeekay/i2pkeys v0.0.0-20220310055120-b97558c06ac8
-	github.com/eyedeekay/sam3 v0.32.32
+	github.com/eyedeekay/sam3 v0.33.2
 	github.com/go-acme/lego/v4 v4.3.1
 	github.com/gorilla/handlers v1.5.1
 	github.com/justinas/alice v1.2.0

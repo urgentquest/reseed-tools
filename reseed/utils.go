@@ -19,8 +19,16 @@ type KeyStore struct {
 }
 
 func (ks *KeyStore) ReseederCertificate(signer []byte) (*x509.Certificate, error) {
+	return ks.reseederCertificate("reseed", signer)
+}
+
+func (ks *KeyStore) DirReseederCertificate(dir string, signer []byte) (*x509.Certificate, error) {
+	return ks.reseederCertificate(dir, signer)
+}
+
+func (ks *KeyStore) reseederCertificate(dir string, signer []byte) (*x509.Certificate, error) {
 	certFile := filepath.Base(SignerFilename(string(signer)))
-	certString, err := ioutil.ReadFile(filepath.Join(ks.Path, "reseed", certFile))
+	certString, err := ioutil.ReadFile(filepath.Join(ks.Path, dir, certFile))
 	if nil != err {
 		return nil, err
 	}
