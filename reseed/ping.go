@@ -56,7 +56,7 @@ func PingWriteContent(url string) error {
 	return nil
 }
 
-//TODO: make this a configuration option
+// TODO: make this a configuration option
 var AllReseeds = []string{
 	"https://banana.incognet.io/",
 	"https://i2p.novg.net/",

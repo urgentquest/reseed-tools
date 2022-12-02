@@ -29,4 +29,4 @@ replace github.com/libp2p/go-libp2p-gostream => github.com/libp2p/go-libp2p-gost
 
 replace github.com/libp2p/go-libp2p-http => github.com/libp2p/go-libp2p-http v0.2.0
 
-replace github.com/eyedeekay/go-i2pd v0.0.0-20220213070306-9807541b2dfc => ./go-i2pd
+//replace github.com/eyedeekay/go-i2pd v0.0.0-20220213070306-9807541b2dfc => ./go-i2pd

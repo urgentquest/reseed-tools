@@ -167,6 +167,16 @@ func NewReseedCommand() cli.Command {
 				Value: "https://acme-staging-v02.api.letsencrypt.org/directory",
 				Usage: "Use this server to issue a certificate with the ACME protocol",
 			},
+			cli.IntFlag{
+				Name:  "ratelimit",
+				Value: 4,
+				Usage: "Maximum number of reseed bundle requests per-IP address, per-hour.",
+			},
+			cli.IntFlag{
+				Name:  "ratelimitweb",
+				Value: 40,
+				Usage: "Maxiumum number of web-visits per-IP address, per-hour",
+			},
 		},
 	}
 }
@@ -446,6 +456,8 @@ func reseedAction(c *cli.Context) {
 func reseedHTTPS(c *cli.Context, tlsCert, tlsKey string, reseeder *reseed.ReseederImpl) {
 	server := reseed.NewServer(c.String("prefix"), c.Bool("trustProxy"))
 	server.Reseeder = reseeder
+	server.RequestRateLimit = c.Int("ratelimit")
+	server.WebRateLimit = c.Int("ratelimitweb")
 	server.Addr = net.JoinHostPort(c.String("ip"), c.String("port"))
 
 	// load a blacklist
@@ -474,6 +486,8 @@ func reseedHTTPS(c *cli.Context, tlsCert, tlsKey string, reseeder *reseed.Reseed
 
 func reseedHTTP(c *cli.Context, reseeder *reseed.ReseederImpl) {
 	server := reseed.NewServer(c.String("prefix"), c.Bool("trustProxy"))
+	server.RequestRateLimit = c.Int("ratelimit")
+	server.WebRateLimit = c.Int("ratelimitweb")
 	server.Reseeder = reseeder
 	server.Addr = net.JoinHostPort(c.String("ip"), c.String("port"))
 
@@ -624,6 +638,8 @@ func reseedOnion(c *cli.Context, onionTlsCert, onionTlsKey string, reseeder *res
 
 func reseedI2P(c *cli.Context, i2pTlsCert, i2pTlsKey string, i2pIdentKey i2pkeys.I2PKeys, reseeder *reseed.ReseederImpl) {
 	server := reseed.NewServer(c.String("prefix"), c.Bool("trustProxy"))
+	server.RequestRateLimit = c.Int("ratelimit")
+	server.WebRateLimit = c.Int("ratelimitweb")
 	server.Reseeder = reseeder
 	server.Addr = net.JoinHostPort(c.String("ip"), c.String("port"))
 

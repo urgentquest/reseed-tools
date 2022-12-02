@@ -31,14 +31,16 @@ const (
 
 type Server struct {
 	*http.Server
-	I2P           *sam3.SAM
-	I2PSession    *sam3.StreamSession
-	I2PListener   *sam3.StreamListener
-	I2PKeys       i2pkeys.I2PKeys
-	Reseeder      *ReseederImpl
-	Blacklist     *Blacklist
-	OnionListener *tor.OnionService
-	acceptables   map[string]time.Time
+	I2P              *sam3.SAM
+	I2PSession       *sam3.StreamSession
+	I2PListener      *sam3.StreamListener
+	I2PKeys          i2pkeys.I2PKeys
+	Reseeder         *ReseederImpl
+	Blacklist        *Blacklist
+	OnionListener    *tor.OnionService
+	RequestRateLimit int
+	WebRateLimit     int
+	acceptables      map[string]time.Time
 }
 
 func NewServer(prefix string, trustProxy bool) *Server {
