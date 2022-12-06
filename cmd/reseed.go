@@ -290,7 +290,7 @@ func reseedAction(c *cli.Context) {
 
 		// prompt to create tls keys if they don't exist?
 		auto := c.Bool("yes")
-		ignore := c.Bool("ignore")
+		ignore := c.Bool("trustProxy")
 		if !ignore {
 			// use ACME?
 			acme := c.Bool("acme")
