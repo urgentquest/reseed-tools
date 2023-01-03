@@ -14,30 +14,31 @@ export RESEED_EMAIL=\""
 
 mkdir -p /etc/systemd/system/reseed.d/
 
-if [ -f /usr/bin/zenity ]; then
-    RESEED_EMAIL=$(zenity --entry --title "Reseed Configuration" --text "$RESEED_MESSAGE" 10 30 3>&1 1>&2 2>&3)
-    if [ -d /etc/systemd/system/ ]; then
-        echo "$RESEED_CONF$RESEED_EMAIL\"" > /etc/systemd/system/reseed.d/reseed.conf
-        rm -f /etc/default/reseed /etc/init.d/reseed
-    else
-        echo "$RESEED_DEFAULT$RESEED_EMAIL\"" > /etc/default/reseed
-    fi
-    exit 0
+INIT=$(file /sbin/init 2>&1 | grep systemd)
+if [ ! -z "$INIT" ]; then
+    rm -f /etc/default/reseed /etc/init.d/reseed
 fi
 
 if [ -t 1 ] ; then 
-    echo "proceeding with terminal"; 
+    if [ -f /usr/bin/whiptail ]; then    
+        RESEED_EMAIL=$(whiptail --inputbox "$RESEED_MESSAGE" 10 30 3>&1 1>&2 2>&3)
+        if [ -d /etc/systemd/system/ ]; then
+            echo "$RESEED_CONF$RESEED_EMAIL\"" | tee /etc/systemd/system/reseed.d/reseed.conf
+        else
+            echo "$RESEED_DEFAULT$RESEED_EMAIL\"" | tee /etc/default/reseed
+        fi
+        exit 0
+    fi
 else 
-    exit 0
+    if [ -f /usr/bin/zenity ]; then
+        RESEED_EMAIL=$(zenity --entry --title "Reseed Configuration" --text "$RESEED_MESSAGE" 10 30 3>&1 1>&2 2>&3)
+        if [ -d /etc/systemd/system/ ]; then
+            echo "$RESEED_CONF$RESEED_EMAIL\"" | tee /etc/systemd/system/reseed.d/reseed.conf
+        else
+            echo "$RESEED_DEFAULT$RESEED_EMAIL\"" | tee /etc/default/reseed
+        fi
+        exit 0
+    fi
 fi
 
-if [ -f /usr/bin/whiptail ]; then    
-    RESEED_EMAIL=$(whiptail --inputbox "$RESEED_MESSAGE" 10 30 3>&1 1>&2 2>&3)
-    if [ -d /etc/systemd/system/ ]; then
-        echo "$RESEED_CONF$RESEED_EMAIL\"" > /etc/systemd/system/reseed.d/reseed.conf
-        rm -f /etc/default/reseed /etc/init.d/reseed
-    else
-        echo "$RESEED_DEFAULT$RESEED_EMAIL\"" > /etc/default/reseed
-    fi
-    exit 0
-fi
+
