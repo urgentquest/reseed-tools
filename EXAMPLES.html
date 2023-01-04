@@ -7,6 +7,7 @@
     <meta name="description" content="reseed-tools" />
     <meta name="keywords" content="master" />
     <link rel="stylesheet" type="text/css" href="style.css" />
+    <link rel="stylesheet" type="text/css" href="showhider.css" />
   </head>
   <body>
     <div id="navbar">
@@ -16,6 +17,11 @@
       <div id="shownav">
         <div id="hidenav">
           <ul>
+            <li>
+              <a href="..">
+                Up one level ^
+              </a>
+            </li>
             <li>
               <a href="index.html">
                 index
@@ -36,6 +42,16 @@
                 EXAMPLES
               </a>
             </li>
+            <li>
+              <a href="content/index.html">
+                content/index.html
+              </a>
+            </li>
+            <li>
+              <a href="index.html">
+                index.html
+              </a>
+            </li>
           </ul>
           <br>
           <a href="#hidenav">
@@ -44,6 +60,9 @@
         </div>
       </div>
     </div>
+    <a id="returnhome" href="/">
+      /
+    </a>
     <h2>
       Example Commands:
     </h2>
@@ -62,7 +81,7 @@
     </h3>
     <ul>
       <li>
-        This one isn’t working yet, I’ll get to it eventually, I’ve got a cooler idea now.
+        This one isn&rsquo;t working yet, I&rsquo;ll get to it eventually, I&rsquo;ve got a cooler idea now.
         <code>
           ./reseed-tools reseed --signer=you@mail.i2p --netdb=/home/i2p/.i2p/netDb --github --ghrepo=reseed-tools --ghuser=eyedeekay
         </code>
@@ -88,6 +107,20 @@
     </h3>
     <pre><code>./reseed-tools reseed --tlsHost=your-domain.tld --signer=you@mail.i2p --netdb=/home/i2p/.i2p/netDb --onion --p2p --littleboss=start
 </code></pre>
+    <div id="sourcecode">
+      <span id="sourcehead">
+        <strong>
+          Get the source code:
+        </strong>
+      </span>
+      <ul>
+        <li>
+          <a href="https://i2pgit.org/idk/reseed-tools">
+            Source Repository: (https://i2pgit.org/idk/reseed-tools)
+          </a>
+        </li>
+      </ul>
+    </div>
     <div>
       <a href="#show">
         Show license
@@ -125,6 +158,7 @@ THE SOFTWARE.
     </div>
     <div>
       <a href="https://geti2p.net/">
+        <img src="i2plogo.png"></img>
         I2P
       </a>
     </div>

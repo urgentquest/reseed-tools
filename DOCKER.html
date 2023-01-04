@@ -7,6 +7,7 @@
     <meta name="description" content="reseed-tools" />
     <meta name="keywords" content="master" />
     <link rel="stylesheet" type="text/css" href="style.css" />
+    <link rel="stylesheet" type="text/css" href="showhider.css" />
   </head>
   <body>
     <div id="navbar">
@@ -16,6 +17,11 @@
       <div id="shownav">
         <div id="hidenav">
           <ul>
+            <li>
+              <a href="..">
+                Up one level ^
+              </a>
+            </li>
             <li>
               <a href="index.html">
                 index
@@ -36,6 +42,16 @@
                 EXAMPLES
               </a>
             </li>
+            <li>
+              <a href="content/index.html">
+                content/index.html
+              </a>
+            </li>
+            <li>
+              <a href="index.html">
+                index.html
+              </a>
+            </li>
           </ul>
           <br>
           <a href="#hidenav">
@@ -44,6 +60,9 @@
         </div>
       </div>
     </div>
+    <a id="returnhome" href="/">
+      /
+    </a>
     <h3>
       Docker
     </h3>
@@ -66,7 +85,7 @@
     </p>
     <p>
       Please note that Docker is not currently compatible with .onion reseeds unless
-      you pass the –network=host tag.
+      you pass the &ndash;network=host tag.
     </p>
     <h4>
       If I2P is running as your user, do this:
@@ -105,7 +124,7 @@
         i2psvc
       </code>
       . This
-      is the case for all installs where Debian’s Advanced Packaging Tool(apt) was
+      is the case for all installs where Debian&rsquo;s Advanced Packaging Tool(apt) was
       used to peform the task. If you used
       <code>
         apt-get install
@@ -124,6 +143,20 @@
         eyedeekay/reseed \
             --signer $YOUR_EMAIL_HERE
 </code></pre>
+    <div id="sourcecode">
+      <span id="sourcehead">
+        <strong>
+          Get the source code:
+        </strong>
+      </span>
+      <ul>
+        <li>
+          <a href="https://i2pgit.org/idk/reseed-tools">
+            Source Repository: (https://i2pgit.org/idk/reseed-tools)
+          </a>
+        </li>
+      </ul>
+    </div>
     <div>
       <a href="#show">
         Show license
@@ -161,6 +194,7 @@ THE SOFTWARE.
     </div>
     <div>
       <a href="https://geti2p.net/">
+        <img src="i2plogo.png"></img>
         I2P
       </a>
     </div>

@@ -7,6 +7,7 @@
     <meta name="description" content="reseed-tools" />
     <meta name="keywords" content="master" />
     <link rel="stylesheet" type="text/css" href="style.css" />
+    <link rel="stylesheet" type="text/css" href="showhider.css" />
   </head>
   <body>
     <div id="navbar">
@@ -16,6 +17,11 @@
       <div id="shownav">
         <div id="hidenav">
           <ul>
+            <li>
+              <a href="..">
+                Up one level ^
+              </a>
+            </li>
             <li>
               <a href="index.html">
                 index
@@ -36,6 +42,16 @@
                 EXAMPLES
               </a>
             </li>
+            <li>
+              <a href="content/index.html">
+                content/index.html
+              </a>
+            </li>
+            <li>
+              <a href="index.html">
+                index.html
+              </a>
+            </li>
           </ul>
           <br>
           <a href="#hidenav">
@@ -44,20 +60,23 @@
         </div>
       </div>
     </div>
+    <a id="returnhome" href="/">
+      /
+    </a>
     <p>
       2021-12-16
-      * app.Version = “0.2.11”
+      * app.Version = &ldquo;0.2.11&rdquo;
       * include license file in plugin
     </p>
     <p>
       2021-12-14
-      * app.Version = “0.2.10”
+      * app.Version = &ldquo;0.2.10&rdquo;
       * restart changelog
       * fix websiteURL in plugin.config
     </p>
     <p>
       2019-04-21
-      * app.Version = “0.1.7”
+      * app.Version = &ldquo;0.1.7&rdquo;
       * enabling TLS 1.3
       <em>
         only
@@ -66,42 +85,56 @@
     <p>
       2016-12-21
       * deactivating previous random time delta, makes only sense when patching ri too
-      * app.Version = “0.1.6”
+      * app.Version = &ldquo;0.1.6&rdquo;
     </p>
     <p>
       2016-10-09
       * seed the math random generator with time.Now().UnixNano()
       * added 6h+6h random time delta at su3-age to increase anonymity
-      * app.Version = “0.1.5”
+      * app.Version = &ldquo;0.1.5&rdquo;
     </p>
     <p>
       2016-05-15
       * README.md updated
       * allowed routerInfos age increased from 96 to 192 hours
-      * app.Version = “0.1.4”
+      * app.Version = &ldquo;0.1.4&rdquo;
     </p>
     <p>
       2016-03-05
-      * app.Version = “0.1.3”
+      * app.Version = &ldquo;0.1.3&rdquo;
       * CRL creation added
     </p>
     <p>
       2016-01-31
       * allowed TLS ciphers updated (hardened)
-      * TLS certificate generation: RSA 4096 –&gt; ECDSAWithSHA512 384bit secp384r1
+      * TLS certificate generation: RSA 4096 &ndash;&gt; ECDSAWithSHA512 384bit secp384r1
       * ECDHE handshake: only CurveP384 + CurveP521, default CurveP256 removed
-      * TLS certificate valid: 2y –&gt; 5y
-      * throttled.PerDay(4) –&gt; PerHour(4), to enable limited testing
-      * su3 RebuildInterval: 24h –&gt; 90h, higher anonymity for the running i2p-router
-      * numRi per su3 file: 75 –&gt; 77
+      * TLS certificate valid: 2y &ndash;&gt; 5y
+      * throttled.PerDay(4) &ndash;&gt; PerHour(4), to enable limited testing
+      * su3 RebuildInterval: 24h &ndash;&gt; 90h, higher anonymity for the running i2p-router
+      * numRi per su3 file: 75 &ndash;&gt; 77
     </p>
     <p>
       2016-01
       * fork from
-      <a href="https://i2pgit.org/idk/reseed-tools" rel="nofollow">
+      <a href="https://i2pgit.org/idk/reseed-tools">
         https://i2pgit.org/idk/reseed-tools
       </a>
     </p>
+    <div id="sourcecode">
+      <span id="sourcehead">
+        <strong>
+          Get the source code:
+        </strong>
+      </span>
+      <ul>
+        <li>
+          <a href="https://i2pgit.org/idk/reseed-tools">
+            Source Repository: (https://i2pgit.org/idk/reseed-tools)
+          </a>
+        </li>
+      </ul>
+    </div>
     <div>
       <a href="#show">
         Show license
@@ -139,6 +172,7 @@ THE SOFTWARE.
     </div>
     <div>
       <a href="https://geti2p.net/">
+        <img src="i2plogo.png"></img>
         I2P
       </a>
     </div>
