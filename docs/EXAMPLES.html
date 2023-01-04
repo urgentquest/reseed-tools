@@ -67,6 +67,11 @@
               </a>
             </li>
             <li>
+              <a href="TLS.html">
+                TLS
+              </a>
+            </li>
+            <li>
               <a href="index.html">
                 index.html
               </a>
@@ -96,17 +101,6 @@
     <pre><code>./reseed-tools reseed --signer=you@mail.i2p --netdb=/home/i2p/.i2p/netDb --p2p
 </code></pre>
     <h3>
-      Without a webserver, standalone, upload a single signed .su3 to github
-    </h3>
-    <ul>
-      <li>
-        This one isn&rsquo;t working yet, I&rsquo;ll get to it eventually, I&rsquo;ve got a cooler idea now.
-        <code>
-          ./reseed-tools reseed --signer=you@mail.i2p --netdb=/home/i2p/.i2p/netDb --github --ghrepo=reseed-tools --ghuser=eyedeekay
-        </code>
-      </li>
-    </ul>
-    <h3>
       Without a webserver, standalone, in-network reseed
     </h3>
     <pre><code>./reseed-tools reseed --signer=you@mail.i2p --netdb=/home/i2p/.i2p/netDb --i2p
@@ -120,11 +114,6 @@
       Without a webserver, standalone, Regular TLS, OnionV3 with TLS, and LibP2P
     </h3>
     <pre><code>./reseed-tools reseed --tlsHost=your-domain.tld --signer=you@mail.i2p --netdb=/home/i2p/.i2p/netDb --onion --p2p
-</code></pre>
-    <h3>
-      Without a webserver, standalone, Regular TLS, OnionV3 with TLS, I2P In-Network reseed, and LibP2P, self-supervising
-    </h3>
-    <pre><code>./reseed-tools reseed --tlsHost=your-domain.tld --signer=you@mail.i2p --netdb=/home/i2p/.i2p/netDb --onion --p2p --littleboss=start
 </code></pre>
     <div id="sourcecode">
       <span id="sourcehead">

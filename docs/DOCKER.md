@@ -8,7 +8,7 @@ and group inside the container as I2P.
 
 When you run a reseed under Docker in this fashion, it will automatically
 generate a self-signed certificate for your reseed server in a Docker volume
-mamed reseed-keys. *Back up this directory*, if it is lost it is impossible
+named reseed-keys. *Back up this directory*, if it is lost it is impossible
 to reproduce.
 
 Please note that Docker is not currently compatible with .onion reseeds unless

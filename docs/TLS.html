@@ -88,172 +88,106 @@
       /
     </a>
     <h1>
-      Configure an I2P Reseed Server Very Rapidly on Debian and Ubuntu
+      TLS Configuration for your Reseed Server
     </h1>
     <p>
-      It is possible to easily and automatically configure a reseed server
-      with a self-signed certificate on any Debian-based operating system,
-      including Ubuntu and it&rsquo;s downstreams. This is achieved using the
+      By default,
       <code>
-        checkinstall
+        reseed-tools
       </code>
-      tool to set up the software dependencies and the operating system to
-      run the
+      will generate self-signed certificates for your reseed service.
+      This is so that it can use TLS by default, and so that it can offer self-signed certificates when operating in
       <code>
-        I2P
+        .onion
       </code>
-      service and the
+      mode.
+      It is also possible to configure
       <code>
-        reseed
+        reseed-tools
       </code>
-      service.
+      without TLS certificates,
+      or to configure it to use ACME in order to automtically obtain a certificate from Let&rsquo;s Encrypt.
+    </p>
+    <p>
+      I2P does not rely on TLS Certificate Authorities to authenticate reseed servers.
+      Instead, the certificates are effectively &ldquo;Pinned&rdquo; in the software, after manual review by the I2P developers and the community.
+      It is acceptable to use self-signed certificates in this fashion because they are not summarily trusted.
+      A self-signed certificate which is not configured in the I2P software will not work when serving a reseed to an I2P router.
     </p>
     <h2>
-      Using a binary package
+      Disable TLS
     </h2>
     <p>
-      If you do not wish to build from source, you can use a binary package
-      from me. This package is built from this repo with the
+      If you do this, it is highly recommended that you use a reverse proxy such as
       <code>
-        make checkinstall
+        Apache2
       </code>
-      target and uploaded by me. I build it on an up-to-date Debian
+      or
       <code>
-        sid
+        nginx
       </code>
-      system
-      at tag time. It contains a static binary and files for configuring it as a
-      system service.
+      to provide a TLS connection to clients.
+      Alternatively, you could run
+      <code>
+        reseed-tools
+      </code>
+      as an
+      <code>
+        .onion
+      </code>
+      service and rely on Tor for encryption and authentication.
     </p>
-    <pre><code class="language-sh">
-wget https://github.com/eyedeekay/reseed-tools/releases/download/v0.2.30/reseed-tools_0.2.30-1_amd64.deb
-# Obtain the checksum from the release web page
-echo &quot;38941246e980dfc0456e066f514fc96a4ba25d25a7ef993abd75130770fa4d4d reseed-tools_0.2.30-1_amd64.deb&quot; &gt; SHA256SUMS
-sha256sums -c SHA256SUMS
-sudo apt-get install ./reseed-tools_0.2.30-1_amd64.deb
+    <p>
+      You can disable automatic TLS configuration with the
+      <code>
+        --trustProxy
+      </code>
+      flag like this:
+    </p>
+    <pre><code>
+./reseed-tools reseed --signer=you@mail.i2p --netdb=/home/i2p/.i2p/netDb --trustProxy
 </code></pre>
     <h2>
-      Building the
-      <code>
-        .deb
-      </code>
-      package from the source(Optional)
+      Setup Self-Signed TLS non-interactively
     </h2>
     <p>
-      If your software is too old, it&rsquo;s possible that the binary package I build will
-      not work for you. It&rsquo;s very easy to generate your own from the source code in this
-      repository.
-    </p>
-    <p>
-      \
-      <strong>
-        1.
-      </strong>
-      Install the build dependencies
-    </p>
-    <pre><code class="language-sh">
-sudo apt-get install fakeroot checkinstall go git make
-</code></pre>
-    <p>
-      \
-      <strong>
-        2.
-      </strong>
-      Clone the source code
-    </p>
-    <pre><code class="language-sh">
-git clone https://i2pgit.org/idk/reseed-tools ~/go/src/i2pgit.org/idk/reseed-tools
-</code></pre>
-    <p>
-      \
-      <strong>
-        3.
-      </strong>
-      Generate the
+      If you don&rsquo;t want to interactively configure TLS but still want to use self-signed certificates, you can pass the
       <code>
-        .deb
+        --yes
       </code>
-      package using the
-      <code>
-        make checkinstall
-      </code>
-      target
+      flag, which will use the defaults for all config values.
     </p>
-    <pre><code class="language-sh">
-cd ~/go/src/i2pgit.org/idk/reseed-tools
-make checkinstall
-</code></pre>
-    <p>
-      \
-      <strong>
-        4.
-      </strong>
-      Install the
-      <code>
-        .deb
-      </code>
-      package
-    </p>
-    <pre><code class="language-sh">
-sudo apt-get install ./reseed-tools_*.deb
+    <pre><code>
+./reseed-tools reseed --signer=you@mail.i2p --netdb=/home/i2p/.i2p/netDb --yes
 </code></pre>
     <h2>
-      Running the Service
+      Use ACME to acquire TLS certificate
     </h2>
     <p>
-      \
+      Instead of self-signed certificates, if you want to chain up to a TLS CA, you can.
+      To automate this process using an ACME CA, like Let&rsquo;s Encrypt, you can use the
+      <code>
+        --acme
+      </code>
+      flag.
+      Be sure to change the
+      <code>
+        --acmeserver
+      </code>
+      option in order to use a
       <strong>
-        1.
+        production
       </strong>
-      First, ensure that the I2P service is already running. The longer the better,
-      if you have to re-start the service, or if the service has very few peers, allow it to
-      run for 24 hours before advancing to step
+      ACME server, as
+      the software defaults to a
       <strong>
-        2.
+        staging
       </strong>
+      ACME server for testing purposes.
     </p>
-    <pre><code class="language-sh">
-sudo systemctl start i2p
-# or, if you use sysvinit
-sudo service i2p start
+    <pre><code>
+./reseed-tools reseed --signer=you@mail.i2p --netdb=/home/i2p/.i2p/netDb --acme --acmeserver=&quot;https://acme-v02.api.letsencrypt.org/directory&quot;
 </code></pre>
-    <p>
-      \
-      <strong>
-        2.
-      </strong>
-      Once your I2P router is &ldquo;Well-Integrated,&rdquo; start the reseed service.
-    </p>
-    <pre><code class="language-sh">
-sudo systemctl start reseed
-# or, if you use sysvinit
-sudo service reseed start
-</code></pre>
-    <p>
-      Your reseed will auto-configure with a self-signed certificate on port
-      <code>
-        :8443
-      </code>
-      . The
-      certificates themselves are available in
-      <code>
-        /var/lib/i2p/i2p-config/reseed
-      </code>
-      . When
-      you are ready, you should copy the
-      <code>
-        *.crt
-      </code>
-      files from that directory and share them
-      witth the I2P community on
-      <a href="http://zzz.i2p">
-        <code>
-          zzz.i2p
-        </code>
-      </a>
-      . These will allow I2P users
-      to authenticate your reseed services and secure the I2P network.
-    </p>
     <div id="sourcecode">
       <span id="sourcehead">
         <strong>
