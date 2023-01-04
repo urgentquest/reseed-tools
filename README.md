@@ -70,6 +70,8 @@ sudo make install
 
 #### Debian/Ubuntu note:
 
+It is possible to create a `.deb` package using [these instructions](docs/DEBIAN.md).
+
 Debian users who are running I2P as a system service must also run the 
 `reseed-tools` as the same user. This is so that the reseed-tools can access
 the I2P service's netDb directory. On Debian and Ubuntu, that user is `i2psvc`
@@ -96,5 +98,5 @@ If you are using a reverse proxy server it may provide the TLS certificate inste
 reseed-tools reseed --signer=you@mail.i2p --netdb=/home/i2p/.i2p/netDb --port=8443 --ip=127.0.0.1 --trustProxy
 ```
 
-- **Usage** [More examples can be found here.](EXAMPLES.md)
-- **Docker** [Docker examples can be found here](DOCKER.md)
+- **Usage** [More examples can be found here.](docs/EXAMPLES.md)
+- **Docker** [Docker examples can be found here](docs/DOCKER.md)
