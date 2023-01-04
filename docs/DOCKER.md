@@ -1,4 +1,4 @@
-### Docker
+# Docker
 
 To make it easier to deploy reseeds, it is possible to run this software as a
 Docker image. Because the software requires access to a network database to host
@@ -15,7 +15,7 @@ Additional flags can be passed to the application in the Docker container by
 appending them to the command. Please note that Docker is not currently
 compatible with .onion reseeds unless you pass the --network=host tag.
 
-#### If I2P is running as your user, do this:
+## If I2P is running as your user, do this:
 
         docker run -itd \
             --name reseed \
@@ -26,7 +26,7 @@ compatible with .onion reseeds unless you pass the --network=host tag.
             eyedeekay/reseed \
                 --signer $YOUR_EMAIL_HERE
 
-#### If I2P is running as another user, do this:
+## If I2P is running as another user, do this:
 
         docker run -itd \
             --name reseed \
@@ -39,7 +39,7 @@ compatible with .onion reseeds unless you pass the --network=host tag.
             eyedeekay/reseed \
                 --signer $YOUR_EMAIL_HERE
 
-#### **Debian/Ubuntu and Docker**
+## **Debian/Ubuntu and Docker**
 
 In many cases I2P will be running as the Debian system user ```i2psvc```. This
 is the case for all installs where Debian's Advanced Packaging Tool(apt) was

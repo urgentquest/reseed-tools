@@ -92,9 +92,9 @@
     <a id="returnhome" href="/">
       /
     </a>
-    <h3>
+    <h1>
       Docker
-    </h3>
+    </h1>
     <p>
       To make it easier to deploy reseeds, it is possible to run this software as a
       Docker image. Because the software requires access to a network database to host
@@ -117,9 +117,9 @@
       appending them to the command. Please note that Docker is not currently
       compatible with .onion reseeds unless you pass the &ndash;network=host tag.
     </p>
-    <h4>
+    <h2>
       If I2P is running as your user, do this:
-    </h4>
+    </h2>
     <pre><code>    docker run -itd \
         --name reseed \
         --publish 443:8443 \
@@ -129,9 +129,9 @@
         eyedeekay/reseed \
             --signer $YOUR_EMAIL_HERE
 </code></pre>
-    <h4>
+    <h2>
       If I2P is running as another user, do this:
-    </h4>
+    </h2>
     <pre><code>    docker run -itd \
         --name reseed \
         --user $(I2P_UID) \
@@ -143,11 +143,11 @@
         eyedeekay/reseed \
             --signer $YOUR_EMAIL_HERE
 </code></pre>
-    <h4>
+    <h2>
       <strong>
         Debian/Ubuntu and Docker
       </strong>
-    </h4>
+    </h2>
     <p>
       In many cases I2P will be running as the Debian system user
       <code>
