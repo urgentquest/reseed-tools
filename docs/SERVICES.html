@@ -118,7 +118,7 @@
     <p>
       The contact email for your reseed should be added in:
       <code>
-        /etc/systemd/system/reseed.d/reseed.conf
+        /etc/systemd/system/reseed.service.d/override.conf
       </code>
       .
     </p>
@@ -126,9 +126,14 @@
       Self-signed certificates will be auto-generated for these services. To change
       this you should edit the
       <code>
-        /etc/systemd/system/reseed.d/reseed.service
+        /etc/systemd/system/reseed.service
       </code>
-      .
+      . For instance:
+    </p>
+    <pre><code>ExecStart=/usr/bin/reseed-tools reseed --yes=true --netdb=/var/lib/i2p/i2p-config/netDb --trustProxy
+</code></pre>
+    <p>
+      to disable self-signed certificate generation.
     </p>
     <ul>
       <li>
@@ -173,12 +178,22 @@
       .
     </p>
     <p>
-      Self-signed certificates will be auto-generated for these services. To change
-      this you should edit the
+      Self-signed certificates will be auto-generated for these services.
+      To change this you should edit the
       <code>
-        /etc/init.d/reseed
+        /etc/default/reseed
       </code>
       .
+      Create a
+      <code>
+        MORE_OPTIONS=&quot;&quot;
+      </code>
+      field. For instance:
+    </p>
+    <pre><code class="language-sh">MORE_OPTIONS=&quot;--trustProxy&quot;
+</code></pre>
+    <p>
+      will disable self-signed certificate generation.
     </p>
     <div id="sourcecode">
       <span id="sourcehead">
