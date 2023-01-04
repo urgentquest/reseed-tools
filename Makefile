@@ -7,8 +7,8 @@ export CGO_ENABLED=0
 PLUGIN_PORT=7671
 export PLUGIN_PORT=7671
 
-GOOS?=$(shell uname -s | tr A-Z a-z)
-GOARCH?="amd64"
+#GOOS?=$(shell uname -s | tr A-Z a-z)
+#GOARCH?="amd64"
 
 ARG=-v -tags netgo -ldflags '-w -extldflags "-static"'
 
@@ -58,14 +58,14 @@ install:
 	cp -r content /var/lib/i2p/i2p-config/reseed/content
 	chown -R i2psvc:i2psvc /var/lib/i2p/i2p-config/reseed/
 	install -m644 etc/systemd/system/reseed.service.d/override.conf /etc/systemd/system/reseed.service.d/override.conf
-	install -m644 etc/systemd/system/reseed.service.d/reseed.service /etc/systemd/system/reseed.service
+	install -m644 etc/systemd/system/reseed.service /etc/systemd/system/reseed.service
 
 uninstall:
 	rm /usr/bin/reseed-tools
 	rm /etc/default/reseed
 	rm /etc/init.d/reseed
 	rm /etc/systemd/system/reseed.service.d/reseed.conf
-	rm /etc/systemd/system/reseed.service.d/reseed.service
+	rm /etc/systemd/system/reseed.service
 	rm -rf /var/lib/i2p/i2p-config/reseed/
 
 checkinstall: build
@@ -197,72 +197,72 @@ upload: tar
 	gothub upload -R -s $(GITHUB_TOKEN) -u $(USER_GH) -r $(APP) -t v$(VERSION) -f ../reseed-tools.tar.xz -n "reseed-tools.tar.xz"
 
 binary:
-	GOOS=darwin GOARCH=amd64 make build
-	GOOS=darwin GOARCH=arm64 make build
-	GOOS=linux GOARCH=386 make build
-	GOOS=linux GOARCH=amd64 make build
-	GOOS=linux GOARCH=arm make build
-	GOOS=linux GOARCH=arm64 make build
-	GOOS=openbsd GOARCH=amd64 make build
-	GOOS=freebsd GOARCH=386 make build
-	GOOS=freebsd GOARCH=amd64 make build
-	GOOS=windows GOARCH=amd64 make build
-	GOOS=windows GOARCH=386 make build
+	##export GOOS=darwin; export GOARCH=amd64; make build
+	###export GOOS=darwin; export GOARCH=arm64; make build
+	export GOOS=linux; export GOARCH=amd64; make build
+	export GOOS=linux; export GOARCH=386; make build
+	export GOOS=linux; export GOARCH=arm; make build
+	export GOOS=linux; export GOARCH=arm64; make build
+	export GOOS=openbsd; export GOARCH=amd64; make build
+	export GOOS=freebsd; export GOARCH=386; make build
+	export GOOS=freebsd; export GOARCH=amd64; make build
+	export GOOS=windows; export GOARCH=amd64; make build
+	export GOOS=windows; export GOARCH=386; make build
 
-plugins: binary
-	GOOS=darwin GOARCH=amd64 make su3s
-	GOOS=darwin GOARCH=arm64 make su3s
-	GOOS=linux GOARCH=386 make su3s
-	GOOS=linux GOARCH=amd64 make su3s
-	GOOS=linux GOARCH=arm make su3s
-	GOOS=linux GOARCH=arm64 make su3s
-	GOOS=openbsd GOARCH=amd64 make su3s
-	GOOS=freebsd GOARCH=386 make su3s
-	GOOS=freebsd GOARCH=amd64 make su3s
-	GOOS=windows GOARCH=amd64 make su3s
-	GOOS=windows GOARCH=386 make su3s
+plugins:
+	#export GOOS=darwin; export GOARCH=amd64; make su3s
+	#export GOOS=darwin; export GOARCH=arm64; make su3s
+	export GOOS=linux; export GOARCH=amd64; make su3s
+	export GOOS=linux; export GOARCH=386; make su3s
+	export GOOS=linux; export GOARCH=arm; make su3s
+	export GOOS=linux; export GOARCH=arm64; make su3s
+	export GOOS=openbsd; export GOARCH=amd64; make su3s
+	export GOOS=freebsd; export GOARCH=386; make su3s
+	export GOOS=freebsd; export GOARCH=amd64; make su3s
+	export GOOS=windows; export GOARCH=amd64; make su3s
+	export GOOS=windows; export GOARCH=386; make su3s
 
 upload-bin:
-	GOOS=darwin GOARCH=amd64 make upload-single-bin
-	GOOS=darwin GOARCH=arm64 make upload-single-bin
-	GOOS=linux GOARCH=386 make upload-single-bin
-	GOOS=linux GOARCH=amd64 make upload-single-bin
-	GOOS=linux GOARCH=arm make upload-single-bin
-	GOOS=linux GOARCH=arm64 make upload-single-bin
-	GOOS=openbsd GOARCH=amd64 make upload-single-bin
-	GOOS=freebsd GOARCH=386 make upload-single-bin
-	GOOS=freebsd GOARCH=amd64 make upload-single-bin
-	GOOS=windows GOARCH=amd64 make upload-single-bin
-	GOOS=windows GOARCH=386 make upload-single-bin
+	#export GOOS=darwin; export GOARCH=amd64; make upload-single-bin
+	#export GOOS=darwin; export GOARCH=arm64; make upload-single-bin
+	export GOOS=linux; export GOARCH=386; make upload-single-bin
+	export GOOS=linux; export GOARCH=amd64; make upload-single-bin
+	export GOOS=linux; export GOARCH=arm; make upload-single-bin
+	export GOOS=linux; export GOARCH=arm64; make upload-single-bin
+	export GOOS=openbsd; export GOARCH=amd64; make upload-single-bin
+	export GOOS=freebsd; export GOARCH=386; make upload-single-bin
+	export GOOS=freebsd; export GOARCH=amd64; make upload-single-bin
+	export GOOS=windows; export GOARCH=amd64; make upload-single-bin
+	export GOOS=windows; export GOARCH=386; make upload-single-bin
 
 rm-su3s:
 	rm *.su3 -f
 
 download-su3s:
-	GOOS=darwin GOARCH=amd64 make download-single-su3
-	GOOS=darwin GOARCH=arm64 make download-single-su3
-	GOOS=linux GOARCH=386 make download-single-su3
-	GOOS=linux GOARCH=amd64 make download-single-su3
-	GOOS=linux GOARCH=arm make download-single-su3
-	GOOS=linux GOARCH=arm64 make download-single-su3
-	GOOS=openbsd GOARCH=amd64 make download-single-su3
-	GOOS=freebsd GOARCH=386 make download-single-su3
-	GOOS=freebsd GOARCH=amd64 make download-single-su3
-	GOOS=windows GOARCH=amd64 make download-single-su3
-	GOOS=windows GOARCH=386 make download-single-su3
+	#export GOOS=darwin; export GOARCH=amd64; make download-single-su3
+	#export GOOS=darwin; export GOARCH=arm64; make download-single-su3
+	export GOOS=linux; export GOARCH=386; make download-single-su3
+	export GOOS=linux; export GOARCH=amd64; make download-single-su3
+	export GOOS=linux; export GOARCH=arm; make download-single-su3
+	export GOOS=linux; export GOARCH=arm64; make download-single-su3
+	export GOOS=openbsd; export GOARCH=amd64; make download-single-su3
+	export GOOS=freebsd; export GOARCH=386; make download-single-su3
+	export GOOS=freebsd; export GOARCH=amd64; make download-single-su3
+	export GOOS=windows; export GOARCH=amd64; make download-single-su3
+	export GOOS=windows; export GOARCH=386; make download-single-su3
 
 upload-su3s:
-	GOOS=darwin GOARCH=amd64 make upload-single-su3
-	GOOS=darwin GOARCH=arm64 make upload-single-su3
-	GOOS=linux GOARCH=386 make upload-single-su3
-	GOOS=linux GOARCH=amd64 make upload-single-su3
-	GOOS=linux GOARCH=arm make upload-single-su3
-	GOOS=linux GOARCH=arm64 make upload-single-su3
-	GOOS=openbsd GOARCH=amd64 make upload-single-su3
-	GOOS=freebsd GOARCH=386 make upload-single-su3
-	GOOS=freebsd GOARCH=amd64 make upload-single-su3
-	GOOS=windows GOARCH=amd64 make upload-single-su3
-	GOOS=windows GOARCH=386 make upload-single-su3
+	#export GOOS=darwin; export GOARCH=amd64; make upload-single-su3
+	#export GOOS=darwin; export GOARCH=arm64; make upload-single-su3
+	export GOOS=linux; export GOARCH=386; make upload-single-su3
+	export GOOS=linux; export GOARCH=amd64; make upload-single-su3
+	export GOOS=linux; export GOARCH=arm; make upload-single-su3
+	export GOOS=linux; export GOARCH=arm64; make upload-single-su3
+	export GOOS=openbsd; export GOARCH=amd64; make upload-single-su3
+	export GOOS=freebsd; export GOARCH=386; make upload-single-su3
+	export GOOS=freebsd; export GOARCH=amd64; make upload-single-su3
+	export GOOS=windows; export GOARCH=amd64; make upload-single-su3
+	export GOOS=windows; export GOARCH=386; make upload-single-su3
 
 download-single-su3:
 	wget-ds "https://github.com/eyedeekay/reseed-tools/releases/download/v$(VERSION)/reseed-tools-$(GOOS)-$(GOARCH).su3"
@@ -286,11 +286,12 @@ tmp/lib:
 #	cp "$(HOME)/build/shellservice.jar" tmp/lib/shellservice.jar
 
 tmp/LICENSE:
-	cp LICENSE.md tmp/LICENSE
+	cp LICENSE tmp/LICENSE
 
 SIGNER_DIR=$(HOME)/i2p-go-keys/
 
-su3s: tmp/content tmp/lib tmp/LICENSE
+su3s: tmp/content tmp/lib tmp/LICENSE build
+	rm -f plugin.yaml
 	i2p.plugin.native -name=reseed-tools-$(GOOS)-$(GOARCH) \
 		-signer=hankhill19580@gmail.com \
 		-signer-dir=$(SIGNER_DIR) \
@@ -310,7 +311,7 @@ su3s: tmp/content tmp/lib tmp/LICENSE
 		-targetos="$(GOOS)" \
 		-res=tmp/ \
 		-license=MIT
-	unzip -o reseed-tools-$(GOOS)-$(GOARCH).zip -d reseed-tools-$(GOOS)-$(GOARCH)-zip
+	#unzip -o reseed-tools-$(GOOS)-$(GOARCH).zip -d reseed-tools-$(GOOS)-$(GOARCH)-zip
 
 #export sumbblinux=`sha256sum "../reseed-tools-linux.su3"`
 #export sumbbwindows=`sha256sum "../reseed-tools-windows.su3"`
