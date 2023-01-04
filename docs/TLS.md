@@ -21,7 +21,7 @@ You can disable automatic TLS configuration with the `--trustProxy` flag like th
 
 ```sh
 
-./reseed-tools reseed --signer=you@mail.i2p --netdb=/home/i2p/.i2p/netDb --trustProxy
+./reseed-tools reseed --signer=you@mail.i2p --netdb=/home/i2p/.i2p/netDb --trustProxy --ip=127.0.0.1
 ```
 
 Setup Self-Signed TLS non-interactively

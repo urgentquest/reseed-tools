@@ -17,7 +17,7 @@ Self-signed certificates will be auto-generated for these services. To change
 this you should edit the `/etc/systemd/system/reseed.service`. For instance:
 
 ```
-ExecStart=/usr/bin/reseed-tools reseed --yes=true --netdb=/var/lib/i2p/i2p-config/netDb --trustProxy
+ExecStart=/usr/bin/reseed-tools reseed --yes=true --netdb=/var/lib/i2p/i2p-config/netDb --trustProxy --ip=127.0.0.1
 ```
 
 to disable self-signed certificate generation.
@@ -41,7 +41,7 @@ To change this you should edit the `/etc/default/reseed`.
 Create a `MORE_OPTIONS=""` field. For instance:
 
 ```sh
-MORE_OPTIONS="--trustProxy"
+MORE_OPTIONS="--trustProxy --ip=127.0.0.1"
 ```
 
 will disable self-signed certificate generation.

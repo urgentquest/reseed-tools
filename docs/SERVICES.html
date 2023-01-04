@@ -130,7 +130,7 @@
       </code>
       . For instance:
     </p>
-    <pre><code>ExecStart=/usr/bin/reseed-tools reseed --yes=true --netdb=/var/lib/i2p/i2p-config/netDb --trustProxy
+    <pre><code>ExecStart=/usr/bin/reseed-tools reseed --yes=true --netdb=/var/lib/i2p/i2p-config/netDb --trustProxy --ip=127.0.0.1
 </code></pre>
     <p>
       to disable self-signed certificate generation.
@@ -190,7 +190,7 @@
       </code>
       field. For instance:
     </p>
-    <pre><code class="language-sh">MORE_OPTIONS=&quot;--trustProxy&quot;
+    <pre><code class="language-sh">MORE_OPTIONS=&quot;--trustProxy --ip=127.0.0.1&quot;
 </code></pre>
     <p>
       will disable self-signed certificate generation.
