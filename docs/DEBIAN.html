@@ -102,7 +102,8 @@ sudo apt-get install fakeroot checkinstall
       </a>
       .
     </p>
-    <pre><code class="language-sh">wget https://github.com/eyedeekay/reseed-tools/releases/download/v0.2.30/reseed-tools_0.2.30-1_amd64.deb
+    <pre><code class="language-sh">
+wget https://github.com/eyedeekay/reseed-tools/releases/download/v0.2.30/reseed-tools_0.2.30-1_amd64.deb
 # Obtain the checksum from the release web page
 echo &quot;38941246e980dfc0456e066f514fc96a4ba25d25a7ef993abd75130770fa4d4d reseed-tools_0.2.30-1_amd64.deb&quot; &gt; SHA256SUMS
 sha256sums -c SHA256SUMS
@@ -113,7 +114,16 @@ sudo apt-get install ./reseed-tools_0.2.30-1_amd64.deb
       <code>
         .deb
       </code>
-      package.
+      package. Once it&rsquo;s installed, you can start it using
+      <code>
+        systemd
+      </code>
+      :
+    </p>
+    <pre><code class="language-sh">sudo systemctl start reseed
+</code></pre>
+    <p>
+      which will run the server in the background.
     </p>
     <div id="sourcecode">
       <span id="sourcehead">
