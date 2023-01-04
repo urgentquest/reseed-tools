@@ -68,52 +68,92 @@
       /
     </a>
     <h1>
-      Debian and Ubuntu Packages
+      Service Integration
     </h1>
     <p>
-      It&rsquo;s possible to generate a package which is compatible with Debian and Ubuntu,
-      using the command:
+      Support for running as a system service as part of the reseed package
+      is new. PR&rsquo;s that improve integration are welcome.
     </p>
-    <pre><code class="language-sh">
-make checkinstall
-sudo apt-get install ./reseed-tools_0.2.30-1_amd64.deb
-</code></pre>
+    <h2>
+      Systemd Service
+    </h2>
     <p>
-      This requires you to have
+      A systemd service is provided which should work with the I2P Debian package
+      when reseed-tools is installed in
       <code>
-        fakeroot
+        /usr/bin/reseed-tools
       </code>
-      and
+      . If you install with
       <code>
-        checkinstall
+        make install
       </code>
-      installed. Use the command
-    </p>
-    <pre><code class="language-sh">
-sudo apt-get install fakeroot checkinstall
-</code></pre>
-    <p>
-      to install them.
+      this service is also installed. This service will cause the
+      bundles to regenerate every 12 hours.
     </p>
     <p>
-      You can also use a binary release from:
-      <a href="https://github.com/eyedeekay/reseed-tools/releases">
-        https://github.com/eyedeekay/reseed-tools/releases
-      </a>
+      The contact email for your reseed should be added in:
+      <code>
+        /etc/systemd/system/reseed.d/reseed.conf
+      </code>
       .
     </p>
-    <pre><code class="language-sh">wget https://github.com/eyedeekay/reseed-tools/releases/download/v0.2.30/reseed-tools_0.2.30-1_amd64.deb
-# Obtain the checksum from the release web page
-echo &quot;38941246e980dfc0456e066f514fc96a4ba25d25a7ef993abd75130770fa4d4d reseed-tools_0.2.30-1_amd64.deb&quot; &gt; SHA256SUMS
-sha256sums -c SHA256SUMS
-sudo apt-get install ./reseed-tools_0.2.30-1_amd64.deb
-</code></pre>
     <p>
-      That is how you install a binary
+      Self-signed certificates will be auto-generated for these services. To change
+      this you should edit the
       <code>
-        .deb
+        /etc/systemd/system/reseed.d/reseed.service
       </code>
-      package.
+      .
+    </p>
+    <ul>
+      <li>
+        To enable starting the reseed service automatically with the system:
+        <code>
+          sudo systemctl enable reseed.service
+        </code>
+      </li>
+      <li>
+        To run the service manually:
+        <code>
+          sudo sysctl start reseed.service
+        </code>
+        <br />
+      </li>
+      <li>
+        To reload the systemd services:
+        <code>
+          sudo systemctl daemon-reload
+        </code>
+      </li>
+      <li>
+        To view the status/logs:
+        <code>
+          sudo journalctl -u reseed.service
+        </code>
+      </li>
+    </ul>
+    <h2>
+      SysV Service
+    </h2>
+    <p>
+      An initscript is also provided. The initscript, unlike the systemd service,
+      cannot schedule itself to restart. You should restart the service roughly once
+      a day to ensure that the information does not expire.
+    </p>
+    <p>
+      The contact email for your reseed should be added in:
+      <code>
+        /etc/init.d/reseed
+      </code>
+      .
+    </p>
+    <p>
+      Self-signed certificates will be auto-generated for these services. To change
+      this you should edit the
+      <code>
+        /etc/init.d/reseed
+      </code>
+      .
     </p>
     <div id="sourcecode">
       <span id="sourcehead">
