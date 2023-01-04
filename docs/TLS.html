@@ -57,6 +57,11 @@
               </a>
             </li>
             <li>
+              <a href="PLUGIN.html">
+                PLUGIN
+              </a>
+            </li>
+            <li>
               <a href="index.html">
                 index
               </a>
@@ -144,7 +149,7 @@
       </code>
       flag like this:
     </p>
-    <pre><code>
+    <pre><code class="language-sh">
 ./reseed-tools reseed --signer=you@mail.i2p --netdb=/home/i2p/.i2p/netDb --trustProxy
 </code></pre>
     <h2>
@@ -157,7 +162,7 @@
       </code>
       flag, which will use the defaults for all config values.
     </p>
-    <pre><code>
+    <pre><code class="language-sh">
 ./reseed-tools reseed --signer=you@mail.i2p --netdb=/home/i2p/.i2p/netDb --yes
 </code></pre>
     <h2>
@@ -185,7 +190,18 @@
       </strong>
       ACME server for testing purposes.
     </p>
-    <pre><code>
+    <p>
+      This functionality is new and may have issues. Please file bug reports at (i2pgit)[
+      <a href="https://i2pgit.org/idk/reseed-tools)">
+        https://i2pgit.org/idk/reseed-tools)
+      </a>
+      or
+      <a href="https://github.com/eyedeekay/reseed-tools">
+        github
+      </a>
+      .
+    </p>
+    <pre><code class="language-sh">
 ./reseed-tools reseed --signer=you@mail.i2p --netdb=/home/i2p/.i2p/netDb --acme --acmeserver=&quot;https://acme-v02.api.letsencrypt.org/directory&quot;
 </code></pre>
     <div id="sourcecode">
