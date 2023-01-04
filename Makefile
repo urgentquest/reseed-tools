@@ -1,5 +1,5 @@
 
-VERSION=0.2.30
+VERSION=0.2.31
 APP=reseed-tools
 USER_GH=eyedeekay
 CGO_ENABLED=0
@@ -7,8 +7,8 @@ export CGO_ENABLED=0
 PLUGIN_PORT=7671
 export PLUGIN_PORT=7671
 
-#GOOS?=$(shell uname -s | tr A-Z a-z)
-#GOARCH?="amd64"
+GOOS?=$(shell uname -s | tr A-Z a-z)
+GOARCH?="amd64"
 
 ARG=-v -tags netgo -ldflags '-w -extldflags "-static"'
 
