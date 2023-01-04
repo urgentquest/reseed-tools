@@ -8,7 +8,7 @@ import (
 	"os/user"
 	"path/filepath"
 
-	"github.com/urfave/cli"
+	"github.com/urfave/cli/v3"
 	"i2pgit.org/idk/reseed-tools/reseed"
 	"i2pgit.org/idk/reseed-tools/su3"
 )
@@ -35,23 +35,23 @@ func I2PHome() string {
 
 }
 
-func NewSu3VerifyCommand() cli.Command {
-	return cli.Command{
+func NewSu3VerifyCommand() *cli.Command {
+	return &cli.Command{
 		Name:        "verify",
 		Usage:       "Verify a Su3 file",
 		Description: "Verify a Su3 file",
 		Action:      su3VerifyAction,
 		Flags: []cli.Flag{
-			cli.BoolFlag{
+			&cli.BoolFlag{
 				Name:  "extract",
 				Usage: "Also extract the contents of the su3",
 			},
-			cli.StringFlag{
+			&cli.StringFlag{
 				Name:  "signer",
 				Value: getDefaultSigner(),
 				Usage: "Your su3 signing ID (ex. something@mail.i2p)",
 			},
-			cli.StringFlag{
+			&cli.StringFlag{
 				Name:  "keystore",
 				Value: filepath.Join(I2PHome(), "/certificates/reseed"),
 				Usage: "Path to the keystore",
@@ -60,21 +60,21 @@ func NewSu3VerifyCommand() cli.Command {
 	}
 }
 
-func su3VerifyAction(c *cli.Context) {
+func su3VerifyAction(c *cli.Context) error {
 	su3File := su3.New()
 
 	data, err := ioutil.ReadFile(c.Args().Get(0))
 	if nil != err {
-		panic(err)
+		return err
 	}
 	if err := su3File.UnmarshalBinary(data); err != nil {
-		panic(err)
+		return err
 	}
 
 	fmt.Println(su3File.String())
 	absPath, err := filepath.Abs(c.String("keystore"))
 	if nil != err {
-		panic(err)
+		return err
 	}
 	keyStorePath := filepath.Dir(absPath)
 	reseedDir := filepath.Base(absPath)
@@ -90,11 +90,11 @@ func su3VerifyAction(c *cli.Context) {
 	cert, err := ks.DirReseederCertificate(reseedDir, su3File.SignerID)
 	if nil != err {
 		fmt.Println(err)
-		return
+		return err
 	}
 
 	if err := su3File.VerifySignature(cert); nil != err {
-		panic(err)
+		return err
 	}
 
 	fmt.Printf("Signature is valid for signer '%s'\n", su3File.SignerID)
@@ -103,4 +103,5 @@ func su3VerifyAction(c *cli.Context) {
 		// @todo: don't assume zip
 		ioutil.WriteFile("extracted.zip", su3File.BodyBytes(), 0755)
 	}
+	return nil
 }

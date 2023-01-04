@@ -17,8 +17,9 @@ require (
 	github.com/libp2p/go-libp2p-http v0.2.0
 	github.com/throttled/throttled/v2 v2.7.1
 	github.com/urfave/cli v1.22.5
+	github.com/urfave/cli/v3 v3.0.0-alpha
 	gitlab.com/golang-commonmark/markdown v0.0.0-20191127184510-91b5b3c99c19
-	golang.org/x/text v0.3.5
+	golang.org/x/text v0.3.7
 )
 
 replace github.com/libp2p/go-libp2p => github.com/libp2p/go-libp2p v0.13.0

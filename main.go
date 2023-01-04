@@ -4,7 +4,7 @@ import (
 	"os"
 	"runtime"
 
-	"github.com/urfave/cli"
+	"github.com/urfave/cli/v3"
 	"i2pgit.org/idk/reseed-tools/cmd"
 )
 
@@ -21,10 +21,13 @@ func main() {
 	app.Name = "reseed-tools"
 	app.Version = "0.2.9"
 	app.Usage = "I2P tools and reseed server"
-	app.Author = "eyedeekay"
-	app.Email = "hankhill19580@gmail.com"
+	auth := &cli.Author{
+		Name:  "eyedeekay",
+		Email: "hankhill19580@gmail.com",
+	}
+	app.Authors = append(app.Authors, auth)
 	app.Flags = []cli.Flag{}
-	app.Commands = []cli.Command{
+	app.Commands = []*cli.Command{
 		cmd.NewReseedCommand(),
 		cmd.NewSu3VerifyCommand(),
 		cmd.NewKeygenCommand(),
