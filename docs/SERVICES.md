@@ -11,10 +11,16 @@ when reseed-tools is installed in `/usr/bin/reseed-tools`. If you install with
 bundles to regenerate every 12 hours.
 
 The contact email for your reseed should be added in:
-`/etc/systemd/system/reseed.d/reseed.conf`.
+`/etc/systemd/system/reseed.service.d/override.conf`.
 
 Self-signed certificates will be auto-generated for these services. To change
-this you should edit the `/etc/systemd/system/reseed.d/reseed.service`.
+this you should edit the `/etc/systemd/system/reseed.service`. For instance:
+
+```
+ExecStart=/usr/bin/reseed-tools reseed --yes=true --netdb=/var/lib/i2p/i2p-config/netDb --trustProxy
+```
+
+to disable self-signed certificate generation.
 
 - To enable starting the reseed service automatically with the system: `sudo systemctl enable reseed.service`
 - To run the service manually: `sudo sysctl start reseed.service`  
@@ -30,5 +36,12 @@ a day to ensure that the information does not expire.
 The contact email for your reseed should be added in:
 `/etc/init.d/reseed`.
 
-Self-signed certificates will be auto-generated for these services. To change
-this you should edit the `/etc/init.d/reseed`.
+Self-signed certificates will be auto-generated for these services.
+To change this you should edit the `/etc/default/reseed`.
+Create a `MORE_OPTIONS=""` field. For instance:
+
+```sh
+MORE_OPTIONS="--trustProxy"
+```
+
+will disable self-signed certificate generation.
