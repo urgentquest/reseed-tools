@@ -56,8 +56,8 @@ install:
 	install -g i2psvc -o i2psvc -d /var/lib/i2p/i2p-config/reseed/
 	cp -r content /var/lib/i2p/i2p-config/reseed/content
 	chown -R i2psvc:i2psvc /var/lib/i2p/i2p-config/reseed/
-	install -m644 etc/systemd/system/reseed.service.d/reseed.conf /etc/systemd/system/reseed.service.d/reseed.conf
-	install -m644 etc/systemd/system/reseed.service.d/reseed.service /etc/systemd/system/reseed.service.d/reseed.service
+	install -m644 etc/systemd/system/reseed.service.d/override.conf /etc/systemd/system/reseed.service.d/override.conf
+	install -m644 etc/systemd/system/reseed.service.d/reseed.service /etc/systemd/system/reseed.service
 
 uninstall:
 	rm /usr/bin/reseed-tools

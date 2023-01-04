@@ -2,7 +2,7 @@
 
 INIT=$(file /sbin/init 2>&1 | grep systemd)
 if [ ! -z "$INIT" ]; then
-    systemctl disable /etc/systemd/system/reseed.service
+    systemctl disable reseed.service
     systemctl daemon-reload
 fi
 
