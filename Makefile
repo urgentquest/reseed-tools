@@ -51,7 +51,7 @@ install:
 	install -m755 reseed-tools-$(GOOS)-$(GOARCH) /usr/bin/reseed-tools
 	install -m644 etc/default/reseed /etc/default/reseed
 	install -m755 etc/init.d/reseed /etc/init.d/reseed
-	mkdir -p /etc/systemd/system/reseed.d/
+	mkdir -p /etc/systemd/system/reseed.service.d/
 	mkdir -p /var/lib/i2p
 	install -g i2psvc -o i2psvc -d /var/lib/i2p/i2p-config/reseed/
 	cp -r content /var/lib/i2p/i2p-config/reseed/content
