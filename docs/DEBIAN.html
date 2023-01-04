@@ -52,6 +52,11 @@
               </a>
             </li>
             <li>
+              <a href="index.html">
+                index
+              </a>
+            </li>
+            <li>
               <a href="SERVICES.html">
                 SERVICES
               </a>
@@ -94,36 +99,6 @@ sudo apt-get install fakeroot checkinstall
 </code></pre>
     <p>
       to install them.
-    </p>
-    <p>
-      You can also use a binary release from:
-      <a href="https://github.com/eyedeekay/reseed-tools/releases">
-        https://github.com/eyedeekay/reseed-tools/releases
-      </a>
-      .
-    </p>
-    <pre><code class="language-sh">
-wget https://github.com/eyedeekay/reseed-tools/releases/download/v0.2.30/reseed-tools_0.2.30-1_amd64.deb
-# Obtain the checksum from the release web page
-echo &quot;38941246e980dfc0456e066f514fc96a4ba25d25a7ef993abd75130770fa4d4d reseed-tools_0.2.30-1_amd64.deb&quot; &gt; SHA256SUMS
-sha256sums -c SHA256SUMS
-sudo apt-get install ./reseed-tools_0.2.30-1_amd64.deb
-</code></pre>
-    <p>
-      That is how you install a binary
-      <code>
-        .deb
-      </code>
-      package. Once it&rsquo;s installed, you can start it using
-      <code>
-        systemd
-      </code>
-      :
-    </p>
-    <pre><code class="language-sh">sudo systemctl start reseed
-</code></pre>
-    <p>
-      which will run the server in the background.
     </p>
     <div id="sourcecode">
       <span id="sourcehead">
