@@ -79,14 +79,13 @@ func (srv *Server) HandleARealBrowser(w http.ResponseWriter, r *http.Request) {
 	base, _ := tag.Base()
 	log.Printf("base: '%s'\n", base)
 
-	switch r.URL.Path {
-	case "/style.css":
+	if strings.HasSuffix(r.URL.Path, "style.css") {
 		w.Header().Set("Content-Type", "text/css")
 		HandleAFile(w, "", "style.css")
-	case "/script.js":
+	} else if strings.HasSuffix(r.URL.Path, "script.js") {
 		w.Header().Set("Content-Type", "text/javascript")
 		HandleAFile(w, "", "script.js")
-	default:
+	} else {
 		image := strings.Replace(r.URL.Path, "/", "", -1)
 		if strings.HasPrefix(image, "images") {
 			w.Header().Set("Content-Type", "image/png")
