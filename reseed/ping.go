@@ -40,6 +40,7 @@ func PingWriteContent(url string) error {
 	path := strings.Replace(url, "http://", "", 1)
 	path = strings.Replace(path, "https://", "", 1)
 	path = strings.Replace(path, "/", "", -1)
+	BaseContentPath, _ := StableContentPath()
 	path = filepath.Join(BaseContentPath, path+"-"+date+".ping")
 	if _, err := os.Stat(path); err != nil {
 		result, err := Ping(url)
@@ -85,6 +86,7 @@ func PingEverybody() []string {
 func GetPingFiles() ([]string, error) {
 	var files []string
 	date := time.Now().Format("2006-01-02")
+	BaseContentPath, _ := StableContentPath()
 	err := filepath.Walk(BaseContentPath, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
 			return err
@@ -105,7 +107,7 @@ func ReadOut(w http.ResponseWriter) {
 	if err == nil {
 		fmt.Fprintf(w, "<h3>Reseed Server Statuses</h3>")
 		fmt.Fprintf(w, "<div><p>This feature is experimental and may not always provide accurate results.</p></div>")
-		fmt.Fprintf(w, "</div><p><ul>")
+		fmt.Fprintf(w, "<div><p><ul>")
 		for _, file := range pinglist {
 			ping, err := ioutil.ReadFile(file)
 			host := strings.Replace(file, ".ping", "", 1)

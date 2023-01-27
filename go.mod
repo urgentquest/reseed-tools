@@ -1,6 +1,6 @@
 module i2pgit.org/idk/reseed-tools
 
-go 1.13
+go 1.16
 
 require (
 	github.com/cretz/bine v0.2.0
@@ -8,6 +8,7 @@ require (
 	github.com/eyedeekay/go-i2pd v0.0.0-20220213070306-9807541b2dfc
 	github.com/eyedeekay/i2pkeys v0.33.0
 	github.com/eyedeekay/sam3 v0.33.5
+	github.com/eyedeekay/unembed v0.0.0-20230123014222-9916b121855b
 	github.com/go-acme/lego/v4 v4.3.1
 	github.com/gorilla/handlers v1.5.1
 	github.com/justinas/alice v1.2.0
@@ -30,4 +31,3 @@ replace github.com/libp2p/go-libp2p-gostream => github.com/libp2p/go-libp2p-gost
 
 replace github.com/libp2p/go-libp2p-http => github.com/libp2p/go-libp2p-http v0.2.0
 
-//replace github.com/eyedeekay/go-i2pd v0.0.0-20220213070306-9807541b2dfc => ./go-i2pd

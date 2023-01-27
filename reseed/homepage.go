@@ -1,6 +1,8 @@
 package reseed
 
 import (
+	"embed"
+	_ "embed"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -8,9 +10,13 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/eyedeekay/unembed"
 	"gitlab.com/golang-commonmark/markdown"
 	"golang.org/x/text/language"
 )
+
+//go:embed content
+var f embed.FS
 
 var SupportedLanguages = []language.Tag{
 	language.English,
@@ -30,7 +36,17 @@ var SupportedLanguages = []language.Tag{
 var CachedLanguagePages = map[string]string{}
 var CachedDataPages = map[string][]byte{}
 
-var BaseContentPath, ContentPathError = ContentPath()
+func StableContentPath() (string, error) {
+	var BaseContentPath, ContentPathError = ContentPath()
+	if _, err := os.Stat(BaseContentPath); os.IsNotExist(err) {
+		if err := unembed.Unembed(f, BaseContentPath); err != nil {
+			return "", err
+		} else {
+			return BaseContentPath, nil
+		}
+	}
+	return BaseContentPath, ContentPathError
+}
 
 var matcher = language.NewMatcher(SupportedLanguages)
 
@@ -61,6 +77,7 @@ func ContentPath() (string, error) {
 }
 
 func (srv *Server) HandleARealBrowser(w http.ResponseWriter, r *http.Request) {
+	_, ContentPathError := StableContentPath()
 	if ContentPathError != nil {
 		http.Error(w, "403 Forbidden", http.StatusForbidden)
 		return
@@ -115,6 +132,7 @@ func (srv *Server) HandleARealBrowser(w http.ResponseWriter, r *http.Request) {
 }
 
 func HandleAFile(w http.ResponseWriter, dirPath, file string) {
+	BaseContentPath, _ := StableContentPath()
 	file = filepath.Join(dirPath, file)
 	if _, prs := CachedDataPages[file]; !prs {
 		path := filepath.Join(BaseContentPath, file)
@@ -132,6 +150,7 @@ func HandleAFile(w http.ResponseWriter, dirPath, file string) {
 
 func HandleALocalizedFile(w http.ResponseWriter, dirPath string) {
 	if _, prs := CachedLanguagePages[dirPath]; !prs {
+		BaseContentPath, _ := StableContentPath()
 		dir := filepath.Join(BaseContentPath, "lang", dirPath)
 		files, err := ioutil.ReadDir(dir)
 		if err != nil {
