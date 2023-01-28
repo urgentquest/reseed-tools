@@ -46,7 +46,7 @@ install:
 	mkdir -p /var/lib/i2p/
 	mkdir -p /var/lib/i2p/i2p-config/reseed/
 	install -g i2psvc -o i2psvc -d /var/lib/i2p/i2p-config/reseed/
-	cp -r content /var/lib/i2p/i2p-config/reseed/content
+	cp -r reseed/content /var/lib/i2p/i2p-config/reseed/content
 	chown -R i2psvc:i2psvc /var/lib/i2p/i2p-config/reseed/
 	install -m644 etc/systemd/system/reseed.service.d/override.conf /etc/systemd/system/reseed.service.d/override.conf
 	install -m644 etc/systemd/system/reseed.service /etc/systemd/system/reseed.service
