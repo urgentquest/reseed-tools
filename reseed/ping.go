@@ -97,7 +97,20 @@ var AllReseeds = []string{
 	"https://www2.mk16.de/",
 }
 
+func yday() time.Time {
+	today := time.Now()
+	yesterday := today.Add(-24 * time.Hour)
+	return yesterday
+}
+
+var lastPing = yday()
+
 func PingEverybody() []string {
+	if lastPing.After(yday()) {
+		log.Println("Your ping was rate-limited")
+		return nil
+	}
+	lastPing = time.Now()
 	var nonerrs []string
 	for _, urlInput := range AllReseeds {
 		err := PingWriteContent(urlInput)
