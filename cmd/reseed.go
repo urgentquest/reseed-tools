@@ -248,6 +248,7 @@ func fileExists(filename string) bool {
 }
 
 func reseedAction(c *cli.Context) error {
+	providedReseeds(c)
 	netdbDir := c.String("netdb")
 	if netdbDir == "" {
 		fmt.Println("--netdb is required")

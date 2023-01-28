@@ -1,5 +1,5 @@
 
-VERSION=0.2.31
+VERSION=0.2.32
 APP=reseed-tools
 USER_GH=eyedeekay
 CGO_ENABLED=0
