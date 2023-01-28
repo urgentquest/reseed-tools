@@ -282,7 +282,7 @@ tmp/LICENSE:
 SIGNER_DIR=$(HOME)/i2p-go-keys/
 
 su3s: tmp/content tmp/lib tmp/LICENSE build
-	rm -f plugin.yaml
+	rm -f plugin.yaml client.yaml
 	i2p.plugin.native -name=reseed-tools-$(GOOS)-$(GOARCH) \
 		-signer=hankhill19580@gmail.com \
 		-signer-dir=$(SIGNER_DIR) \
