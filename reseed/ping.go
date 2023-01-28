@@ -5,20 +5,22 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"net/url"
 	"os"
 	"path/filepath"
 	"strings"
 	"time"
 )
 
-// Ping requests an `.su3` from another reseed server and return true if
+// Ping requests an ".su3" from another reseed server and return true if
 // the reseed server is alive If the reseed server is not alive, returns
 // false and the status of the request as an error
-func Ping(url string) (bool, error) {
-	if strings.HasSuffix(url, "i2pseeds.su3") {
-		url = url + "i2pseeds.su3"
+func Ping(urlInput string) (bool, error) {
+	if !strings.HasSuffix(urlInput, "i2pseeds.su3") {
+		urlInput = fmt.Sprintf("%s%s", urlInput, "i2pseeds.su3")
 	}
-	req, err := http.NewRequest("GET", url, nil)
+	log.Println("Pinging:", urlInput)
+	req, err := http.NewRequest("GET", urlInput, nil)
 	if err != nil {
 		return false, err
 	}
@@ -35,21 +37,33 @@ func Ping(url string) (bool, error) {
 	return true, nil
 }
 
-func PingWriteContent(url string) error {
+func trimPath(s string) string {
+	tmp := strings.ReplaceAll(s, "https://", "")
+	tmp = strings.ReplaceAll(s, "http://", "")
+	tmp = strings.ReplaceAll(s, "/", "")
+	return tmp
+}
+
+func PingWriteContent(urlInput string) error {
+	log.Println("Calling PWC", urlInput)
 	date := time.Now().Format("2006-01-02")
-	path := strings.Replace(url, "http://", "", 1)
-	path = strings.Replace(path, "https://", "", 1)
-	path = strings.Replace(path, "/", "", -1)
+	u, err := url.Parse(urlInput)
+	if err != nil {
+		log.Println("PWC", err)
+		return fmt.Errorf("PingWriteContent:%s", err)
+	}
+	path := trimPath(u.Host)
+	log.Println("Calling PWC path", path)
 	BaseContentPath, _ := StableContentPath()
 	path = filepath.Join(BaseContentPath, path+"-"+date+".ping")
 	if _, err := os.Stat(path); err != nil {
-		result, err := Ping(url)
+		result, err := Ping(urlInput)
 		if result {
-			log.Printf("Ping: %s OK", url)
+			log.Printf("Ping: %s OK", urlInput)
 			err := ioutil.WriteFile(path, []byte("Alive: Status OK"), 0644)
 			return err
 		} else {
-			log.Printf("Ping: %s %s", url, err)
+			log.Printf("Ping: %s %s", urlInput, err)
 			err := ioutil.WriteFile(path, []byte("Dead: "+err.Error()), 0644)
 			return err
 		}
@@ -58,7 +72,7 @@ func PingWriteContent(url string) error {
 }
 
 // TODO: make this a configuration option
-var AllReseeds = []string{
+/*var AllReseeds = []string{
 	"https://banana.incognet.io/",
 	"https://i2p.novg.net/",
 	"https://i2pseed.creativecowpat.net:8443/",
@@ -67,16 +81,30 @@ var AllReseeds = []string{
 	"https://reseed.memcpy.io/",
 	"https://reseed.onion.im/",
 	"https://reseed2.i2p.net/",
+}*/
+
+var AllReseeds = []string{
+	"https://banana.incognet.io/",
+	"https://i2p.novg.net/",
+	"https://i2pseed.creativecowpat.net:8443/",
+	"https://reseed-fr.i2pd.xyz/",
+	"https://reseed-pl.i2pd.xyz/",
+	"https://reseed.diva.exchange/",
+	"https://reseed.i2pgit.org/",
+	"https://reseed.memcpy.io/",
+	"https://reseed.onion.im/",
+	"https://reseed2.i2p.net/",
+	"https://www2.mk16.de/",
 }
 
 func PingEverybody() []string {
 	var nonerrs []string
-	for _, url := range AllReseeds {
-		err := PingWriteContent(url)
+	for _, urlInput := range AllReseeds {
+		err := PingWriteContent(urlInput)
 		if err == nil {
-			nonerrs = append(nonerrs, url)
+			nonerrs = append(nonerrs, urlInput)
 		} else {
-			nonerrs = append(nonerrs, err.Error()+"-"+url)
+			nonerrs = append(nonerrs, err.Error()+"-"+urlInput)
 		}
 	}
 	return nonerrs
@@ -106,8 +134,8 @@ func ReadOut(w http.ResponseWriter) {
 	pinglist, err := GetPingFiles()
 	if err == nil {
 		fmt.Fprintf(w, "<h3>Reseed Server Statuses</h3>")
-		fmt.Fprintf(w, "<div><p>This feature is experimental and may not always provide accurate results.</p></div>")
-		fmt.Fprintf(w, "<div><p><ul>")
+		fmt.Fprintf(w, "<div class=\"pingtest\">This feature is experimental and may not always provide accurate results.</div>")
+		fmt.Fprintf(w, "<div class=\"homepage\"><p><ul>")
 		for _, file := range pinglist {
 			ping, err := ioutil.ReadFile(file)
 			host := strings.Replace(file, ".ping", "", 1)

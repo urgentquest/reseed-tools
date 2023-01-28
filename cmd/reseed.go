@@ -47,6 +47,12 @@ func getHostName() string {
 	return strings.Replace(hostname, "\n", "", -1)
 }
 
+func providedReseeds(c *cli.Context) []string {
+	reseedArg := c.StringSlice("friends")
+	reseed.AllReseeds = reseedArg
+	return reseed.AllReseeds
+}
+
 func NewReseedCommand() *cli.Command {
 	ndb, err := getmeanetdb.WhereIstheNetDB()
 	if err != nil {
@@ -157,6 +163,11 @@ func NewReseedCommand() *cli.Command {
 				Name:  "samaddr",
 				Value: "127.0.0.1:7656",
 				Usage: "Use this SAM address to set up I2P connections for in-network reseed",
+			},
+			&cli.StringSliceFlag{
+				Name:  "friends",
+				Value: cli.NewStringSlice(reseed.AllReseeds...),
+				Usage: "Ping other reseed servers and display the result on the homepage to provide information about reseed uptime.",
 			},
 			&cli.BoolFlag{
 				Name:  "acme",

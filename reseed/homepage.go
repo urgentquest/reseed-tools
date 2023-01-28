@@ -109,7 +109,7 @@ func (srv *Server) HandleARealBrowser(w http.ResponseWriter, r *http.Request) {
 			HandleAFile(w, "images", strings.TrimPrefix(strings.TrimPrefix(r.URL.Path, "/"), "images"))
 		} else if strings.HasPrefix(image, "ping") {
 			PingEverybody()
-			http.Redirect(w, r, "/readout", http.StatusFound)
+			http.Redirect(w, r, "/", http.StatusFound)
 		} else if strings.HasPrefix(image, "readout") {
 			w.Header().Set("Content-Type", "text/html")
 			w.Write([]byte(header))
