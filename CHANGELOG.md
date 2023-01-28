@@ -1,3 +1,18 @@
+2023-01-27
+ * app.Version = "0.2.32"
+ * This changelog has been inadequately updated.
+ * At this time, there have been features added.
+ * All flags but signer will be filled in with default values or left unused.
+ * signer may be configured with an environment variable.
+ * A fake homepage is served when a user-agent does not match eepget.
+ * Static resources have been embedded in the binary to support the homepage.
+ * ACME support has been added.
+ * Support for operating an `.onion` service has been added.
+ * Support for operating an in-network(`.b32.i2p`) interface to the reseed has been added.
+ * Reseed servers can monitor eachother on a rate-limited basis.
+ * Support has been added for running as an I2P plugin.
+ * Limited support has been added for Debian packages.
+
 2021-12-16
  * app.Version = "0.2.11"
  * include license file in plugin

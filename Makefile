@@ -13,7 +13,7 @@ GOARCH?="amd64"
 ARG=-v -tags netgo -ldflags '-w -extldflags "-static"'
 
 #MIN_GO_VERSION=`ls /usr/lib/go-1.14 2>/dev/null >/dev/null && echo 1.14`
-MIN_GO_VERSION?=1.15
+MIN_GO_VERSION?=1.16
 
 I2P_UID=$(shell id -u i2psvc)
 I2P_GID=$(shell id -g i2psvc)
