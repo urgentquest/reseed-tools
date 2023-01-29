@@ -61,6 +61,7 @@ uninstall:
 
 checkinstall: build
 	fakeroot checkinstall \
+		--arch=$(GOARCH) \
 		--default \
 		--install=no \
 		--fstrans=yes \
@@ -173,7 +174,7 @@ jar: gojava
 	echo $(JAVA_HOME)
 	./gojava -v -o reseed.jar -s . build ./reseed
 
-release: version upload checkinstall upload-single-deb plugins upload-su3s upload-bin 
+release: version upload debs upload-deps plugins  upload-bin 
 
 version:
 	cat README.md | gothub release -s $(GITHUB_TOKEN) -u $(USER_GH) -r $(APP) -t v$(VERSION) -d -; true
@@ -212,6 +213,18 @@ plugins:
 	export GOOS=freebsd; export GOARCH=amd64; make su3s
 	export GOOS=windows; export GOARCH=amd64; make su3s
 	export GOOS=windows; export GOARCH=386; make su3s
+
+debs:
+	export GOOS=linux; export GOARCH=amd64; make build checkinstall
+	export GOOS=linux; export GOARCH=386; make build checkinstall
+	export GOOS=linux; export GOARCH=arm; make build checkinstall
+	export GOOS=linux; export GOARCH=arm64; make build checkinstall
+
+upload-debs:
+	export GOOS=linux; export GOARCH=386; make upload-single-su3
+	export GOOS=linux; export GOARCH=amd64; make upload-single-su3
+	export GOOS=linux; export GOARCH=arm; make upload-single-su3
+	export GOOS=linux; export GOARCH=arm64; make upload-single-su3
 
 upload-bin:
 	#export GOOS=darwin; export GOARCH=amd64; make upload-single-bin
@@ -259,7 +272,7 @@ download-single-su3:
 	wget-ds "https://github.com/eyedeekay/reseed-tools/releases/download/v$(VERSION)/reseed-tools-$(GOOS)-$(GOARCH).su3"
 
 upload-single-deb:
-	gothub upload -R -s $(GITHUB_TOKEN) -u $(USER_GH) -r $(APP) -t v$(VERSION) -f reseed-tools_$(VERSION)-1_amd64.deb -l "`sha256sum reseed-tools_$(VERSION)-1_amd64.deb`" -n "reseed-tools_$(VERSION)-1_amd64.deb"
+	gothub upload -R -s $(GITHUB_TOKEN) -u $(USER_GH) -r $(APP) -t v$(VERSION) -f reseed-tools_$(VERSION)-1_amd64.deb -l "`sha256sum reseed-tools_$(VERSION)-1_$(GOARCH).deb`" -n "reseed-tools_$(VERSION)-1_amd64.deb"
 
 upload-single-bin:
 	gothub upload -R -s $(GITHUB_TOKEN) -u $(USER_GH) -r $(APP) -t v$(VERSION) -f reseed-tools-"$(GOOS)"-"$(GOARCH)" -l "`sha256sum reseed-tools-$(GOOS)-$(GOARCH)`" -n "reseed-tools-$(GOOS)"-"$(GOARCH)"
