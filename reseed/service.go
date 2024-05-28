@@ -15,6 +15,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/go-i2p/go-i2p/lib/common/router_info"
 	"i2pgit.org/idk/reseed-tools/su3"
 )
 
@@ -22,6 +23,7 @@ type routerInfo struct {
 	Name    string
 	ModTime time.Time
 	Data    []byte
+	RI      *router_info.RouterInfo
 }
 
 type Peer string
@@ -264,11 +266,17 @@ func (db *LocalNetDbImpl) RouterInfos() (routerInfos []routerInfo, err error) {
 		if age.Hours() > 192 {
 			continue
 		}
-
+		riStruct, remainder, err := router_info.NewRouterInfo(riBytes)
+		if err != nil {
+			log.Println(err)
+			log.Println(remainder)
+			riStruct = nil
+		}
 		routerInfos = append(routerInfos, routerInfo{
 			Name:    file.Name(),
 			ModTime: file.ModTime(),
 			Data:    riBytes,
+			RI:      riStruct,
 		})
 	}
 
