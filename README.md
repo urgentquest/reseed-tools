@@ -8,7 +8,7 @@ There are several utility commands to create, sign, and validate SU3 files.
 Please note that this requires at least Go version 1.13, and uses Go Modules.
 
 Standard reseeds are distributed with the I2P packages. To get your reseed
-included, apply on [zzz.i2p](http://zzz.i2p).
+included, apply on [i2pforum.i2p](http://i2pforum.i2p).
 
 ## Dependencies
 

@@ -1,7 +1,6 @@
 package cmd
 
 import (
-	"context"
 	"strings"
 
 	//"flag"
@@ -19,8 +18,6 @@ import (
 	"github.com/cretz/bine/torutil/ed25519"
 	"github.com/eyedeekay/i2pkeys"
 	"github.com/eyedeekay/sam3"
-	"github.com/libp2p/go-libp2p"
-	"github.com/libp2p/go-libp2p-core/host"
 	"github.com/urfave/cli/v3"
 	"i2pgit.org/idk/reseed-tools/reseed"
 
@@ -448,14 +445,6 @@ func reseedAction(c *cli.Context) error {
 			reseedI2P(c, i2pTlsCert, i2pTlsKey, i2pkey, reseeder)
 		}
 	}
-	if c.Bool("p2p") {
-		log.Printf("libP2P listener starting\n")
-		if tlsHost != "" && tlsCert != "" && tlsKey != "" {
-			go reseedP2P(c, reseeder)
-		} else {
-			reseedP2P(c, reseeder)
-		}
-	}
 	if !c.Bool("trustProxy") {
 		log.Printf("HTTPS server starting\n")
 		reseedHTTPS(c, tlsCert, tlsKey, reseeder)
@@ -524,52 +513,6 @@ func reseedHTTP(c *cli.Context, reseeder *reseed.ReseederImpl) {
 	}
 	log.Printf("HTTP server started on %s\n", server.Addr)
 	if err := server.ListenAndServe(); err != nil {
-		log.Fatalln(err)
-	}
-}
-
-func makeRandomHost(port int) (host.Host, error) {
-	host, err := libp2p.New(context.Background(), libp2p.ListenAddrStrings(fmt.Sprintf("/ip4/127.0.0.1/tcp/%d", port)))
-	if err != nil {
-		return nil, err
-	}
-	return host, nil
-}
-
-func reseedP2P(c *cli.Context, reseeder *reseed.ReseederImpl) {
-	server := reseed.NewServer(c.String("prefix"), c.Bool("trustProxy"))
-	server.Reseeder = reseeder
-	server.Addr = net.JoinHostPort(c.String("ip"), c.String("port"))
-
-	// load a blacklist
-	blacklist := reseed.NewBlacklist()
-	server.Blacklist = blacklist
-	blacklistFile := c.String("blacklist")
-	if "" != blacklistFile {
-		blacklist.LoadFile(blacklistFile)
-	}
-
-	// print stats once in a while
-	if c.Duration("stats") != 0 {
-		go func() {
-			var mem runtime.MemStats
-			for range time.Tick(c.Duration("stats")) {
-				runtime.ReadMemStats(&mem)
-				log.Printf("TotalAllocs: %d Kb, Allocs: %d Kb, Mallocs: %d, NumGC: %d", mem.TotalAlloc/1024, mem.Alloc/1024, mem.Mallocs, mem.NumGC)
-			}
-		}()
-	}
-	port, err := strconv.Atoi(c.String("port"))
-	if err != nil {
-		log.Fatalln(err.Error())
-	}
-	port += 2
-	host, err := makeRandomHost(port)
-	if err != nil {
-		log.Fatalln(err.Error())
-	}
-	log.Printf("P2P listener started on %s\n", host.ID())
-	if err := server.ListenAndServeLibP2P(host); err != nil {
 		log.Fatalln(err)
 	}
 }

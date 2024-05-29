@@ -18,9 +18,6 @@ import (
 	"github.com/eyedeekay/sam3"
 	"github.com/gorilla/handlers"
 	"github.com/justinas/alice"
-	"github.com/libp2p/go-libp2p-core/host"
-	gostream "github.com/libp2p/go-libp2p-gostream"
-	p2phttp "github.com/libp2p/go-libp2p-http"
 	throttled "github.com/throttled/throttled/v2"
 	"github.com/throttled/throttled/v2/store"
 )
@@ -324,15 +321,6 @@ func (srv *Server) ListenAndServeI2P(samaddr string, I2PKeys i2pkeys.I2PKeys) er
 	}
 	log.Printf("I2P server started on http://%v.b32.i2p\n", srv.I2PListener.Addr().(i2pkeys.I2PAddr).Base32())
 	return srv.Serve(srv.I2PListener)
-}
-
-// ListenAndServeLibP2P is used to serve the reseed server over libp2p http connections
-func (srv *Server) ListenAndServeLibP2P(hst host.Host) error {
-	listener, err := gostream.Listen(hst, p2phttp.DefaultP2PProtocol)
-	if err != nil {
-		return err
-	}
-	return srv.Serve(listener)
 }
 
 func (srv *Server) reseedHandler(w http.ResponseWriter, r *http.Request) {
