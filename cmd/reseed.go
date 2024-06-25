@@ -145,10 +145,6 @@ func NewReseedCommand() *cli.Command {
 				Usage: "Periodically print memory stats.",
 			},
 			&cli.BoolFlag{
-				Name:  "p2p",
-				Usage: "Listen for reseed request via libp2p",
-			},
-			&cli.BoolFlag{
 				Name:  "i2p",
 				Usage: "Listen for reseed request inside the I2P network",
 			},
