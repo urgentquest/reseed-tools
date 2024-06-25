@@ -16,8 +16,7 @@ require (
 	github.com/throttled/throttled/v2 v2.7.1
 	github.com/urfave/cli/v3 v3.0.0-alpha
 	gitlab.com/golang-commonmark/markdown v0.0.0-20191127184510-91b5b3c99c19
-	golang.org/x/crypto v0.5.0 // indirect
-	golang.org/x/text v0.6.0
+	golang.org/x/text v0.15.0
 )
 
 replace github.com/libp2p/go-libp2p => github.com/libp2p/go-libp2p v0.13.0
@@ -27,3 +26,5 @@ replace github.com/libp2p/go-libp2p-core => github.com/libp2p/go-libp2p-core v0.
 replace github.com/libp2p/go-libp2p-gostream => github.com/libp2p/go-libp2p-gostream v0.3.1
 
 replace github.com/libp2p/go-libp2p-http => github.com/libp2p/go-libp2p-http v0.2.0
+
+replace github.com/go-i2p/go-i2p => ../../../github.com/go-i2p/go-i2p
