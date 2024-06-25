@@ -1,3 +1,8 @@
+2024-06-25
+ * app.Version = 2.4
+ * Remove dependency on libp2p
+ * Use go-i2p to parse RouterInfos prior to inclusion in reseed bundles, exclude less-useful RIs
+
 2023-01-27
  * app.Version = "0.2.32"
  * This changelog has been inadequately updated.

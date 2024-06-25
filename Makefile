@@ -177,7 +177,7 @@ jar: gojava
 release: version upload debs upload-deps plugins  upload-bin 
 
 version:
-	cat README.md | gothub release -s $(GITHUB_TOKEN) -u $(USER_GH) -r $(APP) -t v$(VERSION) -d -; true
+	head -n 5 README.md | gothub release -s $(GITHUB_TOKEN) -u $(USER_GH) -r $(APP) -t v$(VERSION) -d -; true
 
 delete-version:
 	gothub delete -s $(GITHUB_TOKEN) -u $(USER_GH) -r $(APP) -t v$(VERSION)
