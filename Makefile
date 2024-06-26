@@ -27,7 +27,7 @@ index:
 	edgar
 
 build:
-	go build $(ARG) -o reseed-tools-$(GOOS)-$(GOARCH)
+	/usr/bin/go build $(ARG) -o reseed-tools-$(GOOS)-$(GOARCH)
 
 1.15-build: gofmt
 	/usr/lib/go-$(MIN_GO_VERSION)/bin/go build $(ARG) -o reseed-tools-$(GOOS)-$(GOARCH)
@@ -39,32 +39,30 @@ tar:
 	tar --exclude="./.git" --exclude="./tmp" --exclude=".vscode" --exclude="./*.pem" --exclude="./*.crl" --exclude="./*.crt" -cvf ../reseed-tools.tar.xz .
 
 install:
-	install -m755 reseed-tools-$(GOOS)-$(GOARCH) /usr/bin/reseed-tools
-	install -m644 etc/default/reseed /etc/default/reseed
-	install -m755 etc/init.d/reseed /etc/init.d/reseed
-	mkdir -p /etc/systemd/system/reseed.service.d/
-	mkdir -p /var/lib/i2p/
-	mkdir -p /var/lib/i2p/i2p-config/reseed/
-	install -g i2psvc -o i2psvc -d /var/lib/i2p/i2p-config/reseed/
-	cp -r reseed/content /var/lib/i2p/i2p-config/reseed/content
-	chown -R i2psvc:i2psvc /var/lib/i2p/i2p-config/reseed/
-	install -m644 etc/systemd/system/reseed.service.d/override.conf /etc/systemd/system/reseed.service.d/override.conf
-	install -m644 etc/systemd/system/reseed.service /etc/systemd/system/reseed.service
+	install -m755 reseed-tools-$(GOOS)-$(GOARCH) ${prefix}/usr/bin/reseed-tools
+	install -m644 etc/default/reseed ${prefix}/etc/default/reseed
+	install -m755 etc/init.d/reseed ${prefix}/etc/init.d/reseed
+	install -g i2psvc -o i2psvc -D -d ${prefix}/var/lib/i2p/i2p-config/reseed/
+	cp -r reseed/content ${prefix}/var/lib/i2p/i2p-config/reseed/content
+	chown -R i2psvc:i2psvc ${prefix}/var/lib/i2p/i2p-config/reseed/
+	install -g i2psvc -o i2psvc -D -d ${prefix}/etc/systemd/system/reseed.service.d/
+	install -m644 etc/systemd/system/reseed.service.d/override.conf ${prefix}/etc/systemd/system/reseed.service.d/override.conf
+	install -m644 etc/systemd/system/reseed.service ${prefix}/etc/systemd/system/reseed.service
 
 uninstall:
-	rm /usr/bin/reseed-tools
-	rm /etc/default/reseed
-	rm /etc/init.d/reseed
-	rm /etc/systemd/system/reseed.service.d/reseed.conf
-	rm /etc/systemd/system/reseed.service
-	rm -rf /var/lib/i2p/i2p-config/reseed/
+	rm ${prefix}/usr/bin/reseed-tools
+	rm ${prefix}/etc/default/reseed
+	rm ${prefix}/etc/init.d/reseed
+	rm ${prefix}/etc/systemd/system/reseed.service.d/reseed.conf
+	rm ${prefix}/etc/systemd/system/reseed.service
+	rm -rf ${prefix}/var/lib/i2p/i2p-config/reseed/
 
 checkinstall: build
-	fakeroot checkinstall \
+	checkinstall \
 		--arch=$(GOARCH) \
 		--default \
 		--install=no \
-		--fstrans=yes \
+		--fstrans=no \
 		--pkgname=reseed-tools \
 		--pkgversion=$(VERSION) \
 		--pkggroup=net \
@@ -76,7 +74,8 @@ checkinstall: build
 		--nodoc \
 		--deldoc=yes \
 		--deldesc=yes \
-		--backup=no
+		--backup=no \
+		-D make install
 
 ### You shouldn't need to use these now that the go mod require rule is fixed,
 ## but I'm leaving them in here because it made it easier to test that both
@@ -221,10 +220,10 @@ debs:
 	export GOOS=linux; export GOARCH=arm64; make build checkinstall
 
 upload-debs:
-	export GOOS=linux; export GOARCH=386; make upload-single-su3
-	export GOOS=linux; export GOARCH=amd64; make upload-single-su3
-	export GOOS=linux; export GOARCH=arm; make upload-single-su3
-	export GOOS=linux; export GOARCH=arm64; make upload-single-su3
+	export GOOS=linux; export GOARCH=386; make upload-single-deb
+	export GOOS=linux; export GOARCH=amd64; make upload-single-deb
+	export GOOS=linux; export GOARCH=arm; make upload-single-deb
+	export GOOS=linux; export GOARCH=arm64; make upload-single-deb
 
 upload-bin:
 	#export GOOS=darwin; export GOARCH=amd64; make upload-single-bin
