@@ -173,7 +173,7 @@ jar: gojava
 	echo $(JAVA_HOME)
 	./gojava -v -o reseed.jar -s . build ./reseed
 
-release: version upload debs upload-deps plugins  upload-bin 
+release: version upload plugins upload-plugins binary upload-bin 
 
 version:
 	head -n 5 README.md | github-release release -s $(GITHUB_TOKEN) -u $(USER_GH) -r $(APP) -t v$(VERSION) -d -; true
