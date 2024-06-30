@@ -1,3 +1,7 @@
+2024-06-29
+ * app.Version = 2.5
+ * Add password-protected netDb sync capability
+
 2024-06-25
  * app.Version = 2.4
  * Remove dependency on libp2p

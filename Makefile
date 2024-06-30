@@ -1,5 +1,5 @@
 
-VERSION=0.2.34
+VERSION=$(shell ./reseed-tools --version | tr -d 'abcdefghijklmnopqrstuvwxyz\- ')
 APP=reseed-tools
 USER_GH=eyedeekay
 CGO_ENABLED=0
