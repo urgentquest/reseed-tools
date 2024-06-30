@@ -1,6 +1,9 @@
 package cmd
 
 import (
+	"net/http"
+	"net/url"
+	"path/filepath"
 	"strings"
 
 	//"flag"
@@ -17,7 +20,10 @@ import (
 	"github.com/cretz/bine/torutil"
 	"github.com/cretz/bine/torutil/ed25519"
 	"github.com/eyedeekay/i2pkeys"
+	"github.com/eyedeekay/onramp"
 	"github.com/eyedeekay/sam3"
+	"github.com/otiai10/copy"
+	"github.com/rglonek/untar"
 	"github.com/urfave/cli/v3"
 	"i2pgit.org/idk/reseed-tools/reseed"
 
@@ -162,6 +168,16 @@ func NewReseedCommand() *cli.Command {
 				Value: cli.NewStringSlice(reseed.AllReseeds...),
 				Usage: "Ping other reseed servers and display the result on the homepage to provide information about reseed uptime.",
 			},
+			&cli.StringFlag{
+				Name:  "share-peer",
+				Value: "",
+				Usage: "Download the shared netDb content of another I2P router, over I2P",
+			},
+			&cli.StringFlag{
+				Name:  "share-password",
+				Value: "",
+				Usage: "Password for downloading netDb content from another router. Required for share-peer to work.",
+			},
 			&cli.BoolFlag{
 				Name:  "acme",
 				Usage: "Automatically generate a TLS certificate with the ACME protocol, defaults to Let's Encrypt",
@@ -265,6 +281,17 @@ func reseedAction(c *cli.Context) error {
 		}
 		signerID = string(bytes)
 	}
+	count := []int{1, 2, 3, 4, 5, 6, 7, 8, 9, 10}
+	for i := range count {
+		err := downloadRemoteNetDB(c.String("share-peer"), c.String("share-password"), c.String("netdb"), c.String("samaddr"))
+		if err != nil {
+			log.Println("Error downloading remote netDb,", err, "retrying in 10 seconds", i, "attempts remaining")
+			time.Sleep(time.Second * 10)
+		} else {
+			break
+		}
+	}
+	go getSupplementalNetDb(c.String("share-peer"), c.String("share-password"), c.String("netdb"), c.String("samaddr"))
 
 	var tlsCert, tlsKey string
 	tlsHost := c.String("tlsHost")
@@ -630,4 +657,93 @@ func reseedI2P(c *cli.Context, i2pTlsCert, i2pTlsKey string, i2pIdentKey i2pkeys
 	}
 
 	log.Printf("Onion server started on %s\n", server.Addr)
+}
+
+func getSupplementalNetDb(remote, password, path, samaddr string) {
+	log.Println("Remote NetDB Update Loop")
+	for {
+		if err := downloadRemoteNetDB(remote, password, path, samaddr); err != nil {
+			log.Println("Error downloading remote netDb", err)
+			time.Sleep(time.Second * 30)
+		} else {
+			log.Println("Success downloading remote netDb", err)
+			time.Sleep(time.Minute * 30)
+		}
+	}
+}
+
+func downloadRemoteNetDB(remote, password, path, samaddr string) error {
+	var hremote string
+	if !strings.HasPrefix("http://", remote) && !strings.HasPrefix("https://", remote) {
+		hremote = "http://" + remote
+	}
+	if !strings.HasSuffix(hremote, ".tar.gz") {
+		hremote += "/netDb.tar.gz"
+	}
+	url, err := url.Parse(hremote)
+	if err != nil {
+		return err
+	}
+	httpRequest := http.Request{
+		URL:    url,
+		Header: http.Header{},
+	}
+	garlic, err := onramp.NewGarlic("reseed-client", samaddr, onramp.OPT_WIDE)
+	if err != nil {
+		return err
+	}
+
+	defer garlic.Close()
+	httpRequest.Header.Add(http.CanonicalHeaderKey("reseed-password"), password)
+	httpRequest.Header.Add(http.CanonicalHeaderKey("x-user-agent"), reseed.I2pUserAgent)
+	transport := http.Transport{
+		Dial: garlic.Dial,
+	}
+	client := http.Client{
+		Transport: &transport,
+	}
+	if resp, err := client.Do(&httpRequest); err != nil {
+		return err
+	} else {
+		if bodyBytes, err := ioutil.ReadAll(resp.Body); err != nil {
+			return err
+		} else {
+			if err := ioutil.WriteFile("netDb.tar.gz", bodyBytes, 0644); err != nil {
+				return err
+			} else {
+				dbPath := filepath.Join(path, "reseed-netDb")
+				if err := untar.UntarFile("netDb.tar.gz", dbPath); err != nil {
+					return err
+				} else {
+					// For example...
+					opt := copy.Options{
+						Skip: func(info os.FileInfo, src, dest string) (bool, error) {
+							srcBase := filepath.Base(src)
+							dstBase := filepath.Base(dest)
+							if info.IsDir() {
+								return false, nil
+							}
+							if srcBase == dstBase {
+								log.Println("Ignoring existing RI", srcBase, dstBase)
+								return true, nil
+							}
+							return false, nil
+						},
+					}
+					if err := copy.Copy(dbPath, path, opt); err != nil {
+						return err
+					} else {
+						if err := os.RemoveAll(dbPath); err != nil {
+							return err
+						} else {
+							if err := os.RemoveAll("netDb.tar.gz"); err != nil {
+								return err
+							}
+							return nil
+						}
+					}
+				}
+			}
+		}
+	}
 }

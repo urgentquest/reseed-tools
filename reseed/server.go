@@ -23,7 +23,7 @@ import (
 )
 
 const (
-	i2pUserAgent = "Wget/1.11.4"
+	I2pUserAgent = "Wget/1.11.4"
 )
 
 type Server struct {
@@ -361,7 +361,7 @@ func (srv *Server) browsingMiddleware(next http.Handler) http.Handler {
 		if srv.CheckAcceptable(r.FormValue("onetime")) {
 			srv.reseedHandler(w, r)
 		}
-		if i2pUserAgent != r.UserAgent() {
+		if I2pUserAgent != r.UserAgent() {
 			srv.HandleARealBrowser(w, r)
 			return
 		}
@@ -372,7 +372,7 @@ func (srv *Server) browsingMiddleware(next http.Handler) http.Handler {
 
 func verifyMiddleware(next http.Handler) http.Handler {
 	fn := func(w http.ResponseWriter, r *http.Request) {
-		if i2pUserAgent != r.UserAgent() {
+		if I2pUserAgent != r.UserAgent() {
 			http.Error(w, "403 Forbidden", http.StatusForbidden)
 			return
 		}

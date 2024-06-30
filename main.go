@@ -31,6 +31,7 @@ func main() {
 		cmd.NewReseedCommand(),
 		cmd.NewSu3VerifyCommand(),
 		cmd.NewKeygenCommand(),
+		cmd.NewShareCommand(),
 		// cmd.NewSu3VerifyPublicCommand(),
 	}
 

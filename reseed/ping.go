@@ -24,7 +24,7 @@ func Ping(urlInput string) (bool, error) {
 	if err != nil {
 		return false, err
 	}
-	req.Header.Set("User-Agent", i2pUserAgent)
+	req.Header.Set("User-Agent", I2pUserAgent)
 
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
