@@ -1,5 +1,5 @@
 
-VERSION=`./reseed-tools-host --version | tr -d 'abcdefghijklmnopqrstuvwxyz\- '`
+VERSION=`./reseed-tools-host --version | tr -d 'abcdefghijklmnopqrstuvwxyz\-\n '`
 APP=reseed-tools
 USER_GH=eyedeekay
 CGO_ENABLED=0
