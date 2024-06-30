@@ -1,5 +1,5 @@
 
-VERSION=$(shell make host; ./reseed-tools-host --version | tr -d 'abcdefghijklmnopqrstuvwxyz\- ')
+VERSION=`./reseed-tools-host --version | tr -d 'abcdefghijklmnopqrstuvwxyz\- '`
 APP=reseed-tools
 USER_GH=eyedeekay
 CGO_ENABLED=0

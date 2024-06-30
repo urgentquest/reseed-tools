@@ -281,17 +281,19 @@ func reseedAction(c *cli.Context) error {
 		}
 		signerID = string(bytes)
 	}
-	count := []int{1, 2, 3, 4, 5, 6, 7, 8, 9, 10}
-	for i := range count {
-		err := downloadRemoteNetDB(c.String("share-peer"), c.String("share-password"), c.String("netdb"), c.String("samaddr"))
-		if err != nil {
-			log.Println("Error downloading remote netDb,", err, "retrying in 10 seconds", i, "attempts remaining")
-			time.Sleep(time.Second * 10)
-		} else {
-			break
+	if c.String("share-peer") != "" {
+		count := []int{1, 2, 3, 4, 5, 6, 7, 8, 9, 10}
+		for i := range count {
+			err := downloadRemoteNetDB(c.String("share-peer"), c.String("share-password"), c.String("netdb"), c.String("samaddr"))
+			if err != nil {
+				log.Println("Error downloading remote netDb,", err, "retrying in 10 seconds", i, "attempts remaining")
+				time.Sleep(time.Second * 10)
+			} else {
+				break
+			}
 		}
+		go getSupplementalNetDb(c.String("share-peer"), c.String("share-password"), c.String("netdb"), c.String("samaddr"))
 	}
-	go getSupplementalNetDb(c.String("share-peer"), c.String("share-password"), c.String("netdb"), c.String("samaddr"))
 
 	var tlsCert, tlsKey string
 	tlsHost := c.String("tlsHost")
