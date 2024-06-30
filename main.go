@@ -19,7 +19,7 @@ func main() {
 
 	app := cli.NewApp()
 	app.Name = "reseed-tools"
-	app.Version = "0.2.5"
+	app.Version = "0.3.0"
 	app.Usage = "I2P tools and reseed server"
 	auth := &cli.Author{
 		Name:  "eyedeekay",

@@ -1,5 +1,5 @@
 
-VERSION=$(shell ./reseed-tools --version | tr -d 'abcdefghijklmnopqrstuvwxyz\- ')
+VERSION=$(shell go build; ./reseed-tools --version | tr -d 'abcdefghijklmnopqrstuvwxyz\- ')
 APP=reseed-tools
 USER_GH=eyedeekay
 CGO_ENABLED=0
