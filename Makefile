@@ -24,7 +24,7 @@ echo:
 	@echo "type make version to do release $(APP) $(VERSION) $(GOOS) $(GOARCH) $(MIN_GO_VERSION) $(I2P_UID) $(I2P_GID)"
 
 host:
-	go build -o reseed-tools-host
+	/usr/bin/go build -o reseed-tools-host
 
 index:
 	edgar
