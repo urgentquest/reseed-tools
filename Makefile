@@ -1,5 +1,5 @@
 
-VERSION=$(shell go build; ./reseed-tools --version | tr -d 'abcdefghijklmnopqrstuvwxyz\- ')
+VERSION=$(shell make host; ./reseed-tools-host --version | tr -d 'abcdefghijklmnopqrstuvwxyz\- ')
 APP=reseed-tools
 USER_GH=eyedeekay
 CGO_ENABLED=0
@@ -22,6 +22,9 @@ WHOAMI=$(shell whoami)
 
 echo:
 	@echo "type make version to do release $(APP) $(VERSION) $(GOOS) $(GOARCH) $(MIN_GO_VERSION) $(I2P_UID) $(I2P_GID)"
+
+host:
+	go build -o reseed-tools-host
 
 index:
 	edgar
