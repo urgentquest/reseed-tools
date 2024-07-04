@@ -12,7 +12,7 @@ Why?
 ----
 
 In most setups, a reseed service is using a network database which is kept on the same server as the I2P router where it finds it's netDb.
-This is convenient, however if reseed servers are targeted for a RouterInfo spam attack, then the reseed server could potentially be overwhelmed with spammy routerInfos.
+This is convenient, however if reseed servers are targeted for a RouterInfo spam attack, then the reseed server could potentially be overwhelmed with spammy RouterInfos.
 That impairs a new user's ability to join the network and slows down network integration.
 
 Password-Protected Sharing of NetDB content over I2P
