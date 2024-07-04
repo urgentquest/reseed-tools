@@ -48,7 +48,7 @@ After, set up the `cron` job to copy the netDB.
 ```sh
 crontab -e
 >>
-* 30 * * *  rsync --ignore-existing -raz $(UserRunningI2P)@$(RemoteRouter):$(/Path/To/Remote/NetDB) $(Path/To/My/NetDB)
+* 30 * * *  rsync --update -raz $(UserRunningI2P)@$(RemoteRouter):$(/Path/To/Remote/NetDB) $(Path/To/My/NetDB)
 ```
 
 SSH-Protected Sharing of NetDB content over I2P
@@ -90,5 +90,5 @@ After, set up the `cron` job to copy the netDB.
 ```sh
 crontab -e
 >>
-* 30 * * *  rsync --ignore-existing -raz $(/Path/To/My/NetDB) $(UserRunningReseed)@$(ReseedServer):/$(Path/To/Reseed/NetDB)
+* 30 * * *  rsync --update -raz $(/Path/To/My/NetDB) $(UserRunningReseed)@$(ReseedServer):/$(Path/To/Reseed/NetDB)
 ```
