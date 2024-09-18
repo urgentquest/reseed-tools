@@ -41,6 +41,8 @@ clean:
 	rm reseed-tools-* tmp -rfv *.deb plugin reseed-tools
 
 tar:
+	git pull github --tags; true
+	git pull --tags; true
 	git archive --format=tar.gz --output=reseed-tools.tar.gz v$(VERSION)
 
 install:
@@ -175,7 +177,7 @@ jar: gojava
 	echo $(JAVA_HOME)
 	./gojava -v -o reseed.jar -s . build ./reseed
 
-release: version upload binary upload-bin plugins upload-plugins debs upload-debs
+release: version upload binary upload-bin plugins upload-su3s debs upload-debs
 
 version:
 	head -n 5 README.md | github-release release -s $(GITHUB_TOKEN) -u $(USER_GH) -r $(APP) -t v$(VERSION) -d -; true
@@ -187,7 +189,7 @@ edit:
 	cat README.md | github-release edit -s $(GITHUB_TOKEN) -u $(USER_GH) -r $(APP) -t v$(VERSION) -d -
 
 upload: tar
-	github-release upload -R -s $(GITHUB_TOKEN) -u $(USER_GH) -r $(APP) -t v$(VERSION) -f ../reseed-tools.tar.gz -n "reseed-tools.tar.gz"
+	github-release upload -s $(GITHUB_TOKEN) -u $(USER_GH) -r $(APP) -t v$(VERSION) -f reseed-tools.tar.gz -n "reseed-tools.tar.gz"; true
 
 binary:
 	##export GOOS=darwin; export GOARCH=amd64; make build
@@ -273,13 +275,13 @@ download-single-su3:
 	wget-ds "https://github.com/eyedeekay/reseed-tools/releases/download/v$(VERSION)/reseed-tools-$(GOOS)-$(GOARCH).su3"
 
 upload-single-deb:
-	github-release upload -R -s $(GITHUB_TOKEN) -u $(USER_GH) -r $(APP) -t v$(VERSION) -f reseed-tools_$(VERSION)-1_amd64.deb -l "`sha256sum reseed-tools_$(VERSION)-1_$(GOARCH).deb`" -n "reseed-tools_$(VERSION)-1_amd64.deb"
+	github-release upload -s $(GITHUB_TOKEN) -u $(USER_GH) -r $(APP) -t v$(VERSION) -f reseed-tools_$(VERSION)-1_amd64.deb -l "`sha256sum reseed-tools_$(VERSION)-1_$(GOARCH).deb`" -n "reseed-tools_$(VERSION)-1_amd64.deb"; true
 
 upload-single-bin:
-	github-release upload -R -s $(GITHUB_TOKEN) -u $(USER_GH) -r $(APP) -t v$(VERSION) -f reseed-tools-"$(GOOS)"-"$(GOARCH)" -l "`sha256sum reseed-tools-$(GOOS)-$(GOARCH)`" -n "reseed-tools-$(GOOS)"-"$(GOARCH)"
+	github-release upload -s $(GITHUB_TOKEN) -u $(USER_GH) -r $(APP) -t v$(VERSION) -f reseed-tools-"$(GOOS)"-"$(GOARCH)" -l "`sha256sum reseed-tools-$(GOOS)-$(GOARCH)`" -n "reseed-tools-$(GOOS)"-"$(GOARCH)"; true
 
 upload-single-su3:
-	github-release upload -R -s $(GITHUB_TOKEN) -u $(USER_GH) -r $(APP) -t v$(VERSION) -f reseed-tools-"$(GOOS)"-"$(GOARCH).su3" -l "`sha256sum reseed-tools-$(GOOS)-$(GOARCH).su3`" -n "reseed-tools-$(GOOS)"-"$(GOARCH).su3"
+	github-release upload -s $(GITHUB_TOKEN) -u $(USER_GH) -r $(APP) -t v$(VERSION) -f reseed-tools-"$(GOOS)"-"$(GOARCH).su3" -l "`sha256sum reseed-tools-$(GOOS)-$(GOARCH).su3`" -n "reseed-tools-$(GOOS)"-"$(GOARCH).su3"; true
 
 tmp/content:
 	mkdir -p tmp
