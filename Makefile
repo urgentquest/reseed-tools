@@ -41,7 +41,7 @@ clean:
 	rm reseed-tools-* tmp -rfv *.deb plugin reseed-tools
 
 tar:
-	tar --exclude="./.git" --exclude="./tmp" --exclude=".vscode" --exclude="./*.pem" --exclude="./*.crl" --exclude="./*.crt" -cvf ../reseed-tools.tar.xz .
+	git archive --format=tar.gz --output=reseed-tools.tar.gz v$(VERSION)
 
 install:
 	install -m755 reseed-tools-$(GOOS)-$(GOARCH) ${prefix}usr/bin/reseed-tools
@@ -187,7 +187,7 @@ edit:
 	cat README.md | github-release edit -s $(GITHUB_TOKEN) -u $(USER_GH) -r $(APP) -t v$(VERSION) -d -
 
 upload: tar
-	github-release upload -R -s $(GITHUB_TOKEN) -u $(USER_GH) -r $(APP) -t v$(VERSION) -f ../reseed-tools.tar.xz -n "reseed-tools.tar.xz"
+	github-release upload -R -s $(GITHUB_TOKEN) -u $(USER_GH) -r $(APP) -t v$(VERSION) -f ../reseed-tools.tar.gz -n "reseed-tools.tar.gz"
 
 binary:
 	##export GOOS=darwin; export GOARCH=amd64; make build
