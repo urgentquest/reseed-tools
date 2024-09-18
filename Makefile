@@ -1,11 +1,13 @@
 
-VERSION=`./reseed-tools-host --version | tr -d 'abcdefghijklmnopqrstuvwxyz\-\n '`
+VERSION=0.3.2
 APP=reseed-tools
 USER_GH=eyedeekay
+SIGNER=hankhill19580@gmail.com
 CGO_ENABLED=0
 export CGO_ENABLED=0
 PLUGIN_PORT=7671
 export PLUGIN_PORT=7671
+prefix?=/
 
 GOOS?=$(shell uname -s | tr A-Z a-z)
 GOARCH?="amd64"
@@ -42,30 +44,28 @@ tar:
 	tar --exclude="./.git" --exclude="./tmp" --exclude=".vscode" --exclude="./*.pem" --exclude="./*.crl" --exclude="./*.crt" -cvf ../reseed-tools.tar.xz .
 
 install:
-	install -m755 reseed-tools-$(GOOS)-$(GOARCH) ${prefix}/usr/bin/reseed-tools
-	install -m644 etc/default/reseed ${prefix}/etc/default/reseed
-	install -m755 etc/init.d/reseed ${prefix}/etc/init.d/reseed
-	install -g i2psvc -o i2psvc -D -d ${prefix}/var/lib/i2p/i2p-config/reseed/
-	cp -r reseed/content ${prefix}/var/lib/i2p/i2p-config/reseed/content
-	chown -R i2psvc:i2psvc ${prefix}/var/lib/i2p/i2p-config/reseed/
-	install -g i2psvc -o i2psvc -D -d ${prefix}/etc/systemd/system/reseed.service.d/
-	install -m644 etc/systemd/system/reseed.service.d/override.conf ${prefix}/etc/systemd/system/reseed.service.d/override.conf
-	install -m644 etc/systemd/system/reseed.service ${prefix}/etc/systemd/system/reseed.service
+	install -m755 reseed-tools-$(GOOS)-$(GOARCH) ${prefix}usr/bin/reseed-tools
+	install -m644 etc/default/reseed ${prefix}etc/default/reseed
+	install -m755 etc/init.d/reseed ${prefix}etc/init.d/reseed
+	install -g i2psvc -o i2psvc -D -d ${prefix}var/lib/i2p/i2p-config/reseed/
+	install -g i2psvc -o i2psvc -D -d ${prefix}etc/systemd/system/reseed.service.d/
+	install -m644 etc/systemd/system/reseed.service.d/override.conf ${prefix}etc/systemd/system/reseed.service.d/override.conf
+	install -m644 etc/systemd/system/reseed.service ${prefix}etc/systemd/system/reseed.service
 
 uninstall:
-	rm ${prefix}/usr/bin/reseed-tools
-	rm ${prefix}/etc/default/reseed
-	rm ${prefix}/etc/init.d/reseed
-	rm ${prefix}/etc/systemd/system/reseed.service.d/reseed.conf
-	rm ${prefix}/etc/systemd/system/reseed.service
-	rm -rf ${prefix}/var/lib/i2p/i2p-config/reseed/
+	rm -rf ${prefix}bin/reseed-tools
+	rm -rf ${prefix}etc/default/reseed
+	rm -rf ${prefix}etc/init.d/reseed
+	rm -rf ${prefix}etc/systemd/system/reseed.service.d/reseed.conf
+	rm -rf ${prefix}etc/systemd/system/reseed.service
+	rm -rf ${prefix}var/lib/i2p/i2p-config/reseed/
 
-checkinstall: build
-	checkinstall \
+checkinstall:
+	checkinstall -D \
 		--arch=$(GOARCH) \
 		--default \
 		--install=no \
-		--fstrans=no \
+		--fstrans=yes \
 		--pkgname=reseed-tools \
 		--pkgversion=$(VERSION) \
 		--pkggroup=net \
@@ -77,8 +77,7 @@ checkinstall: build
 		--nodoc \
 		--deldoc=yes \
 		--deldesc=yes \
-		--backup=no \
-		-D make install
+		--backup=no
 
 ### You shouldn't need to use these now that the go mod require rule is fixed,
 ## but I'm leaving them in here because it made it easier to test that both
