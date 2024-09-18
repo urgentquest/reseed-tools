@@ -5,13 +5,13 @@ go 1.16
 require (
 	github.com/andybalholm/brotli v1.0.0 // indirect
 	github.com/cretz/bine v0.2.0
-	github.com/eyedeekay/checki2cp v0.0.22
+	github.com/eyedeekay/checki2cp v0.33.8
 	github.com/eyedeekay/go-fpw v0.0.0-20200512022837-c8b4dcdc74d4 // indirect
 	github.com/eyedeekay/go-i2pd v0.0.0-20220213070306-9807541b2dfc
-	github.com/eyedeekay/i2pkeys v0.33.7
+	github.com/eyedeekay/i2pkeys v0.33.8
 	github.com/eyedeekay/onramp v0.33.7
 	github.com/eyedeekay/ramp v0.0.0-20190429201811-305b382042ab // indirect
-	github.com/eyedeekay/sam3 v0.33.7
+	github.com/eyedeekay/sam3 v0.33.8
 	github.com/eyedeekay/unembed v0.0.0-20230123014222-9916b121855b
 	github.com/go-acme/lego/v4 v4.3.1
 	github.com/go-i2p/go-i2p v0.0.0-20240625160418-ac705dee767b
