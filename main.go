@@ -6,6 +6,7 @@ import (
 
 	"github.com/urfave/cli/v3"
 	"i2pgit.org/idk/reseed-tools/cmd"
+	"i2pgit.org/idk/reseed-tools/reseed"
 )
 
 func main() {
@@ -19,7 +20,7 @@ func main() {
 
 	app := cli.NewApp()
 	app.Name = "reseed-tools"
-	app.Version = "0.3.3"
+	app.Version = reseed.Version
 	app.Usage = "I2P tools and reseed server"
 	auth := &cli.Author{
 		Name:  "eyedeekay",
