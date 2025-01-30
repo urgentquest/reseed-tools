@@ -14,3 +14,7 @@ plugin
 reseed-tools*
 data-dir*
 audit.json
+*ed25519*
+client.yaml
+plugin.yaml
+err
