@@ -33,6 +33,7 @@ func main() {
 		cmd.NewSu3VerifyCommand(),
 		cmd.NewKeygenCommand(),
 		cmd.NewShareCommand(),
+		cmd.NewVersionCommand(),
 		// cmd.NewSu3VerifyPublicCommand(),
 	}
 

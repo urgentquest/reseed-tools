@@ -1,5 +1,5 @@
 
-VERSION=0.3.3
+VERSION=$(shell ./reseed-tools-linux-amd64 version 2>/dev/null)
 APP=reseed-tools
 USER_GH=eyedeekay
 SIGNER=hankhill19580@gmail.com
