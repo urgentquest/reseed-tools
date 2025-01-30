@@ -275,7 +275,7 @@ download-single-su3:
 	wget-ds "https://github.com/eyedeekay/reseed-tools/releases/download/v$(VERSION)/reseed-tools-$(GOOS)-$(GOARCH).su3"
 
 upload-single-deb:
-	github-release upload -s $(GITHUB_TOKEN) -u $(USER_GH) -r $(APP) -t v$(VERSION) -f reseed-tools_$(VERSION)-1_"$(GOARCH)".deb -l "`sha256sum reseed-tools_$(VERSION)-1_$(GOARCH).deb`" -n "reseed-tools_$(VERSION)-1_amd64.deb"; true
+	github-release upload -s $(GITHUB_TOKEN) -u $(USER_GH) -r $(APP) -t v$(VERSION) -f reseed-tools_$(VERSION)-1_"$(GOARCH)".deb -l "`sha256sum reseed-tools_$(VERSION)-1_$(GOARCH).deb`" -n "reseed-tools_$(VERSION)-1_$(GOARCH).deb"; true
 
 upload-single-bin:
 	github-release upload -s $(GITHUB_TOKEN) -u $(USER_GH) -r $(APP) -t v$(VERSION) -f reseed-tools-"$(GOOS)"-"$(GOARCH)" -l "`sha256sum reseed-tools-$(GOOS)-$(GOARCH)`" -n "reseed-tools-$(GOOS)"-"$(GOARCH)"; true
