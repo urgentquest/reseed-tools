@@ -347,6 +347,7 @@ func (srv *Server) reseedHandler(w http.ResponseWriter, r *http.Request) {
 func disableKeepAliveMiddleware(next http.Handler) http.Handler {
 	fn := func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Connection", "close")
+		w.Header().Set("Version", Version)
 		next.ServeHTTP(w, r)
 	}
 	return http.HandlerFunc(fn)

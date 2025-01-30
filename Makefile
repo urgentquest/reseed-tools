@@ -1,5 +1,5 @@
 
-VERSION=0.3.2
+VERSION=0.3.3
 APP=reseed-tools
 USER_GH=eyedeekay
 SIGNER=hankhill19580@gmail.com
