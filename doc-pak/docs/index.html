@@ -1,0 +1,318 @@
+<html>
+  <head>
+    <title>
+      I2P Reseed Tools
+    </title>
+    <meta name="author" content="eyedeekay" />
+    <meta name="description" content="reseed-tools" />
+    <meta name="keywords" content="master" />
+    <link rel="stylesheet" type="text/css" href="style.css" />
+    <link rel="stylesheet" type="text/css" href="showhider.css" />
+  </head>
+  <body>
+    <div id="navbar">
+      <a href="#shownav">
+        Show navigation
+      </a>
+      <div id="shownav">
+        <div id="hidenav">
+          <ul>
+            <li>
+              <a href="..">
+                Up one level ^
+              </a>
+            </li>
+            <li>
+              <a href=""></a>
+            </li>
+            <li>
+              <a href=""></a>
+            </li>
+            <li>
+              <a href="index.html">
+                index.html
+              </a>
+            </li>
+            <li>
+              <a href="index.html">
+                index.html
+              </a>
+            </li>
+            <li>
+              <a href=""></a>
+            </li>
+            <li>
+              <a href="DEBIAN.html">
+                DEBIAN
+              </a>
+            </li>
+            <li>
+              <a href="DOCKER.html">
+                DOCKER
+              </a>
+            </li>
+            <li>
+              <a href="EXAMPLES.html">
+                EXAMPLES
+              </a>
+            </li>
+            <li>
+              <a href="PLUGIN.html">
+                PLUGIN
+              </a>
+            </li>
+            <li>
+              <a href="index.html">
+                index
+              </a>
+            </li>
+            <li>
+              <a href="SERVICES.html">
+                SERVICES
+              </a>
+            </li>
+            <li>
+              <a href="TLS.html">
+                TLS
+              </a>
+            </li>
+            <li>
+              <a href="index.html">
+                index.html
+              </a>
+            </li>
+          </ul>
+          <br>
+          <a href="#hidenav">
+            Hide Navigation
+          </a>
+        </div>
+      </div>
+    </div>
+    <a id="returnhome" href="/">
+      /
+    </a>
+    <h1>
+      Configure an I2P Reseed Server Very Rapidly on Debian and Ubuntu
+    </h1>
+    <p>
+      It is possible to easily and automatically configure a reseed server
+      with a self-signed certificate on any Debian-based operating system,
+      including Ubuntu and it&rsquo;s downstreams. This is achieved using the
+      <code>
+        checkinstall
+      </code>
+      tool to set up the software dependencies and the operating system to
+      run the
+      <code>
+        I2P
+      </code>
+      service and the
+      <code>
+        reseed
+      </code>
+      service.
+    </p>
+    <h2>
+      Using a binary package
+    </h2>
+    <p>
+      If you do not wish to build from source, you can use a binary package
+      from me. This package is built from this repo with the
+      <code>
+        make checkinstall
+      </code>
+      target and uploaded by me. I build it on an up-to-date Debian
+      <code>
+        sid
+      </code>
+      system
+      at tag time. It contains a static binary and files for configuring it as a
+      system service.
+    </p>
+    <pre><code class="language-sh">
+wget https://github.com/eyedeekay/reseed-tools/releases/download/v0.2.30/reseed-tools_0.2.30-1_amd64.deb
+# Obtain the checksum from the release web page
+echo &quot;38941246e980dfc0456e066f514fc96a4ba25d25a7ef993abd75130770fa4d4d reseed-tools_0.2.30-1_amd64.deb&quot; &gt; SHA256SUMS
+sha256sums -c SHA256SUMS
+sudo apt-get install ./reseed-tools_0.2.30-1_amd64.deb
+</code></pre>
+    <h2>
+      Building the
+      <code>
+        .deb
+      </code>
+      package from the source(Optional)
+    </h2>
+    <p>
+      If your software is too old, it&rsquo;s possible that the binary package I build will
+      not work for you. It&rsquo;s very easy to generate your own from the source code in this
+      repository.
+    </p>
+    <p>
+      \
+      <strong>
+        1.
+      </strong>
+      Install the build dependencies
+    </p>
+    <pre><code class="language-sh">
+sudo apt-get install fakeroot checkinstall go git make
+</code></pre>
+    <p>
+      \
+      <strong>
+        2.
+      </strong>
+      Clone the source code
+    </p>
+    <pre><code class="language-sh">
+git clone https://i2pgit.org/idk/reseed-tools ~/go/src/i2pgit.org/idk/reseed-tools
+</code></pre>
+    <p>
+      \
+      <strong>
+        3.
+      </strong>
+      Generate the
+      <code>
+        .deb
+      </code>
+      package using the
+      <code>
+        make checkinstall
+      </code>
+      target
+    </p>
+    <pre><code class="language-sh">
+cd ~/go/src/i2pgit.org/idk/reseed-tools
+make checkinstall
+</code></pre>
+    <p>
+      \
+      <strong>
+        4.
+      </strong>
+      Install the
+      <code>
+        .deb
+      </code>
+      package
+    </p>
+    <pre><code class="language-sh">
+sudo apt-get install ./reseed-tools_*.deb
+</code></pre>
+    <h2>
+      Running the Service
+    </h2>
+    <p>
+      \
+      <strong>
+        1.
+      </strong>
+      First, ensure that the I2P service is already running. The longer the better,
+      if you have to re-start the service, or if the service has very few peers, allow it to
+      run for 24 hours before advancing to step
+      <strong>
+        2.
+      </strong>
+    </p>
+    <pre><code class="language-sh">
+sudo systemctl start i2p
+# or, if you use sysvinit
+sudo service i2p start
+</code></pre>
+    <p>
+      \
+      <strong>
+        2.
+      </strong>
+      Once your I2P router is &ldquo;Well-Integrated,&rdquo; start the reseed service.
+    </p>
+    <pre><code class="language-sh">
+sudo systemctl start reseed
+# or, if you use sysvinit
+sudo service reseed start
+</code></pre>
+    <p>
+      Your reseed will auto-configure with a self-signed certificate on port
+      <code>
+        :8443
+      </code>
+      . The
+      certificates themselves are available in
+      <code>
+        /var/lib/i2p/i2p-config/reseed
+      </code>
+      . When
+      you are ready, you should copy the
+      <code>
+        *.crt
+      </code>
+      files from that directory and share them
+      witth the I2P community on
+      <a href="http://zzz.i2p">
+        <code>
+          zzz.i2p
+        </code>
+      </a>
+      . These will allow I2P users
+      to authenticate your reseed services and secure the I2P network.
+    </p>
+    <div id="sourcecode">
+      <span id="sourcehead">
+        <strong>
+          Get the source code:
+        </strong>
+      </span>
+      <ul>
+        <li>
+          <a href="https://i2pgit.org/idk/reseed-tools">
+            Source Repository: (https://i2pgit.org/idk/reseed-tools)
+          </a>
+        </li>
+      </ul>
+    </div>
+    <div>
+      <a href="#show">
+        Show license
+      </a>
+      <div id="show">
+        <div id="hide">
+          <pre><code>Copyright (c) 2014 Matt Drollette
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
+</code></pre>
+          <a href="#hide">
+            Hide license
+          </a>
+        </div>
+      </div>
+    </div>
+    <div>
+      <iframe src="https://snowflake.torproject.org/embed.html" width="320" height="240" frameborder="0" scrolling="no"></iframe>
+    </div>
+    <div>
+      <a href="https://geti2p.net/">
+        <img src="i2plogo.png"></img>
+        I2P
+      </a>
+    </div>
+  </body>
+</html>

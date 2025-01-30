@@ -1,0 +1,254 @@
+<html>
+  <head>
+    <title>
+      I2P Reseed Tools
+    </title>
+    <meta name="author" content="eyedeekay" />
+    <meta name="description" content="reseed-tools" />
+    <meta name="keywords" content="master" />
+    <link rel="stylesheet" type="text/css" href="style.css" />
+    <link rel="stylesheet" type="text/css" href="showhider.css" />
+  </head>
+  <body>
+    <div id="navbar">
+      <a href="#shownav">
+        Show navigation
+      </a>
+      <div id="shownav">
+        <div id="hidenav">
+          <ul>
+            <li>
+              <a href="..">
+                Up one level ^
+              </a>
+            </li>
+            <li>
+              <a href=""></a>
+            </li>
+            <li>
+              <a href=""></a>
+            </li>
+            <li>
+              <a href="index.html">
+                index.html
+              </a>
+            </li>
+            <li>
+              <a href="index.html">
+                index.html
+              </a>
+            </li>
+            <li>
+              <a href=""></a>
+            </li>
+            <li>
+              <a href="DEBIAN.html">
+                DEBIAN
+              </a>
+            </li>
+            <li>
+              <a href="DOCKER.html">
+                DOCKER
+              </a>
+            </li>
+            <li>
+              <a href="EXAMPLES.html">
+                EXAMPLES
+              </a>
+            </li>
+            <li>
+              <a href="PLUGIN.html">
+                PLUGIN
+              </a>
+            </li>
+            <li>
+              <a href="index.html">
+                index
+              </a>
+            </li>
+            <li>
+              <a href="SERVICES.html">
+                SERVICES
+              </a>
+            </li>
+            <li>
+              <a href="TLS.html">
+                TLS
+              </a>
+            </li>
+            <li>
+              <a href="index.html">
+                index.html
+              </a>
+            </li>
+          </ul>
+          <br>
+          <a href="#hidenav">
+            Hide Navigation
+          </a>
+        </div>
+      </div>
+    </div>
+    <a id="returnhome" href="/">
+      /
+    </a>
+    <h1>
+      Service Integration
+    </h1>
+    <p>
+      Support for running as a system service as part of the reseed package
+      is new. PR&rsquo;s that improve integration are welcome.
+    </p>
+    <h2>
+      Systemd Service
+    </h2>
+    <p>
+      A systemd service is provided which should work with the I2P Debian package
+      when reseed-tools is installed in
+      <code>
+        /usr/bin/reseed-tools
+      </code>
+      . If you install with
+      <code>
+        make install
+      </code>
+      this service is also installed. This service will cause the
+      bundles to regenerate every 12 hours.
+    </p>
+    <p>
+      The contact email for your reseed should be added in:
+      <code>
+        /etc/systemd/system/reseed.service.d/override.conf
+      </code>
+      .
+    </p>
+    <p>
+      Self-signed certificates will be auto-generated for these services. To change
+      this you should edit the
+      <code>
+        /etc/systemd/system/reseed.service
+      </code>
+      . For instance:
+    </p>
+    <pre><code>ExecStart=/usr/bin/reseed-tools reseed --yes=true --netdb=/var/lib/i2p/i2p-config/netDb --trustProxy --ip=127.0.0.1
+</code></pre>
+    <p>
+      to disable self-signed certificate generation.
+    </p>
+    <ul>
+      <li>
+        To enable starting the reseed service automatically with the system:
+        <code>
+          sudo systemctl enable reseed.service
+        </code>
+      </li>
+      <li>
+        To run the service manually:
+        <code>
+          sudo sysctl start reseed.service
+        </code>
+        <br />
+      </li>
+      <li>
+        To reload the systemd services:
+        <code>
+          sudo systemctl daemon-reload
+        </code>
+      </li>
+      <li>
+        To view the status/logs:
+        <code>
+          sudo journalctl -u reseed.service
+        </code>
+      </li>
+    </ul>
+    <h2>
+      SysV Service
+    </h2>
+    <p>
+      An initscript is also provided. The initscript, unlike the systemd service,
+      cannot schedule itself to restart. You should restart the service roughly once
+      a day to ensure that the information does not expire.
+    </p>
+    <p>
+      The contact email for your reseed should be added in:
+      <code>
+        /etc/init.d/reseed
+      </code>
+      .
+    </p>
+    <p>
+      Self-signed certificates will be auto-generated for these services.
+      To change this you should edit the
+      <code>
+        /etc/default/reseed
+      </code>
+      .
+      Create a
+      <code>
+        MORE_OPTIONS=&quot;&quot;
+      </code>
+      field. For instance:
+    </p>
+    <pre><code class="language-sh">MORE_OPTIONS=&quot;--trustProxy --ip=127.0.0.1&quot;
+</code></pre>
+    <p>
+      will disable self-signed certificate generation.
+    </p>
+    <div id="sourcecode">
+      <span id="sourcehead">
+        <strong>
+          Get the source code:
+        </strong>
+      </span>
+      <ul>
+        <li>
+          <a href="https://i2pgit.org/idk/reseed-tools">
+            Source Repository: (https://i2pgit.org/idk/reseed-tools)
+          </a>
+        </li>
+      </ul>
+    </div>
+    <div>
+      <a href="#show">
+        Show license
+      </a>
+      <div id="show">
+        <div id="hide">
+          <pre><code>Copyright (c) 2014 Matt Drollette
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
+</code></pre>
+          <a href="#hide">
+            Hide license
+          </a>
+        </div>
+      </div>
+    </div>
+    <div>
+      <iframe src="https://snowflake.torproject.org/embed.html" width="320" height="240" frameborder="0" scrolling="no"></iframe>
+    </div>
+    <div>
+      <a href="https://geti2p.net/">
+        <img src="i2plogo.png"></img>
+        I2P
+      </a>
+    </div>
+  </body>
+</html>

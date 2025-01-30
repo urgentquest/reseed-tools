@@ -1,0 +1,263 @@
+<html>
+  <head>
+    <title>
+      I2P Reseed Tools
+    </title>
+    <meta name="author" content="eyedeekay" />
+    <meta name="description" content="reseed-tools" />
+    <meta name="keywords" content="master" />
+    <link rel="stylesheet" type="text/css" href="style.css" />
+    <link rel="stylesheet" type="text/css" href="showhider.css" />
+  </head>
+  <body>
+    <div id="navbar">
+      <a href="#shownav">
+        Show navigation
+      </a>
+      <div id="shownav">
+        <div id="hidenav">
+          <ul>
+            <li>
+              <a href="..">
+                Up one level ^
+              </a>
+            </li>
+            <li>
+              <a href=""></a>
+            </li>
+            <li>
+              <a href=""></a>
+            </li>
+            <li>
+              <a href="index.html">
+                index.html
+              </a>
+            </li>
+            <li>
+              <a href="index.html">
+                index.html
+              </a>
+            </li>
+            <li>
+              <a href=""></a>
+            </li>
+            <li>
+              <a href="DEBIAN.html">
+                DEBIAN
+              </a>
+            </li>
+            <li>
+              <a href="DOCKER.html">
+                DOCKER
+              </a>
+            </li>
+            <li>
+              <a href="EXAMPLES.html">
+                EXAMPLES
+              </a>
+            </li>
+            <li>
+              <a href="PLUGIN.html">
+                PLUGIN
+              </a>
+            </li>
+            <li>
+              <a href="index.html">
+                index
+              </a>
+            </li>
+            <li>
+              <a href="SERVICES.html">
+                SERVICES
+              </a>
+            </li>
+            <li>
+              <a href="TLS.html">
+                TLS
+              </a>
+            </li>
+            <li>
+              <a href="index.html">
+                index.html
+              </a>
+            </li>
+          </ul>
+          <br>
+          <a href="#hidenav">
+            Hide Navigation
+          </a>
+        </div>
+      </div>
+    </div>
+    <a id="returnhome" href="/">
+      /
+    </a>
+    <h1>
+      TLS Configuration for your Reseed Server
+    </h1>
+    <p>
+      By default,
+      <code>
+        reseed-tools
+      </code>
+      will generate self-signed certificates for your reseed service.
+      This is so that it can use TLS by default, and so that it can offer self-signed certificates when operating in
+      <code>
+        .onion
+      </code>
+      mode.
+      It is also possible to configure
+      <code>
+        reseed-tools
+      </code>
+      without TLS certificates,
+      or to configure it to use ACME in order to automtically obtain a certificate from Let&rsquo;s Encrypt.
+    </p>
+    <p>
+      I2P does not rely on TLS Certificate Authorities to authenticate reseed servers.
+      Instead, the certificates are effectively &ldquo;Pinned&rdquo; in the software, after manual review by the I2P developers and the community.
+      It is acceptable to use self-signed certificates in this fashion because they are not summarily trusted.
+      A self-signed certificate which is not configured in the I2P software will not work when serving a reseed to an I2P router.
+    </p>
+    <h2>
+      Disable TLS
+    </h2>
+    <p>
+      If you do this, it is highly recommended that you use a reverse proxy such as
+      <code>
+        Apache2
+      </code>
+      or
+      <code>
+        nginx
+      </code>
+      to provide a TLS connection to clients.
+      Alternatively, you could run
+      <code>
+        reseed-tools
+      </code>
+      as an
+      <code>
+        .onion
+      </code>
+      service and rely on Tor for encryption and authentication.
+    </p>
+    <p>
+      You can disable automatic TLS configuration with the
+      <code>
+        --trustProxy
+      </code>
+      flag like this:
+    </p>
+    <pre><code class="language-sh">
+./reseed-tools reseed --signer=you@mail.i2p --netdb=/home/i2p/.i2p/netDb --trustProxy --ip=127.0.0.1
+</code></pre>
+    <h2>
+      Setup Self-Signed TLS non-interactively
+    </h2>
+    <p>
+      If you don&rsquo;t want to interactively configure TLS but still want to use self-signed certificates, you can pass the
+      <code>
+        --yes
+      </code>
+      flag, which will use the defaults for all config values.
+    </p>
+    <pre><code class="language-sh">
+./reseed-tools reseed --signer=you@mail.i2p --netdb=/home/i2p/.i2p/netDb --yes
+</code></pre>
+    <h2>
+      Use ACME to acquire TLS certificate
+    </h2>
+    <p>
+      Instead of self-signed certificates, if you want to chain up to a TLS CA, you can.
+      To automate this process using an ACME CA, like Let&rsquo;s Encrypt, you can use the
+      <code>
+        --acme
+      </code>
+      flag.
+      Be sure to change the
+      <code>
+        --acmeserver
+      </code>
+      option in order to use a
+      <strong>
+        production
+      </strong>
+      ACME server, as
+      the software defaults to a
+      <strong>
+        staging
+      </strong>
+      ACME server for testing purposes.
+    </p>
+    <p>
+      This functionality is new and may have issues. Please file bug reports at (i2pgit)[
+      <a href="https://i2pgit.org/idk/reseed-tools)">
+        https://i2pgit.org/idk/reseed-tools)
+      </a>
+      or
+      <a href="https://github.com/eyedeekay/reseed-tools">
+        github
+      </a>
+      .
+    </p>
+    <pre><code class="language-sh">
+./reseed-tools reseed --signer=you@mail.i2p --netdb=/home/i2p/.i2p/netDb --acme --acmeserver=&quot;https://acme-v02.api.letsencrypt.org/directory&quot;
+</code></pre>
+    <div id="sourcecode">
+      <span id="sourcehead">
+        <strong>
+          Get the source code:
+        </strong>
+      </span>
+      <ul>
+        <li>
+          <a href="https://i2pgit.org/idk/reseed-tools">
+            Source Repository: (https://i2pgit.org/idk/reseed-tools)
+          </a>
+        </li>
+      </ul>
+    </div>
+    <div>
+      <a href="#show">
+        Show license
+      </a>
+      <div id="show">
+        <div id="hide">
+          <pre><code>Copyright (c) 2014 Matt Drollette
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
+</code></pre>
+          <a href="#hide">
+            Hide license
+          </a>
+        </div>
+      </div>
+    </div>
+    <div>
+      <iframe src="https://snowflake.torproject.org/embed.html" width="320" height="240" frameborder="0" scrolling="no"></iframe>
+    </div>
+    <div>
+      <a href="https://geti2p.net/">
+        <img src="i2plogo.png"></img>
+        I2P
+      </a>
+    </div>
+  </body>
+</html>
