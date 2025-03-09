@@ -1,2 +1,3 @@
-#Edit the contact/signing email used by your reseed server here
+# Edit the contact/signing email used by your reseed server here
+# Required: Set a valid email address
 export RESEED_EMAIL=""

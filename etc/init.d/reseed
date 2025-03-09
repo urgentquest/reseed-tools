@@ -13,21 +13,58 @@ RUNAS=i2psvc
 NETDBDIR=/var/lib/i2p/i2p-config/netDb
 RUNDIR=/var/lib/i2p/i2p-config/reseed
 MORE_OPTIONS=""
+PIDFILE="$RUNDIR/reseed.pid"
+TIMEOUT=60
 if [ -f /etc/default/reseed ]; then
     . /etc/default/reseed
 fi
 RUNOPTS=" reseed --yes=true --netdb=$NETDBDIR $MORE_OPTIONS "
 
 start() {
-    start-stop-daemon --background --user $RUNAS --chuid $RUNAS --exec $SCRIPT --chdir $RUNDIR --make-pidfile --pidfile $RUNDIR/reseed.pid --start -- $RUNOPTS
+    if [ ! -d "$RUNDIR" ]; then
+        mkdir -p "$RUNDIR"
+        chown $RUNAS:$RUNAS "$RUNDIR"
+    }   
+    if [ -z "$RESEED_EMAIL" ]; then
+        echo "Error: RESEED_EMAIL not configured" >&2
+        return 1
+    }
+    start-stop-daemon --background \
+        --user $RUNAS \
+        --chuid $RUNAS \
+        --exec $SCRIPT \
+        --chdir $RUNDIR \
+        --make-pidfile \
+        --pidfile $PIDFILE \
+        --start \
+        --startas $SCRIPT -- $RUNOPTS
+
+    for i in $(seq 1 $TIMEOUT); do
+        if status >/dev/null; then
+            return 0
+        fi
+        sleep 1
+    done
+    return 1
 }
 
 stop() {
-    start-stop-daemon --background --user $RUNAS --exec $SCRIPT --chdir $RUNDIR --remove-pidfile --pidfile $RUNDIR/reseed.pid --stop
+    start-stop-daemon --background \
+      --user $RUNAS \
+      --exec $SCRIPT \
+      --chdir $RUNDIR \
+      --remove-pidfile \
+      --pidfile $RUNDIR/reseed.pid \
+      --stop
 }
 
 status() {
-    start-stop-daemon --background --user $RUNAS --exec $SCRIPT --chdir $RUNDIR --pidfile $RUNDIR/reseed.pid --status
+    start-stop-daemon --background \
+      --user $RUNAS \
+      --exec $SCRIPT \
+      --chdir $RUNDIR \
+      --pidfile $RUNDIR/reseed.pid \
+      --status
 }
 
 restart() {

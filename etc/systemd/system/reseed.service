@@ -11,6 +11,10 @@ ExecStart=/usr/bin/reseed-tools reseed --yes=true --netdb=/var/lib/i2p/i2p-confi
 Restart=always
 RestartSec=10
 RuntimeMaxSec=43200
+StandardOutput=journal
+StandardError=journal
+#MemoryMax=512M
+#CPUQuota=50%
 
 [Install]
 WantedBy=multi-user.target
