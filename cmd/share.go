@@ -19,6 +19,8 @@ import (
 	"github.com/eyedeekay/onramp"
 )
 
+// NewShareCommand creates a new CLI Command for sharing the netDb over I2P with a password.
+// Can be used to combine the local netDb with the netDb of a remote I2P router.
 func NewShareCommand() *cli.Command {
 	ndb, err := getmeanetdb.WhereIstheNetDB()
 	if err != nil {

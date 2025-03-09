@@ -6,6 +6,7 @@ import (
 	"github.com/urfave/cli/v3"
 )
 
+// NewKeygenCommand creates a new CLI command for generating keys.
 func NewKeygenCommand() *cli.Command {
 	return &cli.Command{
 		Name:   "keygen",

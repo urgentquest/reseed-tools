@@ -56,6 +56,7 @@ func providedReseeds(c *cli.Context) []string {
 	return reseed.AllReseeds
 }
 
+// NewReseedCommand creates a new CLI command for starting a reseed server.
 func NewReseedCommand() *cli.Command {
 	ndb, err := getmeanetdb.WhereIstheNetDB()
 	if err != nil {
