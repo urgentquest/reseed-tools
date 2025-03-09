@@ -24,6 +24,7 @@ jobs:
 
       - name: Install build dependencies
         run: |
+          sudo add-apt-repository -y ppa:i2p-maintainers/i2p
           sudo apt-get update
           sudo apt-get install -y make git fakeroot checkinstall i2p i2p-router
 
