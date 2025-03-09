@@ -105,7 +105,7 @@ func NewSigningCertificate(signerID string, privateKey *rsa.PrivateKey) ([]byte,
 	publicKey := &privateKey.PublicKey
 
 	// create a self-signed certificate. template = parent
-	var parent = template
+	parent := template
 	cert, err := x509.CreateCertificate(rand.Reader, template, parent, publicKey, privateKey)
 	if err != nil {
 		return nil, err

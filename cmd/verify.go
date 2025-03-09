@@ -32,7 +32,6 @@ func I2PHome() string {
 		return usrCheck
 	}
 	return ""
-
 }
 
 func NewSu3VerifyCommand() *cli.Command {
@@ -101,7 +100,7 @@ func su3VerifyAction(c *cli.Context) error {
 
 	if c.Bool("extract") {
 		// @todo: don't assume zip
-		ioutil.WriteFile("extracted.zip", su3File.BodyBytes(), 0755)
+		ioutil.WriteFile("extracted.zip", su3File.BodyBytes(), 0o755)
 	}
 	return nil
 }

@@ -55,9 +55,11 @@ type MyUser struct {
 func (u *MyUser) GetEmail() string {
 	return u.Email
 }
+
 func (u MyUser) GetRegistration() *registration.Resource {
 	return u.Registration
 }
+
 func (u *MyUser) GetPrivateKey() crypto.PrivateKey {
 	return u.key
 }
@@ -150,7 +152,7 @@ func checkUseAcmeCert(tlsHost, signer, cadirurl string, tlsCert, tlsKey *string,
 		return err
 	}
 	filename := tlsHost + signer + ".acme.key"
-	keypem, err := os.OpenFile(filename, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0600)
+	keypem, err := os.OpenFile(filename, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0o600)
 	if err != nil {
 		return err
 	}
@@ -201,8 +203,8 @@ func renewAcmeIssuedCert(client *lego.Client, user MyUser, tlsHost string, tlsCe
 		return err
 	}
 
-	ioutil.WriteFile(tlsHost+".pem", certificates.PrivateKey, 0600)
-	ioutil.WriteFile(tlsHost+".crt", certificates.Certificate, 0600)
+	ioutil.WriteFile(tlsHost+".pem", certificates.PrivateKey, 0o600)
+	ioutil.WriteFile(tlsHost+".crt", certificates.Certificate, 0o600)
 	//	ioutil.WriteFile(tlsHost+".crl", certificates.PrivateKey, 0600)
 	*tlsCert = tlsHost + ".crt"
 	*tlsKey = tlsHost + ".pem"
@@ -238,8 +240,8 @@ func newAcmeIssuedCert(client *lego.Client, user MyUser, tlsHost string, tlsCert
 		return err
 	}
 
-	ioutil.WriteFile(tlsHost+".pem", certificates.PrivateKey, 0600)
-	ioutil.WriteFile(tlsHost+".crt", certificates.Certificate, 0600)
+	ioutil.WriteFile(tlsHost+".pem", certificates.PrivateKey, 0o600)
+	ioutil.WriteFile(tlsHost+".crt", certificates.Certificate, 0o600)
 	//	ioutil.WriteFile(tlsHost+".crl", certificates.PrivateKey, 0600)
 	*tlsCert = tlsHost + ".crt"
 	*tlsKey = tlsHost + ".pem"
@@ -303,7 +305,7 @@ func createSigningCertificate(signerID string) error {
 
 	// save signing private key
 	privFile := signerFile(signerID) + ".pem"
-	keyOut, err := os.OpenFile(privFile, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0600)
+	keyOut, err := os.OpenFile(privFile, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0o600)
 	if err != nil {
 		return fmt.Errorf("failed to open %s for writing: %v", privFile, err)
 	}
@@ -314,7 +316,7 @@ func createSigningCertificate(signerID string) error {
 
 	// CRL
 	crlFile := signerFile(signerID) + ".crl"
-	crlOut, err := os.OpenFile(crlFile, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0600)
+	crlOut, err := os.OpenFile(crlFile, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0o600)
 	if err != nil {
 		return fmt.Errorf("failed to open %s for writing: %s", crlFile, err)
 	}
@@ -373,7 +375,7 @@ func CreateTLSCertificate(host string) error {
 
 	// save the TLS private key
 	privFile := host + ".pem"
-	keyOut, err := os.OpenFile(privFile, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0600)
+	keyOut, err := os.OpenFile(privFile, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0o600)
 	if err != nil {
 		return fmt.Errorf("failed to open %s for writing: %v", privFile, err)
 	}
@@ -388,7 +390,7 @@ func CreateTLSCertificate(host string) error {
 
 	// CRL
 	crlFile := host + ".crl"
-	crlOut, err := os.OpenFile(crlFile, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0600)
+	crlOut, err := os.OpenFile(crlFile, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0o600)
 	if err != nil {
 		return fmt.Errorf("failed to open %s for writing: %s", crlFile, err)
 	}

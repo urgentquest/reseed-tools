@@ -33,11 +33,14 @@ var SupportedLanguages = []language.Tag{
 	language.Korean,
 	language.Bengali,
 }
-var CachedLanguagePages = map[string]string{}
-var CachedDataPages = map[string][]byte{}
+
+var (
+	CachedLanguagePages = map[string]string{}
+	CachedDataPages     = map[string][]byte{}
+)
 
 func StableContentPath() (string, error) {
-	var BaseContentPath, ContentPathError = ContentPath()
+	BaseContentPath, ContentPathError := ContentPath()
 	if _, err := os.Stat(BaseContentPath); os.IsNotExist(err) {
 		if err := unembed.Unembed(f, BaseContentPath); err != nil {
 			return "", err
@@ -59,6 +62,7 @@ var header = []byte(`<!DOCTYPE html>
     <script src="script.js"></script>
   </head>
   <body>`)
+
 var footer = []byte(`  </body>
 </html>`)
 
@@ -69,7 +73,7 @@ func ContentPath() (string, error) {
 	if err != nil {
 		return "", err
 	}
-	//exPath := filepath.Dir(ex)
+	// exPath := filepath.Dir(ex)
 	if _, err := os.Stat(filepath.Join(exPath, "content")); err != nil {
 		return "", err
 	}

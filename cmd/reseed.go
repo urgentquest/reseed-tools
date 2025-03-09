@@ -394,7 +394,7 @@ func reseedAction(c *cli.Context) error {
 		if onionTlsHost == "" {
 			onionTlsHost = torutil.OnionServiceIDFromPrivateKey(ed25519.PrivateKey(ok)) + ".onion"
 		}
-		err = ioutil.WriteFile(c.String("onionKey"), ok, 0644)
+		err = ioutil.WriteFile(c.String("onionKey"), ok, 0o644)
 		if err != nil {
 			log.Fatalln(err.Error())
 		}
@@ -655,7 +655,6 @@ func reseedI2P(c *cli.Context, i2pTlsCert, i2pTlsKey string, i2pIdentKey i2pkeys
 		if err := server.ListenAndServeI2P(c.String("samaddr"), i2pIdentKey); err != nil {
 			log.Fatalln(err)
 		}
-
 	}
 
 	log.Printf("Onion server started on %s\n", server.Addr)
@@ -710,7 +709,7 @@ func downloadRemoteNetDB(remote, password, path, samaddr string) error {
 		if bodyBytes, err := ioutil.ReadAll(resp.Body); err != nil {
 			return err
 		} else {
-			if err := ioutil.WriteFile("netDb.tar.gz", bodyBytes, 0644); err != nil {
+			if err := ioutil.WriteFile("netDb.tar.gz", bodyBytes, 0o644); err != nil {
 				return err
 			} else {
 				dbPath := filepath.Join(path, "reseed-netDb")

@@ -60,11 +60,11 @@ func PingWriteContent(urlInput string) error {
 		result, err := Ping(urlInput)
 		if result {
 			log.Printf("Ping: %s OK", urlInput)
-			err := ioutil.WriteFile(path, []byte("Alive: Status OK"), 0644)
+			err := ioutil.WriteFile(path, []byte("Alive: Status OK"), 0o644)
 			return err
 		} else {
 			log.Printf("Ping: %s %s", urlInput, err)
-			err := ioutil.WriteFile(path, []byte("Dead: "+err.Error()), 0644)
+			err := ioutil.WriteFile(path, []byte("Dead: "+err.Error()), 0o644)
 			return err
 		}
 	}

@@ -114,7 +114,7 @@ func SecureRandomAlphaString() string {
 
 // SecureRandomBytes returns the requested number of bytes using crypto/rand
 func SecureRandomBytes(length int) []byte {
-	var randomBytes = make([]byte, length)
+	randomBytes := make([]byte, length)
 	_, err := rand.Read(randomBytes)
 	if err != nil {
 		log.Fatal("Unable to generate random bytes")
