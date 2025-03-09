@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 ### BEGIN INIT INFO
 # Provides:          reseed
 # Required-Start:    $local_fs $network $named $time $syslog
@@ -24,11 +24,11 @@ start() {
     if [ ! -d "$RUNDIR" ]; then
         mkdir -p "$RUNDIR"
         chown $RUNAS:$RUNAS "$RUNDIR"
-    }   
+    fi
     if [ -z "$RESEED_EMAIL" ]; then
         echo "Error: RESEED_EMAIL not configured" >&2
         return 1
-    }
+    fi
     start-stop-daemon --background \
         --user $RUNAS \
         --chuid $RUNAS \
@@ -49,7 +49,7 @@ start() {
 }
 
 stop() {
-    start-stop-daemon --background \
+    start-stop-daemon \
       --user $RUNAS \
       --exec $SCRIPT \
       --chdir $RUNDIR \
@@ -59,7 +59,7 @@ stop() {
 }
 
 status() {
-    start-stop-daemon --background \
+    start-stop-daemon \
       --user $RUNAS \
       --exec $SCRIPT \
       --chdir $RUNDIR \
@@ -79,7 +79,7 @@ uninstall() {
   if [ "$SURE" = "yes" ]; then
     stop
     rm -f "$PIDFILE"
-    echo "Notice: log file is not be removed: '$LOGFILE'" >&2
+    echo "Notice: log file is not removed" >&2
     update-rc.d -f reseed remove
     rm -fv "$0"
   fi
@@ -102,5 +102,5 @@ case "$1" in
     restart
     ;;
   *)
-    echo "Usage: $0 {start|stop|restart|uninstall}"
+    echo "Usage: $0 {start|stop|restart|uninstall|status}"
 esac
