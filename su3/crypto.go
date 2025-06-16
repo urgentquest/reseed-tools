@@ -21,6 +21,10 @@ type dsaSignature struct {
 type ecdsaSignature dsaSignature
 
 func checkSignature(c *x509.Certificate, algo x509.SignatureAlgorithm, signed, signature []byte) (err error) {
+	if c == nil {
+		return errors.New("x509: certificate is nil")
+	}
+
 	var hashType crypto.Hash
 
 	switch algo {
