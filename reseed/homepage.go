@@ -102,15 +102,15 @@ func (srv *Server) HandleARealBrowser(w http.ResponseWriter, r *http.Request) {
 
 	if strings.HasSuffix(r.URL.Path, "style.css") {
 		w.Header().Set("Content-Type", "text/css")
-		HandleAFile(w, "", "style.css")
+		handleAFile(w, "", "style.css")
 	} else if strings.HasSuffix(r.URL.Path, "script.js") {
 		w.Header().Set("Content-Type", "text/javascript")
-		HandleAFile(w, "", "script.js")
+		handleAFile(w, "", "script.js")
 	} else {
 		image := strings.Replace(r.URL.Path, "/", "", -1)
 		if strings.HasPrefix(image, "images") {
 			w.Header().Set("Content-Type", "image/png")
-			HandleAFile(w, "images", strings.TrimPrefix(strings.TrimPrefix(r.URL.Path, "/"), "images"))
+			handleAFile(w, "images", strings.TrimPrefix(strings.TrimPrefix(r.URL.Path, "/"), "images"))
 		} else if strings.HasPrefix(image, "ping") {
 			PingEverybody()
 			http.Redirect(w, r, "/", http.StatusFound)
@@ -122,7 +122,7 @@ func (srv *Server) HandleARealBrowser(w http.ResponseWriter, r *http.Request) {
 		} else {
 			w.Header().Set("Content-Type", "text/html")
 			w.Write([]byte(header))
-			HandleALocalizedFile(w, base.String())
+			handleALocalizedFile(w, base.String())
 			w.Write([]byte(`<ul><li><form method="post" action="/i2pseeds" class="inline">
 			<input type="hidden" name="onetime" value="` + srv.Acceptable() + `">
 			<button type="submit" name="submit_param" value="submit_value" class="link-button">
@@ -135,7 +135,7 @@ func (srv *Server) HandleARealBrowser(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func HandleAFile(w http.ResponseWriter, dirPath, file string) {
+func handleAFile(w http.ResponseWriter, dirPath, file string) {
 	BaseContentPath, _ := StableContentPath()
 	file = filepath.Join(dirPath, file)
 	if _, prs := CachedDataPages[file]; !prs {
@@ -152,7 +152,7 @@ func HandleAFile(w http.ResponseWriter, dirPath, file string) {
 	}
 }
 
-func HandleALocalizedFile(w http.ResponseWriter, dirPath string) {
+func handleALocalizedFile(w http.ResponseWriter, dirPath string) {
 	if _, prs := CachedLanguagePages[dirPath]; !prs {
 		BaseContentPath, _ := StableContentPath()
 		dir := filepath.Join(BaseContentPath, "lang", dirPath)

@@ -19,15 +19,15 @@ import (
 	"github.com/cretz/bine/tor"
 	"github.com/cretz/bine/torutil"
 	"github.com/cretz/bine/torutil/ed25519"
-	"github.com/eyedeekay/i2pkeys"
-	"github.com/eyedeekay/onramp"
-	"github.com/eyedeekay/sam3"
+	"github.com/go-i2p/i2pkeys"
+	"github.com/go-i2p/onramp"
+	"github.com/go-i2p/sam3"
 	"github.com/otiai10/copy"
 	"github.com/rglonek/untar"
 	"github.com/urfave/cli/v3"
 	"i2pgit.org/idk/reseed-tools/reseed"
 
-	"github.com/eyedeekay/checki2cp/getmeanetdb"
+	"github.com/go-i2p/checki2cp/getmeanetdb"
 )
 
 func getDefaultSigner() string {

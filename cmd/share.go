@@ -15,8 +15,8 @@ import (
 
 	"github.com/urfave/cli/v3"
 
-	"github.com/eyedeekay/checki2cp/getmeanetdb"
-	"github.com/eyedeekay/onramp"
+	"github.com/go-i2p/checki2cp/getmeanetdb"
+	"github.com/go-i2p/onramp"
 )
 
 // NewShareCommand creates a new CLI Command for sharing the netDb over I2P with a password.

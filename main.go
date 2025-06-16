@@ -23,7 +23,7 @@ func main() {
 	app.Version = reseed.Version
 	app.Usage = "I2P tools and reseed server"
 	auth := &cli.Author{
-		Name:  "eyedeekay",
+		Name:  "go-i2p",
 		Email: "hankhill19580@gmail.com",
 	}
 	app.Authors = append(app.Authors, auth)
