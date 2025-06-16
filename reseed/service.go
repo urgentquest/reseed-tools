@@ -103,7 +103,7 @@ func (rs *ReseederImpl) rebuild() error {
 	// get all RIs from netdb provider
 	ris, err := rs.netdb.RouterInfos()
 	if nil != err {
-		return fmt.Errorf("Unable to get routerInfos: %s", err)
+		return fmt.Errorf("unable to get routerInfos: %s", err)
 	}
 
 	// use only 75% of routerInfos
@@ -201,7 +201,7 @@ func (rs *ReseederImpl) PeerSu3Bytes(peer Peer) ([]byte, error) {
 	m := <-rs.su3s
 	defer func() { rs.su3s <- m }()
 
-	if 0 == len(m) {
+	if len(m) == 0 {
 		return nil, errors.New("404")
 	}
 

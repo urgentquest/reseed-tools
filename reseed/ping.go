@@ -38,8 +38,8 @@ func Ping(urlInput string) (bool, error) {
 
 func trimPath(s string) string {
 	tmp := strings.ReplaceAll(s, "https://", "")
-	tmp = strings.ReplaceAll(s, "http://", "")
-	tmp = strings.ReplaceAll(s, "/", "")
+	tmp = strings.ReplaceAll(tmp, "http://", "")
+	tmp = strings.ReplaceAll(tmp, "/", "")
 	return tmp
 }
 
@@ -137,7 +137,7 @@ func GetPingFiles() ([]string, error) {
 		return nil
 	})
 	if len(files) == 0 {
-		return nil, fmt.Errorf("No ping files found")
+		return nil, fmt.Errorf("no ping files found")
 	}
 	return files, err
 }

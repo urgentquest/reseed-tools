@@ -156,7 +156,7 @@ func (srv *Server) CheckAcceptable(val string) bool {
 		srv.acceptables = make(map[string]time.Time)
 	}
 	if timeout, ok := srv.acceptables[val]; ok {
-		checktime := time.Now().Sub(timeout)
+		checktime := time.Since(timeout)
 		if checktime > (4 * time.Minute) {
 			delete(srv.acceptables, val)
 			return false

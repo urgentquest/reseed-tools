@@ -2,7 +2,6 @@ package reseed
 
 import (
 	"embed"
-	_ "embed"
 	"log"
 	"net/http"
 	"os"
