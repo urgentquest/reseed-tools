@@ -3,7 +3,7 @@ package reseed
 import (
 	"archive/zip"
 	"bytes"
-	"io/ioutil"
+	"io"
 )
 
 func zipSeeds(seeds []routerInfo) ([]byte, error) {
@@ -48,7 +48,7 @@ func uzipSeeds(c []byte) ([]routerInfo, error) {
 		if err != nil {
 			return nil, err
 		}
-		data, err := ioutil.ReadAll(rc)
+		data, err := io.ReadAll(rc)
 		rc.Close()
 		if nil != err {
 			return nil, err

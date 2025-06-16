@@ -6,9 +6,9 @@ import (
 	"crypto/x509"
 	"crypto/x509/pkix"
 	"encoding/pem"
-	"io/ioutil"
 	"math/big"
 	"net"
+	"os"
 	"path/filepath"
 	"strings"
 	"time"
@@ -28,7 +28,7 @@ func (ks *KeyStore) DirReseederCertificate(dir string, signer []byte) (*x509.Cer
 
 func (ks *KeyStore) reseederCertificate(dir string, signer []byte) (*x509.Certificate, error) {
 	certFile := filepath.Base(SignerFilename(string(signer)))
-	certString, err := ioutil.ReadFile(filepath.Join(ks.Path, dir, certFile))
+	certString, err := os.ReadFile(filepath.Join(ks.Path, dir, certFile))
 	if nil != err {
 		return nil, err
 	}

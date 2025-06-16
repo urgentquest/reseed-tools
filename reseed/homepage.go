@@ -3,7 +3,6 @@ package reseed
 import (
 	"embed"
 	_ "embed"
-	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
@@ -140,7 +139,7 @@ func handleAFile(w http.ResponseWriter, dirPath, file string) {
 	file = filepath.Join(dirPath, file)
 	if _, prs := CachedDataPages[file]; !prs {
 		path := filepath.Join(BaseContentPath, file)
-		f, err := ioutil.ReadFile(path)
+		f, err := os.ReadFile(path)
 		if err != nil {
 			w.Write([]byte("Oops! Something went wrong handling your language. Please file a bug at https://i2pgit.org/idk/reseed-tools\n\t" + err.Error()))
 			return
@@ -156,7 +155,7 @@ func handleALocalizedFile(w http.ResponseWriter, dirPath string) {
 	if _, prs := CachedLanguagePages[dirPath]; !prs {
 		BaseContentPath, _ := StableContentPath()
 		dir := filepath.Join(BaseContentPath, "lang", dirPath)
-		files, err := ioutil.ReadDir(dir)
+		files, err := os.ReadDir(dir)
 		if err != nil {
 			w.Write([]byte("Oops! Something went wrong handling your language. Please file a bug at https://i2pgit.org/idk/reseed-tools\n\t" + err.Error()))
 		}
@@ -167,7 +166,7 @@ func handleALocalizedFile(w http.ResponseWriter, dirPath string) {
 			}
 			trimmedName := strings.TrimSuffix(file.Name(), ".md")
 			path := filepath.Join(dir, file.Name())
-			b, err := ioutil.ReadFile(path)
+			b, err := os.ReadFile(path)
 			if err != nil {
 				w.Write([]byte("Oops! Something went wrong handling your language. Please file a bug at https://i2pgit.org/idk/reseed-tools\n\t" + err.Error()))
 				return

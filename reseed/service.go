@@ -6,7 +6,6 @@ import (
 	"errors"
 	"fmt"
 	"hash/crc32"
-	"io/ioutil"
 	"log"
 	"math/rand"
 	"os"
@@ -255,7 +254,7 @@ func (db *LocalNetDbImpl) RouterInfos() (routerInfos []routerInfo, err error) {
 	filepath.Walk(db.Path, walkpath)
 
 	for path, file := range files {
-		riBytes, err := ioutil.ReadFile(path)
+		riBytes, err := os.ReadFile(path)
 		if nil != err {
 			log.Println(err)
 			continue

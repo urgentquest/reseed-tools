@@ -2,7 +2,6 @@ package reseed
 
 import (
 	"fmt"
-	"io/ioutil"
 	"log"
 	"net/http"
 	"net/url"
@@ -60,11 +59,11 @@ func PingWriteContent(urlInput string) error {
 		result, err := Ping(urlInput)
 		if result {
 			log.Printf("Ping: %s OK", urlInput)
-			err := ioutil.WriteFile(path, []byte("Alive: Status OK"), 0o644)
+			err := os.WriteFile(path, []byte("Alive: Status OK"), 0o644)
 			return err
 		} else {
 			log.Printf("Ping: %s %s", urlInput, err)
-			err := ioutil.WriteFile(path, []byte("Dead: "+err.Error()), 0o644)
+			err := os.WriteFile(path, []byte("Dead: "+err.Error()), 0o644)
 			return err
 		}
 	}
@@ -150,7 +149,7 @@ func ReadOut(w http.ResponseWriter) {
 		fmt.Fprintf(w, "<div class=\"pingtest\">This feature is experimental and may not always provide accurate results.</div>")
 		fmt.Fprintf(w, "<div class=\"homepage\"><p><ul>")
 		for _, file := range pinglist {
-			ping, err := ioutil.ReadFile(file)
+			ping, err := os.ReadFile(file)
 			host := strings.Replace(file, ".ping", "", 1)
 			host = filepath.Base(host)
 			if err == nil {

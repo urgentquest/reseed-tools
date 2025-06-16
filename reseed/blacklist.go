@@ -1,8 +1,8 @@
 package reseed
 
 import (
-	"io/ioutil"
 	"net"
+	"os"
 	"strings"
 	"sync"
 )
@@ -18,7 +18,7 @@ func NewBlacklist() *Blacklist {
 
 func (s *Blacklist) LoadFile(file string) error {
 	if file != "" {
-		if content, err := ioutil.ReadFile(file); err == nil {
+		if content, err := os.ReadFile(file); err == nil {
 			for _, ip := range strings.Split(string(content), "\n") {
 				s.BlockIP(ip)
 			}
