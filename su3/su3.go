@@ -62,6 +62,10 @@ func New() *File {
 }
 
 func (s *File) Sign(privkey *rsa.PrivateKey) error {
+	if privkey == nil {
+		return fmt.Errorf("private key cannot be nil")
+	}
+
 	var hashType crypto.Hash
 	switch s.SignatureType {
 	case SigTypeDSA:
