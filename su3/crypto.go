@@ -84,13 +84,18 @@ func NewSigningCertificate(signerID string, privateKey *rsa.PrivateKey) ([]byte,
 	}
 
 	var subjectKeyId []byte
+	isCA := true
 	if signerID != "" {
 		subjectKeyId = []byte(signerID)
+	} else {
+		// When signerID is empty, create non-CA certificate to prevent auto-generation of SubjectKeyId
+		subjectKeyId = []byte("")
+		isCA = false
 	}
 
 	template := &x509.Certificate{
 		BasicConstraintsValid: true,
-		IsCA:                  true,
+		IsCA:                  isCA,
 		SubjectKeyId:          subjectKeyId,
 		SerialNumber:          serialNumber,
 		Subject: pkix.Name{
