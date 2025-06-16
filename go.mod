@@ -12,6 +12,7 @@ require (
 	github.com/eyedeekay/unembed v0.0.0-20230123014222-9916b121855b
 	github.com/go-acme/lego/v4 v4.3.1
 	github.com/go-i2p/go-i2p v0.0.0-20250130205134-f144c457ba5d
+	github.com/go-i2p/i2pkeys v0.33.10-0.20241113193422-e10de5e60708
 	github.com/go-i2p/onramp v0.33.92
 	github.com/gorilla/handlers v1.5.1
 	github.com/justinas/alice v1.2.0
