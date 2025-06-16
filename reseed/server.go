@@ -15,7 +15,7 @@ import (
 
 	"github.com/cretz/bine/tor"
 	"github.com/eyedeekay/i2pkeys"
-	"github.com/eyedeekay/sam3"
+	"github.com/go-i2p/onramp"
 	"github.com/gorilla/handlers"
 	"github.com/justinas/alice"
 	throttled "github.com/throttled/throttled/v2"
@@ -28,13 +28,18 @@ const (
 
 type Server struct {
 	*http.Server
-	I2P              *sam3.SAM
-	I2PSession       *sam3.StreamSession
-	I2PListener      *sam3.StreamListener
-	I2PKeys          i2pkeys.I2PKeys
-	Reseeder         *ReseederImpl
-	Blacklist        *Blacklist
-	OnionListener    *tor.OnionService
+
+	Reseeder  *ReseederImpl
+	Blacklist *Blacklist
+
+	// I2P Listener
+	Garlic      *onramp.Garlic
+	I2PListener net.Listener
+
+	// Tor Listener
+	OnionListener net.Listener
+	Onion         *onramp.Onion
+
 	RequestRateLimit int
 	WebRateLimit     int
 	acceptables      map[string]time.Time
@@ -205,43 +210,19 @@ func (srv *Server) ListenAndServeTLS(certFile, keyFile string) error {
 
 func (srv *Server) ListenAndServeOnionTLS(startConf *tor.StartConf, listenConf *tor.ListenConf, certFile, keyFile string) error {
 	log.Println("Starting and registering OnionV3 HTTPS service, please wait a couple of minutes...")
-	tor, err := tor.Start(nil, startConf)
+	var err error
+	srv.Onion, err = onramp.NewOnion("reseed")
 	if err != nil {
 		return err
 	}
-	defer tor.Close()
-
-	listenCtx, listenCancel := context.WithTimeout(context.Background(), 3*time.Minute)
-	defer listenCancel()
-
-	srv.OnionListener, err = tor.Listen(listenCtx, listenConf)
+	srv.OnionListener, err = srv.Onion.ListenTLS()
 	if err != nil {
 		return err
 	}
-	srv.Addr = srv.OnionListener.ID
-	if srv.TLSConfig == nil {
-		srv.TLSConfig = &tls.Config{
-			ServerName: srv.OnionListener.ID,
-		}
-	}
+	//srv.Addr = srv.OnionListener.Addr().String()
+	log.Printf("Onionv3 server started on https://%v.onion\n", srv.OnionListener.Addr().String())
 
-	if srv.TLSConfig.NextProtos == nil {
-		srv.TLSConfig.NextProtos = []string{"http/1.1"}
-	}
-
-	//	var err error
-	srv.TLSConfig.Certificates = make([]tls.Certificate, 1)
-	srv.TLSConfig.Certificates[0], err = tls.LoadX509KeyPair(certFile, keyFile)
-	if err != nil {
-		return err
-	}
-
-	log.Printf("Onionv3 server started on https://%v.onion\n", srv.OnionListener.ID)
-
-	//	tlsListener := tls.NewListener(newBlacklistListener(srv.OnionListener, srv.Blacklist), srv.TLSConfig)
-	tlsListener := tls.NewListener(srv.OnionListener, srv.TLSConfig)
-
-	return srv.Serve(tlsListener)
+	return srv.Serve(srv.OnionListener)
 }
 
 func (srv *Server) ListenAndServeOnion(startConf *tor.StartConf, listenConf *tor.ListenConf) error {
@@ -251,71 +232,39 @@ func (srv *Server) ListenAndServeOnion(startConf *tor.StartConf, listenConf *tor
 		return err
 	}
 	defer tor.Close()
-
 	listenCtx, listenCancel := context.WithTimeout(context.Background(), 3*time.Minute)
 	defer listenCancel()
 	srv.OnionListener, err = tor.Listen(listenCtx, listenConf)
 	if err != nil {
 		return err
 	}
-
-	log.Printf("Onionv3 server started on http://%v.onion\n", srv.OnionListener.ID)
+	log.Printf("Onionv3 server started on http://%v.onion\n", srv.OnionListener.Addr().String())
 	return srv.Serve(srv.OnionListener)
 }
 
 func (srv *Server) ListenAndServeI2PTLS(samaddr string, I2PKeys i2pkeys.I2PKeys, certFile, keyFile string) error {
 	log.Println("Starting and registering I2P HTTPS service, please wait a couple of minutes...")
 	var err error
-	srv.I2P, err = sam3.NewSAM(samaddr)
+	srv.Garlic, err = onramp.NewGarlic("reseed-tls", samaddr, onramp.OPT_WIDE)
 	if err != nil {
 		return err
 	}
-	srv.I2PSession, err = srv.I2P.NewStreamSession("", I2PKeys, []string{})
+	srv.I2PListener, err = srv.Garlic.ListenTLS()
 	if err != nil {
 		return err
 	}
-	srv.I2PListener, err = srv.I2PSession.Listen()
-	if err != nil {
-		return err
-	}
-	srv.Addr = srv.I2PListener.Addr().(i2pkeys.I2PAddr).Base32()
-	if srv.TLSConfig == nil {
-		srv.TLSConfig = &tls.Config{
-			ServerName: srv.I2PListener.Addr().(i2pkeys.I2PAddr).Base32(),
-		}
-	}
-
-	if srv.TLSConfig.NextProtos == nil {
-		srv.TLSConfig.NextProtos = []string{"http/1.1"}
-	}
-
-	//	var err error
-	srv.TLSConfig.Certificates = make([]tls.Certificate, 1)
-	srv.TLSConfig.Certificates[0], err = tls.LoadX509KeyPair(certFile, keyFile)
-	if err != nil {
-		return err
-	}
-
 	log.Printf("I2P server started on https://%v\n", srv.I2PListener.Addr().(i2pkeys.I2PAddr).Base32())
-
-	//	tlsListener := tls.NewListener(newBlacklistListener(srv.OnionListener, srv.Blacklist), srv.TLSConfig)
-	tlsListener := tls.NewListener(srv.I2PListener, srv.TLSConfig)
-
-	return srv.Serve(tlsListener)
+	return srv.Serve(srv.I2PListener)
 }
 
 func (srv *Server) ListenAndServeI2P(samaddr string, I2PKeys i2pkeys.I2PKeys) error {
 	log.Println("Starting and registering I2P service, please wait a couple of minutes...")
 	var err error
-	srv.I2P, err = sam3.NewSAM(samaddr)
+	srv.Garlic, err = onramp.NewGarlic("reseed", samaddr, onramp.OPT_WIDE)
 	if err != nil {
 		return err
 	}
-	srv.I2PSession, err = srv.I2P.NewStreamSession("", I2PKeys, []string{})
-	if err != nil {
-		return err
-	}
-	srv.I2PListener, err = srv.I2PSession.Listen()
+	srv.I2PListener, err = srv.Garlic.Listen()
 	if err != nil {
 		return err
 	}
