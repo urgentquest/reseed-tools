@@ -116,7 +116,13 @@ func (s *File) BodyBytes() []byte {
 	case SigTypeECDSAWithSHA384, SigTypeRSAWithSHA384:
 		signatureLength = uint16(384)
 	case SigTypeECDSAWithSHA512, SigTypeRSAWithSHA512:
-		signatureLength = uint16(512)
+		// For RSA, signature length depends on key size, not hash algorithm
+		// If we have a signature already, use its actual length
+		if len(s.Signature) > 0 {
+			signatureLength = uint16(len(s.Signature))
+		} else {
+			signatureLength = uint16(256) // Default for 2048-bit RSA key
+		}
 	}
 
 	// pad the version field
