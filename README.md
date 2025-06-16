@@ -13,8 +13,8 @@ included, apply on [i2pforum.i2p](http://i2pforum.i2p).
 ## Dependencies
 
 `go`, `git`, and optionally `make` are required to build the project.
-Precompiled binaries for most platforms are available at my github mirror
-https://github.com/eyedeekay/i2p-tools-1.
+Precompiled binaries for most platforms are available at the github mirror
+https://github.com/go-i2p/reseed-tools.
 
 In order to install the build-dependencies on Ubuntu or Debian, you may use:
 

@@ -1,7 +1,7 @@
 # Plugin install URL's
 
 Plugin releases are available inside of i2p at http://idk.i2p/reseed-tools/
-and via the github mirror at https://github.com/eyedeekay/reseed-tools/releases.
+and via the github mirror at https://github.com/go-i2p/reseed-tools/releases.
 These can be installed by adding them on the 
 [http://127.0.0.1:7657/configplugins](http://127.0.0.1:7657/configplugins).
 
