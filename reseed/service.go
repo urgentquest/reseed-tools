@@ -266,11 +266,10 @@ func (db *LocalNetDbImpl) RouterInfos() (routerInfos []routerInfo, err error) {
 		if age.Hours() > 192 {
 			continue
 		}
-		riStruct, remainder, err := router_info.NewRouterInfo(riBytes)
+		riStruct, remainder, err := router_info.ReadRouterInfo(riBytes)
 		if err != nil {
 			log.Println("RouterInfo Parsing Error:", err)
 			log.Println("Leftover Data(for debugging):", remainder)
-			riStruct = nil
 			continue
 		}
 
@@ -280,7 +279,7 @@ func (db *LocalNetDbImpl) RouterInfos() (routerInfos []routerInfo, err error) {
 				Name:    file.Name(),
 				ModTime: file.ModTime(),
 				Data:    riBytes,
-				RI:      riStruct,
+				RI:      &riStruct,
 			})
 		} else {
 			log.Println("Skipped less-useful RouterInfo Capabilities:", riStruct.RouterCapabilities(), riStruct.RouterVersion())
