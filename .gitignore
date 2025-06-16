@@ -2,9 +2,9 @@
 /cert.pem
 /key.pem
 /_netdb
-/i2pkeys
-/onionkeys
-/tlskeys
+i2pkeys
+onionkeys
+tlskeys
 /tmp
 i2pseeds.su3
 *.pem
