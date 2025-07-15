@@ -14,7 +14,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/go-i2p/go-i2p/lib/common/router_info"
+	"github.com/go-i2p/common/router_info"
 	"i2pgit.org/idk/reseed-tools/su3"
 )
 
