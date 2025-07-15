@@ -8,7 +8,7 @@ require (
 	github.com/eyedeekay/unembed v0.0.0-20230123014222-9916b121855b
 	github.com/go-acme/lego/v4 v4.3.1
 	github.com/go-i2p/checki2cp v0.0.0-20250223011251-79201ef39571
-	github.com/go-i2p/common v0.0.0-20250714211557-d6f4d7b5b75b
+	github.com/go-i2p/common v0.0.0-20250715213359-dfa5527ece83
 	github.com/go-i2p/i2pkeys v0.33.10-0.20241113193422-e10de5e60708
 	github.com/go-i2p/onramp v0.33.92
 	github.com/go-i2p/sam3 v0.33.92
@@ -28,7 +28,7 @@ require (
 	github.com/cpuguy83/go-md2man/v2 v2.0.2 // indirect
 	github.com/felixge/httpsnoop v1.0.4 // indirect
 	github.com/gabriel-vasile/mimetype v1.4.0 // indirect
-	github.com/go-i2p/crypto v0.0.0-20250709015313-e8c1d28892d7 // indirect
+	github.com/go-i2p/crypto v0.0.0-20250715184623-f513693a7dcc // indirect
 	github.com/go-i2p/logger v0.0.0-20241123010126-3050657e5d0c // indirect
 	github.com/gomodule/redigo v2.0.0+incompatible // indirect
 	github.com/hashicorp/golang-lru v0.5.4 // indirect

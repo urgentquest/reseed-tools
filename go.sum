@@ -126,10 +126,10 @@ github.com/go-gl/glfw/v3.3/glfw v0.0.0-20191125211704-12ad95a8df72/go.mod h1:tQ2
 github.com/go-gl/glfw/v3.3/glfw v0.0.0-20200222043503-6f7a984d4dc4/go.mod h1:tQ2UAYgL5IevRw8kRxooKSPJfGvJ9fJQFa0TUsXzTg8=
 github.com/go-i2p/checki2cp v0.0.0-20250223011251-79201ef39571 h1:l/mJzTbwzgycCvv6rGdgGERQleR1J6SpZJ6LZr5yCz4=
 github.com/go-i2p/checki2cp v0.0.0-20250223011251-79201ef39571/go.mod h1:h2Ufc73Qvj+KTkOz6H+JSS4XA7fM/Smqp593daAQNOc=
-github.com/go-i2p/common v0.0.0-20250714211557-d6f4d7b5b75b h1:I0RV1gD3bCIewh/9cg0fYyTsOjS+AEHoPXIRU68myPo=
-github.com/go-i2p/common v0.0.0-20250714211557-d6f4d7b5b75b/go.mod h1:Hq9v0qoOgIWVs/cYszDqw5rhk6DjnHLHm6+75/+Y6m0=
-github.com/go-i2p/crypto v0.0.0-20250709015313-e8c1d28892d7 h1:A0lMAhY2hxLtv43GkdoMsFg+hc/1wce+MAR60eIYjJU=
-github.com/go-i2p/crypto v0.0.0-20250709015313-e8c1d28892d7/go.mod h1:1Y3NCpVg6OgE3c2VPRQ3QDmWPtDpJYLIyRBA1iJCd3E=
+github.com/go-i2p/common v0.0.0-20250715213359-dfa5527ece83 h1:F6xM06QyqR+qMYA4SzWzUzfVmkSE1P41tHK32TmGxP8=
+github.com/go-i2p/common v0.0.0-20250715213359-dfa5527ece83/go.mod h1:e6X6esQk0zaevdZPZecKY7n8+wOfOLukQfWw558DYfk=
+github.com/go-i2p/crypto v0.0.0-20250715184623-f513693a7dcc h1:uPGQTF7XDqBzHg3auMn6x/8ByxMmPni9ANsvhpcYcQ8=
+github.com/go-i2p/crypto v0.0.0-20250715184623-f513693a7dcc/go.mod h1:1Y3NCpVg6OgE3c2VPRQ3QDmWPtDpJYLIyRBA1iJCd3E=
 github.com/go-i2p/i2pkeys v0.0.0-20241108200332-e4f5ccdff8c4/go.mod h1:m5TlHjPZrU5KbTd7Lr+I2rljyC6aJ88HdkeMQXV0U0E=
 github.com/go-i2p/i2pkeys v0.33.10-0.20241113193422-e10de5e60708 h1:Tiy9IBwi21maNpK74yCdHursJJMkyH7w87tX1nXGWzg=
 github.com/go-i2p/i2pkeys v0.33.10-0.20241113193422-e10de5e60708/go.mod h1:m5TlHjPZrU5KbTd7Lr+I2rljyC6aJ88HdkeMQXV0U0E=
