@@ -1,6 +1,7 @@
 package reseed
 
 import (
+	"errors"
 	"net"
 	"os"
 	"strings"
@@ -65,7 +66,7 @@ func (ln blacklistListener) Accept() (net.Conn, error) {
 
 	if ln.blacklist.isBlocked(ip) {
 		tc.Close()
-		return tc, nil
+		return nil, errors.New("connection rejected: IP address is blacklisted")
 	}
 
 	return tc, err
