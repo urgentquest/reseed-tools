@@ -227,10 +227,10 @@ func LoadKeys(keysPath string, c *cli.Context) (i2pkeys.I2PKeys, error) {
 			return i2pkeys.I2PKeys{}, err
 		}
 		file, err := os.Create(keysPath)
-		defer file.Close()
 		if err != nil {
 			return i2pkeys.I2PKeys{}, err
 		}
+		defer file.Close()
 		err = i2pkeys.StoreKeysIncompat(keys, file)
 		if err != nil {
 			return i2pkeys.I2PKeys{}, err
@@ -238,10 +238,10 @@ func LoadKeys(keysPath string, c *cli.Context) (i2pkeys.I2PKeys, error) {
 		return keys, nil
 	} else if err == nil {
 		file, err := os.Open(keysPath)
-		defer file.Close()
 		if err != nil {
 			return i2pkeys.I2PKeys{}, err
 		}
+		defer file.Close()
 		keys, err := i2pkeys.LoadKeysIncompat(file)
 		if err != nil {
 			return i2pkeys.I2PKeys{}, err
