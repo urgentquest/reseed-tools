@@ -99,6 +99,11 @@ func NewReseedCommand() *cli.Command {
 				Value: ndb,
 				Usage: "Path to NetDB directory containing routerInfos",
 			},
+			&cli.DurationFlag{
+				Name:  "routerInfoAge",
+				Value: 72 * time.Hour,
+				Usage: "Maximum age of router infos to include in reseed files (ex. 72h, 8d)",
+			},
 			&cli.StringFlag{
 				Name:  "tlsCert",
 				Usage: "Path to a TLS certificate",
@@ -442,7 +447,8 @@ func reseedAction(c *cli.Context) error {
 	}
 
 	// create a local file netdb provider
-	netdb := reseed.NewLocalNetDb(netdbDir)
+	routerInfoAge := c.Duration("routerInfoAge")
+	netdb := reseed.NewLocalNetDb(netdbDir, routerInfoAge)
 
 	// create a reseeder
 	reseeder := reseed.NewReseeder(netdb)

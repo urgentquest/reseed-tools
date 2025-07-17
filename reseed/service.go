@@ -231,12 +231,14 @@ func (rs *ReseederImpl) createSu3(seeds []routerInfo) (*su3.File, error) {
 }*/
 
 type LocalNetDbImpl struct {
-	Path string
+	Path             string
+	MaxRouterInfoAge time.Duration
 }
 
-func NewLocalNetDb(path string) *LocalNetDbImpl {
+func NewLocalNetDb(path string, maxAge time.Duration) *LocalNetDbImpl {
 	return &LocalNetDbImpl{
-		Path: path,
+		Path:             path,
+		MaxRouterInfoAge: maxAge,
 	}
 }
 
@@ -262,7 +264,7 @@ func (db *LocalNetDbImpl) RouterInfos() (routerInfos []routerInfo, err error) {
 
 		// ignore outdate routerInfos
 		age := time.Since(file.ModTime())
-		if age.Hours() > 192 {
+		if age > db.MaxRouterInfoAge {
 			continue
 		}
 		riStruct, remainder, err := router_info.ReadRouterInfo(riBytes)
