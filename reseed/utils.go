@@ -5,40 +5,19 @@ import (
 	"crypto/rand"
 	"crypto/x509"
 	"crypto/x509/pkix"
-	"encoding/pem"
 	"math/big"
 	"net"
-	"os"
-	"path/filepath"
 	"strings"
 	"time"
 )
 
-type KeyStore struct {
-	Path string
-}
+// KeyStore struct and methods moved to keystore.go
 
-func (ks *KeyStore) ReseederCertificate(signer []byte) (*x509.Certificate, error) {
-	return ks.reseederCertificate("reseed", signer)
-}
-
-func (ks *KeyStore) DirReseederCertificate(dir string, signer []byte) (*x509.Certificate, error) {
-	return ks.reseederCertificate(dir, signer)
-}
-
-func (ks *KeyStore) reseederCertificate(dir string, signer []byte) (*x509.Certificate, error) {
-	certFile := filepath.Base(SignerFilename(string(signer)))
-	certString, err := os.ReadFile(filepath.Join(ks.Path, dir, certFile))
-	if nil != err {
-		return nil, err
-	}
-
-	certPem, _ := pem.Decode(certString)
-	return x509.ParseCertificate(certPem.Bytes)
-}
-
+// SignerFilename creates a certificate filename from signer ID.
+// Uses SignerFilenameFromID for consistency.
+// Moved from: multiple files
 func SignerFilename(signer string) string {
-	return strings.Replace(signer, "@", "_at_", 1) + ".crt"
+	return SignerFilenameFromID(signer) + ".crt"
 }
 
 func NewTLSCertificate(host string, priv *ecdsa.PrivateKey) ([]byte, error) {

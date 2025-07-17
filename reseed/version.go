@@ -1,3 +1,3 @@
 package reseed
 
-const Version = "0.3.3"
+// Version constant moved to constants.go

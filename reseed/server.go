@@ -20,9 +20,7 @@ import (
 	"github.com/throttled/throttled/v2/store"
 )
 
-const (
-	I2pUserAgent = "Wget/1.11.4"
-)
+// Constants moved to constants.go
 
 type Server struct {
 	*http.Server
@@ -83,11 +81,7 @@ func NewServer(prefix string, trustProxy bool) *Server {
 
 // See use of crypto/rand on:
 // https://stackoverflow.com/questions/22892120/how-to-generate-a-random-string-of-a-fixed-length-in-go
-const (
-	letterBytes   = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ" // 52 possibilities
-	letterIdxBits = 6                                                      // 6 bits to represent 64 possibilities / indexes
-	letterIdxMask = 1<<letterIdxBits - 1                                   // All 1-bits, as many as letterIdxBits
-)
+// Constants moved to constants.go
 
 func SecureRandomAlphaString() string {
 	length := 16

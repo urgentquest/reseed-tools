@@ -70,31 +70,7 @@ func PingWriteContent(urlInput string) error {
 	return nil
 }
 
-// TODO: make this a configuration option
-/*var AllReseeds = []string{
-	"https://banana.incognet.io/",
-	"https://i2p.novg.net/",
-	"https://i2pseed.creativecowpat.net:8443/",
-	"https://reseed.diva.exchange/",
-	"https://reseed.i2pgit.org/",
-	"https://reseed.memcpy.io/",
-	"https://reseed.onion.im/",
-	"https://reseed2.i2p.net/",
-}*/
-
-var AllReseeds = []string{
-	"https://banana.incognet.io/",
-	"https://i2p.novg.net/",
-	"https://i2pseed.creativecowpat.net:8443/",
-	"https://reseed-fr.i2pd.xyz/",
-	"https://reseed-pl.i2pd.xyz/",
-	"https://reseed.diva.exchange/",
-	"https://reseed.i2pgit.org/",
-	"https://reseed.memcpy.io/",
-	"https://reseed.onion.im/",
-	"https://reseed2.i2p.net/",
-	"https://www2.mk16.de/",
-}
+// AllReseeds moved to shared_utils.go
 
 func yday() time.Time {
 	today := time.Now()

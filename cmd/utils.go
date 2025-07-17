@@ -2,7 +2,6 @@ package cmd
 
 import (
 	"bufio"
-	"crypto"
 	"crypto/ecdsa"
 	"crypto/elliptic"
 	"crypto/rand"
@@ -44,26 +43,11 @@ func loadPrivateKey(path string) (*rsa.PrivateKey, error) {
 	return privKey, nil
 }
 
-// Taken directly from the lego example, since we need very minimal support
-// https://go-acme.github.io/lego/usage/library/
-type MyUser struct {
-	Email        string
-	Registration *registration.Resource
-	key          crypto.PrivateKey
-}
+// MyUser struct and methods moved to myuser.go
 
-func (u *MyUser) GetEmail() string {
-	return u.Email
-}
-
-func (u MyUser) GetRegistration() *registration.Resource {
-	return u.Registration
-}
-
-func (u *MyUser) GetPrivateKey() crypto.PrivateKey {
-	return u.key
-}
-
+// signerFile creates a filename-safe version of a signer ID.
+// This function provides consistent filename generation across the cmd package.
+// Moved from: inline implementations
 func signerFile(signerID string) string {
 	return strings.Replace(signerID, "@", "_at_", 1)
 }
@@ -128,18 +112,15 @@ func checkUseAcmeCert(tlsHost, signer, cadirurl string, tlsCert, tlsKey *string,
 			if err != nil {
 				return err
 			}
-			user := MyUser{
-				Email: signer,
-				key:   privateKey,
-			}
-			config := lego.NewConfig(&user)
+			user := NewMyUser(signer, privateKey)
+			config := lego.NewConfig(user)
 			config.CADirURL = cadirurl
 			config.Certificate.KeyType = certcrypto.RSA2048
 			client, err := lego.NewClient(config)
 			if err != nil {
 				return err
 			}
-			renewAcmeIssuedCert(client, user, tlsHost, tlsCert, tlsKey)
+			renewAcmeIssuedCert(client, *user, tlsHost, tlsCert, tlsKey)
 		} else {
 			return nil
 		}
@@ -162,18 +143,15 @@ func checkUseAcmeCert(tlsHost, signer, cadirurl string, tlsCert, tlsKey *string,
 	if err != nil {
 		return err
 	}
-	user := MyUser{
-		Email: signer,
-		key:   privateKey,
-	}
-	config := lego.NewConfig(&user)
+	user := NewMyUser(signer, privateKey)
+	config := lego.NewConfig(user)
 	config.CADirURL = cadirurl
 	config.Certificate.KeyType = certcrypto.RSA2048
 	client, err := lego.NewClient(config)
 	if err != nil {
 		return err
 	}
-	return newAcmeIssuedCert(client, user, tlsHost, tlsCert, tlsKey)
+	return newAcmeIssuedCert(client, *user, tlsHost, tlsCert, tlsKey)
 }
 
 func renewAcmeIssuedCert(client *lego.Client, user MyUser, tlsHost string, tlsCert, tlsKey *string) error {
