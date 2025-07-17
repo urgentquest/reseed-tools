@@ -11,6 +11,7 @@ import (
 	"net/http"
 	"os"
 	"strconv"
+	"sync"
 	"time"
 
 	"github.com/go-i2p/onramp"
@@ -41,6 +42,7 @@ type Server struct {
 	RequestRateLimit int
 	WebRateLimit     int
 	acceptables      map[string]time.Time
+	acceptablesMutex sync.RWMutex
 }
 
 func NewServer(prefix string, trustProxy bool) *Server {
@@ -126,12 +128,15 @@ func (srv *Server) Address() string {
 }
 
 func (srv *Server) Acceptable() string {
+	srv.acceptablesMutex.Lock()
+	defer srv.acceptablesMutex.Unlock()
+
 	if srv.acceptables == nil {
 		srv.acceptables = make(map[string]time.Time)
 	}
 	if len(srv.acceptables) > 50 {
 		for val := range srv.acceptables {
-			srv.CheckAcceptable(val)
+			srv.checkAcceptableUnsafe(val)
 		}
 		for val := range srv.acceptables {
 			if len(srv.acceptables) < 50 {
@@ -146,6 +151,9 @@ func (srv *Server) Acceptable() string {
 }
 
 func (srv *Server) CheckAcceptable(val string) bool {
+	srv.acceptablesMutex.Lock()
+	defer srv.acceptablesMutex.Unlock()
+
 	if srv.acceptables == nil {
 		srv.acceptables = make(map[string]time.Time)
 	}
@@ -156,6 +164,21 @@ func (srv *Server) CheckAcceptable(val string) bool {
 			return false
 		}
 		delete(srv.acceptables, val)
+		return true
+	}
+	return false
+}
+
+// checkAcceptableUnsafe performs acceptable checking without acquiring the mutex.
+// This should only be called when the mutex is already held.
+func (srv *Server) checkAcceptableUnsafe(val string) bool {
+	if timeout, ok := srv.acceptables[val]; ok {
+		checktime := time.Since(timeout)
+		if checktime > (4 * time.Minute) {
+			delete(srv.acceptables, val)
+			return false
+		}
+		// Don't delete here since we're just cleaning up expired entries
 		return true
 	}
 	return false
