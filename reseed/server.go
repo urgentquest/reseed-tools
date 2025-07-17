@@ -177,6 +177,7 @@ func (srv *Server) reseedHandler(w http.ResponseWriter, r *http.Request) {
 
 	su3Bytes, err := srv.Reseeder.PeerSu3Bytes(peer)
 	if nil != err {
+		log.Println("Error serving su3:", err)
 		http.Error(w, "500 Unable to serve su3", http.StatusInternalServerError)
 		return
 	}

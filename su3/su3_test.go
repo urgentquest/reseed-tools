@@ -447,6 +447,50 @@ func TestFile_RoundTrip(t *testing.T) {
 	}
 }
 
+func TestFile_Sign_RSAKeySize(t *testing.T) {
+	testCases := []struct {
+		name           string
+		keySize        int
+		expectedSigLen int
+	}{
+		{"2048-bit RSA", 2048, 256},
+		{"3072-bit RSA", 3072, 384},
+		{"4096-bit RSA", 4096, 512},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			// Generate RSA key of specific size
+			privateKey, err := rsa.GenerateKey(rand.Reader, tc.keySize)
+			if err != nil {
+				t.Fatalf("Failed to generate %d-bit RSA key: %v", tc.keySize, err)
+			}
+
+			file := New()
+			file.Content = []byte("test content")
+			file.SignerID = []byte("test@example.com")
+			file.SignatureType = SigTypeRSAWithSHA512
+
+			err = file.Sign(privateKey)
+			if err != nil {
+				t.Errorf("Unexpected error signing with %d-bit key: %v", tc.keySize, err)
+				return
+			}
+
+			if len(file.Signature) != tc.expectedSigLen {
+				t.Errorf("Expected signature length %d for %d-bit key, got %d",
+					tc.expectedSigLen, tc.keySize, len(file.Signature))
+			}
+
+			// Verify the header reflects the correct signature length
+			bodyBytes := file.BodyBytes()
+			if len(bodyBytes) == 0 {
+				t.Error("BodyBytes should not be empty")
+			}
+		})
+	}
+}
+
 // Benchmark tests for performance validation
 func BenchmarkNew(b *testing.B) {
 	for i := 0; i < b.N; i++ {

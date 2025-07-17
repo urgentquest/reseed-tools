@@ -66,6 +66,11 @@ func (s *File) Sign(privkey *rsa.PrivateKey) error {
 		return fmt.Errorf("private key cannot be nil")
 	}
 
+	// Pre-calculate signature length based on RSA key size
+	// This ensures BodyBytes() generates the correct header
+	keySize := privkey.Size()           // Returns key size in bytes
+	s.Signature = make([]byte, keySize) // Temporary signature with correct length
+
 	var hashType crypto.Hash
 	switch s.SignatureType {
 	case SigTypeDSA:
