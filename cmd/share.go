@@ -107,10 +107,14 @@ func shareAction(c *cli.Context) error {
 	if err != nil {
 		return err
 	}
+	defer garlic.Close()
+
 	garlicListener, err := garlic.Listen()
 	if err != nil {
 		return err
 	}
+	defer garlicListener.Close()
+
 	return http.Serve(garlicListener, httpFs)
 }
 
