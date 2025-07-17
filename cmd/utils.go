@@ -118,7 +118,8 @@ func checkUseAcmeCert(tlsHost, signer, cadirurl string, tlsCert, tlsKey *string,
 		if err != nil {
 			return err
 		}
-		if time.Now().Sub(TLSConfig.Certificates[0].Leaf.NotAfter) < (time.Hour * 48) {
+		// Check if certificate expires within 48 hours (time until expiration < 48 hours)
+		if time.Until(TLSConfig.Certificates[0].Leaf.NotAfter) < (time.Hour * 48) {
 			ecder, err := ioutil.ReadFile(tlsHost + signer + ".acme.key")
 			if err != nil {
 				return err
