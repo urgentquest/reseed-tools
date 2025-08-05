@@ -13,7 +13,8 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/urfave/cli/v3"
+	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 
 	"github.com/go-i2p/checki2cp/getmeanetdb"
 	"github.com/go-i2p/onramp"
@@ -21,42 +22,31 @@ import (
 
 // NewShareCommand creates a new CLI Command for sharing the netDb over I2P with a password.
 // Can be used to combine the local netDb with the netDb of a remote I2P router.
-func NewShareCommand() *cli.Command {
+var shareCmd = &cobra.Command{
+	Use:   "share",
+	Short: "Start a netDb sharing server",
+	Run: func(cmd *cobra.Command, args []string) {
+		shareAction()
+	},
+}
+
+func init() {
 	ndb, err := getmeanetdb.WhereIstheNetDB()
 	if err != nil {
 		log.Fatal(err)
 	}
-	return &cli.Command{
-		Name:   "share",
-		Usage:  "Start a netDb sharing server",
-		Action: shareAction,
-		Flags: []cli.Flag{
-			&cli.StringFlag{
-				Name:  "signer",
-				Value: getDefaultSigner(),
-				Usage: "Your su3 signing ID (ex. something@mail.i2p)",
-			},
-			&cli.StringFlag{
-				Name:  "key",
-				Usage: "Path to your su3 signing private key",
-			},
-			&cli.StringFlag{
-				Name:  "netdb",
-				Value: ndb,
-				Usage: "Path to NetDB directory containing routerInfos",
-			},
-			&cli.StringFlag{
-				Name:  "samaddr",
-				Value: "127.0.0.1:7656",
-				Usage: "Use this SAM address to set up I2P connections for in-network sharing",
-			},
-			&cli.StringFlag{
-				Name:  "share-password",
-				Value: "",
-				Usage: "Share the contents of your netDb directory privately over I2P as a tar.gz archive. Will fail is password is blank.",
-			},
-		},
-	}
+	rootCmd.AddCommand(shareCmd)
+
+	shareCmd.Flags().String("signer", getDefaultSigner(), "Your su3 signing ID (ex. something@mail.i2p)")
+	shareCmd.Flags().String("key", "", "Path to your su3 signing private key")
+	shareCmd.Flags().String("netdb", ndb, "Path to NetDB directory containing routerInfos")
+	shareCmd.Flags().String("samaddr", "127.0.0.1:7656",
+		"Use this SAM address to set up I2P connections for in-network sharing")
+	shareCmd.Flags().String("share-password", "",
+		"Share the contents of your netDb directory privately over I2P as a tar.gz archive. Will fail is password is blank.",
+	)
+
+	viper.BindPFlags(shareCmd.Flags())
 }
 
 type sharer struct {
@@ -97,13 +87,13 @@ func Sharer(netDbDir, password string) *sharer {
 	return fileSystem
 }
 
-func shareAction(c *cli.Context) error {
-	netDbDir, err := filepath.Abs(c.String("netdb"))
+func shareAction() error {
+	netDbDir, err := filepath.Abs(viper.GetString("netdb"))
 	if err != nil {
 		return err
 	}
-	httpFs := Sharer(netDbDir, c.String("share-password"))
-	garlic, err := onramp.NewGarlic("reseed", c.String("samaddr"), onramp.OPT_WIDE)
+	httpFs := Sharer(netDbDir, viper.GetString("share-password"))
+	garlic, err := onramp.NewGarlic("reseed", viper.GetString("samaddr"), onramp.OPT_WIDE)
 	if err != nil {
 		return err
 	}

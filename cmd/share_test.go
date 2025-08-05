@@ -8,18 +8,15 @@ import (
 )
 
 func TestNewShareCommand(t *testing.T) {
-	cmd := NewShareCommand()
+	cmd := shareCmd
 	if cmd == nil {
 		t.Fatal("NewShareCommand() returned nil")
 	}
 
-	if cmd.Name != "share" {
-		t.Errorf("Expected command name 'share', got %s", cmd.Name)
+	if cmd.Name() != "share" {
+		t.Errorf("Expected command name 'share', got %s", cmd.Name())
 	}
 
-	if cmd.Action == nil {
-		t.Error("Command action should not be nil")
-	}
 }
 
 func TestSharer(t *testing.T) {

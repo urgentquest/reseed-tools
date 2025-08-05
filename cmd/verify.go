@@ -2,13 +2,13 @@ package cmd
 
 import (
 	"fmt"
-	"io/ioutil"
 	"log"
 	"os"
 	"os/user"
 	"path/filepath"
 
-	"github.com/urfave/cli/v3"
+	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 	"i2pgit.org/idk/reseed-tools/reseed"
 	"i2pgit.org/idk/reseed-tools/su3"
 )
@@ -34,35 +34,29 @@ func I2PHome() string {
 	return ""
 }
 
-func NewSu3VerifyCommand() *cli.Command {
-	return &cli.Command{
-		Name:        "verify",
-		Usage:       "Verify a Su3 file",
-		Description: "Verify a Su3 file",
-		Action:      su3VerifyAction,
-		Flags: []cli.Flag{
-			&cli.BoolFlag{
-				Name:  "extract",
-				Usage: "Also extract the contents of the su3",
-			},
-			&cli.StringFlag{
-				Name:  "signer",
-				Value: getDefaultSigner(),
-				Usage: "Your su3 signing ID (ex. something@mail.i2p)",
-			},
-			&cli.StringFlag{
-				Name:  "keystore",
-				Value: filepath.Join(I2PHome(), "/certificates/reseed"),
-				Usage: "Path to the keystore",
-			},
-		},
-	}
+// verifyCmd represents the keygen command
+var verifyCmd = &cobra.Command{
+	Use:   "verify [flags] filename",
+	Short: "Verify a Su3 file",
+	Args:  cobra.ExactArgs(1),
+	Run: func(cmd *cobra.Command, args []string) {
+		su3VerifyAction(args[0])
+	},
 }
 
-func su3VerifyAction(c *cli.Context) error {
+func init() {
+	rootCmd.AddCommand(verifyCmd)
+
+	keygenCmd.Flags().Bool("extract", false, "Also extract the contents of the su3")
+	keygenCmd.Flags().String("signer", getDefaultSigner(), "Your su3 signing ID (ex. something@mail.i2p)")
+	keygenCmd.PersistentFlags().String("keystore", filepath.Join(I2PHome(), "/certificates/reseed"), "Path to the keystore")
+	viper.BindPFlags(verifyCmd.Flags())
+}
+
+func su3VerifyAction(filename string) error {
 	su3File := su3.New()
 
-	data, err := ioutil.ReadFile(c.Args().Get(0))
+	data, err := os.ReadFile(filename)
 	if nil != err {
 		return err
 	}
@@ -71,7 +65,7 @@ func su3VerifyAction(c *cli.Context) error {
 	}
 
 	fmt.Println(su3File.String())
-	absPath, err := filepath.Abs(c.String("keystore"))
+	absPath, err := filepath.Abs(viper.GetString("keystore"))
 	if nil != err {
 		return err
 	}
@@ -81,8 +75,8 @@ func su3VerifyAction(c *cli.Context) error {
 	// get the reseeder key
 	ks := reseed.KeyStore{Path: keyStorePath}
 
-	if c.String("signer") != "" {
-		su3File.SignerID = []byte(c.String("signer"))
+	if viper.GetString("signer") != "" {
+		su3File.SignerID = []byte(viper.GetString("signer"))
 	}
 	log.Println("Using keystore:", absPath, "for purpose", reseedDir, "and", string(su3File.SignerID))
 
@@ -98,9 +92,9 @@ func su3VerifyAction(c *cli.Context) error {
 
 	fmt.Printf("Signature is valid for signer '%s'\n", su3File.SignerID)
 
-	if c.Bool("extract") {
+	if viper.GetBool("extract") {
 		// @todo: don't assume zip
-		ioutil.WriteFile("extracted.zip", su3File.BodyBytes(), 0o755)
+		os.WriteFile("extracted.zip", su3File.BodyBytes(), 0o755)
 	}
 	return nil
 }

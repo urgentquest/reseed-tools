@@ -3,17 +3,19 @@ package cmd
 import (
 	"fmt"
 
-	"github.com/urfave/cli/v3"
+	"github.com/spf13/cobra"
 	"i2pgit.org/idk/reseed-tools/reseed"
 )
 
-func NewVersionCommand() *cli.Command {
-	return &cli.Command{
-		Name:  "version",
-		Usage: "Print the version number of reseed-tools",
-		Action: func(c *cli.Context) error {
-			fmt.Printf("%s\n", reseed.Version)
-			return nil
-		},
-	}
+// versionCmd represents the version command
+var versionCmd = &cobra.Command{
+	Use:   "version",
+	Short: "Print the version number of reseed-tools",
+	Run: func(cmd *cobra.Command, args []string) {
+		fmt.Printf("%s\n", reseed.Version)
+	},
+}
+
+func init() {
+	rootCmd.AddCommand(versionCmd)
 }

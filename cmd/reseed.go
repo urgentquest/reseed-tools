@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"io"
 	"net/http"
 	"net/url"
 	"path/filepath"
@@ -8,7 +9,6 @@ import (
 
 	//"flag"
 	"fmt"
-	"io/ioutil"
 	"log"
 	"net"
 	"os"
@@ -24,7 +24,8 @@ import (
 	"github.com/go-i2p/sam3"
 	"github.com/otiai10/copy"
 	"github.com/rglonek/untar"
-	"github.com/urfave/cli/v3"
+	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 	"i2pgit.org/idk/reseed-tools/reseed"
 
 	"github.com/go-i2p/checki2cp/getmeanetdb"
@@ -50,165 +51,73 @@ func getHostName() string {
 	return strings.Replace(hostname, "\n", "", -1)
 }
 
-func providedReseeds(c *cli.Context) []string {
-	reseedArg := c.StringSlice("friends")
+func providedReseeds() []string {
+	reseedArg := viper.GetStringSlice("friends")
 	reseed.AllReseeds = reseedArg
 	return reseed.AllReseeds
 }
 
 // NewReseedCommand creates a new CLI command for starting a reseed server.
-func NewReseedCommand() *cli.Command {
+var reseedCmd = &cobra.Command{
+	Use:   "reseed",
+	Short: "Start a reseed server",
+	Run: func(cmd *cobra.Command, args []string) {
+		reseedAction()
+	},
+}
+
+func init() {
+	rootCmd.AddCommand(reseedCmd)
 	ndb, err := getmeanetdb.WhereIstheNetDB()
 	if err != nil {
 		log.Fatal(err)
 	}
-	return &cli.Command{
-		Name:   "reseed",
-		Usage:  "Start a reseed server",
-		Action: reseedAction,
-		Flags: []cli.Flag{
-			&cli.StringFlag{
-				Name:  "signer",
-				Value: getDefaultSigner(),
-				Usage: "Your su3 signing ID (ex. something@mail.i2p)",
-			},
-			&cli.StringFlag{
-				Name:  "tlsHost",
-				Value: getHostName(),
-				Usage: "The public hostname used on your TLS certificate",
-			},
-			&cli.BoolFlag{
-				Name:  "onion",
-				Usage: "Present an onionv3 address",
-			},
-			&cli.BoolFlag{
-				Name:  "singleOnion",
-				Usage: "Use a faster, but non-anonymous single-hop onion",
-			},
-			&cli.StringFlag{
-				Name:  "onionKey",
-				Value: "onion.key",
-				Usage: "Specify a path to an ed25519 private key for onion",
-			},
-			&cli.StringFlag{
-				Name:  "key",
-				Usage: "Path to your su3 signing private key",
-			},
-			&cli.StringFlag{
-				Name:  "netdb",
-				Value: ndb,
-				Usage: "Path to NetDB directory containing routerInfos",
-			},
-			&cli.DurationFlag{
-				Name:  "routerInfoAge",
-				Value: 72 * time.Hour,
-				Usage: "Maximum age of router infos to include in reseed files (ex. 72h, 8d)",
-			},
-			&cli.StringFlag{
-				Name:  "tlsCert",
-				Usage: "Path to a TLS certificate",
-			},
-			&cli.StringFlag{
-				Name:  "tlsKey",
-				Usage: "Path to a TLS private key",
-			},
-			&cli.StringFlag{
-				Name:  "ip",
-				Value: "0.0.0.0",
-				Usage: "IP address to listen on",
-			},
-			&cli.StringFlag{
-				Name:  "port",
-				Value: "8443",
-				Usage: "Port to listen on",
-			},
-			&cli.IntFlag{
-				Name:  "numRi",
-				Value: 77,
-				Usage: "Number of routerInfos to include in each su3 file",
-			},
-			&cli.IntFlag{
-				Name:  "numSu3",
-				Value: 50,
-				Usage: "Number of su3 files to build (0 = automatic based on size of netdb)",
-			},
-			&cli.StringFlag{
-				Name:  "interval",
-				Value: "90h",
-				Usage: "Duration between SU3 cache rebuilds (ex. 12h, 15m)",
-			},
-			&cli.StringFlag{
-				Name:  "prefix",
-				Value: "",
-				Usage: "Prefix path for the HTTP(S) server. (ex. /netdb)",
-			},
-			&cli.BoolFlag{
-				Name:  "trustProxy",
-				Usage: "If provided, we will trust the 'X-Forwarded-For' header in requests (ex. behind cloudflare)",
-			},
-			&cli.StringFlag{
-				Name:  "blacklist",
-				Value: "",
-				Usage: "Path to a txt file containing a list of IPs to deny connections from.",
-			},
-			&cli.DurationFlag{
-				Name:  "stats",
-				Value: 0,
-				Usage: "Periodically print memory stats.",
-			},
-			&cli.BoolFlag{
-				Name:  "i2p",
-				Usage: "Listen for reseed request inside the I2P network",
-			},
-			&cli.BoolFlag{
-				Name:  "yes",
-				Usage: "Automatically answer 'yes' to self-signed SSL generation",
-			},
-			&cli.StringFlag{
-				Name:  "samaddr",
-				Value: "127.0.0.1:7656",
-				Usage: "Use this SAM address to set up I2P connections for in-network reseed",
-			},
-			&cli.StringSliceFlag{
-				Name:  "friends",
-				Value: cli.NewStringSlice(reseed.AllReseeds...),
-				Usage: "Ping other reseed servers and display the result on the homepage to provide information about reseed uptime.",
-			},
-			&cli.StringFlag{
-				Name:  "share-peer",
-				Value: "",
-				Usage: "Download the shared netDb content of another I2P router, over I2P",
-			},
-			&cli.StringFlag{
-				Name:  "share-password",
-				Value: "",
-				Usage: "Password for downloading netDb content from another router. Required for share-peer to work.",
-			},
-			&cli.BoolFlag{
-				Name:  "acme",
-				Usage: "Automatically generate a TLS certificate with the ACME protocol, defaults to Let's Encrypt",
-			},
-			&cli.StringFlag{
-				Name:  "acmeserver",
-				Value: "https://acme-staging-v02.api.letsencrypt.org/directory",
-				Usage: "Use this server to issue a certificate with the ACME protocol",
-			},
-			&cli.IntFlag{
-				Name:  "ratelimit",
-				Value: 4,
-				Usage: "Maximum number of reseed bundle requests per-IP address, per-hour.",
-			},
-			&cli.IntFlag{
-				Name:  "ratelimitweb",
-				Value: 40,
-				Usage: "Maxiumum number of web-visits per-IP address, per-hour",
-			},
-		},
-	}
+
+	reseedCmd.PersistentFlags().String("signer", getDefaultSigner(), "Your su3 signing ID (ex. something@mail.i2p)")
+	reseedCmd.PersistentFlags().String("tlsHost", getHostName(), "The public hostname used on your TLS certificate")
+	reseedCmd.PersistentFlags().Bool("onion", false, "Present an onionv3 address")
+	reseedCmd.PersistentFlags().Bool("singleOnion", false, "Use a faster, but non-anonymous single-hop onion")
+	reseedCmd.PersistentFlags().String("onionKey", "onion.key", "Specify a path to an ed25519 private key for onion")
+	reseedCmd.PersistentFlags().String("key", "", "Path to your su3 signing private key")
+	reseedCmd.PersistentFlags().String("netdb", ndb, "Path to NetDB directory containing routerInfos")
+	reseedCmd.PersistentFlags().Duration("routerInfoAge", 72*time.Hour, "Maximum age of router infos to include in reseed files (ex. 72h, 8d)")
+	reseedCmd.PersistentFlags().String("tlsCert", "", "Path to a TLS certificate")
+	reseedCmd.PersistentFlags().String("tlsKey", "", "Path to a TLS private key")
+	reseedCmd.PersistentFlags().String("ip", "0.0.0.0", "IP address to listen on")
+	reseedCmd.PersistentFlags().String("port", "8443", "Port to listen on")
+	reseedCmd.PersistentFlags().Int("numRi", 77, "Number of routerInfos to include in each su3 file")
+	reseedCmd.PersistentFlags().Int("numSu3", 50, "Number of su3 files to build (0 = automatic based on size of netdb)")
+	reseedCmd.PersistentFlags().Duration("interval", 72*time.Hour, "Duration between SU3 cache rebuilds (ex. 12h, 15m)")
+	reseedCmd.PersistentFlags().String("prefix", "", "Prefix path for the HTTP(S) server. (ex. /netdb)")
+	reseedCmd.PersistentFlags().Bool("trustProxy", false,
+		"If provided, we will trust the 'X-Forwarded-For' header in requests (ex. behind cloudflare)")
+	reseedCmd.PersistentFlags().String("blacklist", "",
+		"Path to a txt file containing a list of IPs to deny connections from.")
+	reseedCmd.PersistentFlags().Duration("stats", 0, "Periodically print memory stats.")
+	reseedCmd.PersistentFlags().Bool("i2p", false, "Listen for reseed request inside the I2P network")
+	reseedCmd.PersistentFlags().Bool("yes", false, "Automatically answer 'yes' to self-signed SSL generation")
+	reseedCmd.PersistentFlags().String("samaddr", "127.0.0.1:7656",
+		"Use this SAM address to set up I2P connections for in-network reseed")
+	reseedCmd.PersistentFlags().StringSlice("friends", reseed.AllReseeds,
+		"Ping other reseed servers and display the result on the homepage to provide information about reseed uptime.")
+	reseedCmd.PersistentFlags().String("share-peer", "",
+		"Download the shared netDb content of another I2P router, over I2P")
+	reseedCmd.PersistentFlags().String("share-password", "",
+		"Password for downloading netDb content from another router. Required for share-peer to work.")
+	reseedCmd.PersistentFlags().Bool("acme", false,
+		"Automatically generate a TLS certificate with the ACME protocol, defaults to Let's Encrypt")
+	reseedCmd.PersistentFlags().String(
+		"acmeserver",
+		"https://acme-staging-v02.api.letsencrypt.org/directory",
+		"Use this server to issue a certificate with the ACME protocol")
+	reseedCmd.PersistentFlags().Int("ratelimit", 4, "Maximum number of reseed bundle requests per-IP address, per-hour.")
+	reseedCmd.PersistentFlags().Int("ratelimitweb", 40, "Maxiumum number of web-visits per-IP address, per-hour")
+
+	viper.BindPFlags(reseedCmd.Flags())
 }
 
-func CreateEepServiceKey(c *cli.Context) (i2pkeys.I2PKeys, error) {
-	sam, err := sam3.NewSAM(c.String("samaddr"))
+func CreateEepServiceKey() (i2pkeys.I2PKeys, error) {
+	sam, err := sam3.NewSAM(viper.GetString("samaddr"))
 	if err != nil {
 		return i2pkeys.I2PKeys{}, err
 	}
@@ -220,9 +129,9 @@ func CreateEepServiceKey(c *cli.Context) (i2pkeys.I2PKeys, error) {
 	return k, err
 }
 
-func LoadKeys(keysPath string, c *cli.Context) (i2pkeys.I2PKeys, error) {
+func LoadKeys(keysPath string) (i2pkeys.I2PKeys, error) {
 	if _, err := os.Stat(keysPath); os.IsNotExist(err) {
-		keys, err := CreateEepServiceKey(c)
+		keys, err := CreateEepServiceKey()
 		if err != nil {
 			return i2pkeys.I2PKeys{}, err
 		}
@@ -262,15 +171,15 @@ func fileExists(filename string) bool {
 	return !info.IsDir()
 }
 
-func reseedAction(c *cli.Context) error {
-	providedReseeds(c)
-	netdbDir := c.String("netdb")
+func reseedAction() error {
+	providedReseeds()
+	netdbDir := viper.GetString("netdb")
 	if netdbDir == "" {
 		fmt.Println("--netdb is required")
 		return fmt.Errorf("--netdb is required")
 	}
 
-	signerID := c.String("signer")
+	signerID := viper.GetString("signer")
 	if signerID == "" || signerID == "you@mail.i2p" {
 		fmt.Println("--signer is required")
 		return fmt.Errorf("--signer is required")
@@ -280,17 +189,17 @@ func reseedAction(c *cli.Context) error {
 			fmt.Println("--signer must be an email address or a file containing an email address.")
 			return fmt.Errorf("--signer must be an email address or a file containing an email address.")
 		}
-		bytes, err := ioutil.ReadFile(signerID)
+		bytes, err := os.ReadFile(signerID)
 		if err != nil {
 			fmt.Println("--signer must be an email address or a file containing an email address.")
 			return fmt.Errorf("--signer must be an email address or a file containing an email address.")
 		}
 		signerID = string(bytes)
 	}
-	if c.String("share-peer") != "" {
+	if viper.GetString("share-peer") != "" {
 		count := []int{1, 2, 3, 4, 5, 6, 7, 8, 9, 10}
 		for i := range count {
-			err := downloadRemoteNetDB(c.String("share-peer"), c.String("share-password"), c.String("netdb"), c.String("samaddr"))
+			err := downloadRemoteNetDB(viper.GetString("share-peer"), viper.GetString("share-password"), viper.GetString("netdb"), viper.GetString("samaddr"))
 			if err != nil {
 				log.Println("Error downloading remote netDb,", err, "retrying in 10 seconds", i, "attempts remaining")
 				time.Sleep(time.Second * 10)
@@ -298,11 +207,11 @@ func reseedAction(c *cli.Context) error {
 				break
 			}
 		}
-		go getSupplementalNetDb(c.String("share-peer"), c.String("share-password"), c.String("netdb"), c.String("samaddr"))
+		go getSupplementalNetDb(viper.GetString("share-peer"), viper.GetString("share-password"), viper.GetString("netdb"), viper.GetString("samaddr"))
 	}
 
 	var tlsCert, tlsKey string
-	tlsHost := c.String("tlsHost")
+	tlsHost := viper.GetString("tlsHost")
 	onionTlsHost := ""
 	var onionTlsCert, onionTlsKey string
 	i2pTlsHost := ""
@@ -312,7 +221,7 @@ func reseedAction(c *cli.Context) error {
 	if tlsHost != "" {
 		onionTlsHost = tlsHost
 		i2pTlsHost = tlsHost
-		tlsKey = c.String("tlsKey")
+		tlsKey = viper.GetString("tlsKey")
 		// if no key is specified, default to the host.pem in the current dir
 		if tlsKey == "" {
 			tlsKey = tlsHost + ".pem"
@@ -320,7 +229,7 @@ func reseedAction(c *cli.Context) error {
 			i2pTlsKey = tlsHost + ".pem"
 		}
 
-		tlsCert = c.String("tlsCert")
+		tlsCert = viper.GetString("tlsCert")
 		// if no certificate is specified, default to the host.crt in the current dir
 		if tlsCert == "" {
 			tlsCert = tlsHost + ".crt"
@@ -329,13 +238,13 @@ func reseedAction(c *cli.Context) error {
 		}
 
 		// prompt to create tls keys if they don't exist?
-		auto := c.Bool("yes")
-		ignore := c.Bool("trustProxy")
+		auto := viper.GetBool("yes")
+		ignore := viper.GetBool("trustProxy")
 		if !ignore {
 			// use ACME?
-			acme := c.Bool("acme")
+			acme := viper.GetBool("acme")
 			if acme {
-				acmeserver := c.String("acmeserver")
+				acmeserver := viper.GetString("acmeserver")
 				err := checkUseAcmeCert(tlsHost, signerID, acmeserver, &tlsCert, &tlsKey, auto)
 				if nil != err {
 					log.Fatalln(err)
@@ -350,9 +259,9 @@ func reseedAction(c *cli.Context) error {
 
 	}
 
-	if c.Bool("i2p") {
+	if viper.GetBool("i2p") {
 		var err error
-		i2pkey, err = LoadKeys("reseed.i2pkeys", c)
+		i2pkey, err = LoadKeys("reseed.i2pkeys")
 		if err != nil {
 			log.Fatalln(err)
 		}
@@ -371,8 +280,8 @@ func reseedAction(c *cli.Context) error {
 			}
 
 			// prompt to create tls keys if they don't exist?
-			auto := c.Bool("yes")
-			ignore := c.Bool("trustProxy")
+			auto := viper.GetBool("yes")
+			ignore := viper.GetBool("trustProxy")
 			if !ignore {
 				err := checkOrNewTLSCert(i2pTlsHost, &i2pTlsCert, &i2pTlsKey, auto)
 				if nil != err {
@@ -382,11 +291,11 @@ func reseedAction(c *cli.Context) error {
 		}
 	}
 
-	if c.Bool("onion") {
+	if viper.GetBool("onion") {
 		var ok []byte
 		var err error
-		if _, err = os.Stat(c.String("onionKey")); err == nil {
-			ok, err = ioutil.ReadFile(c.String("onionKey"))
+		if _, err = os.Stat(viper.GetString("onionKey")); err == nil {
+			ok, err = os.ReadFile(viper.GetString("onionKey"))
 			if err != nil {
 				log.Fatalln(err.Error())
 			}
@@ -400,7 +309,7 @@ func reseedAction(c *cli.Context) error {
 		if onionTlsHost == "" {
 			onionTlsHost = torutil.OnionServiceIDFromPrivateKey(ed25519.PrivateKey(ok)) + ".onion"
 		}
-		err = ioutil.WriteFile(c.String("onionKey"), ok, 0o644)
+		err = os.WriteFile(viper.GetString("onionKey"), ok, 0o644)
 		if err != nil {
 			log.Fatalln(err.Error())
 		}
@@ -416,8 +325,8 @@ func reseedAction(c *cli.Context) error {
 			}
 
 			// prompt to create tls keys if they don't exist?
-			auto := c.Bool("yes")
-			ignore := c.Bool("trustProxy")
+			auto := viper.GetBool("yes")
+			ignore := viper.GetBool("trustProxy")
 			if !ignore {
 				err := checkOrNewTLSCert(onionTlsHost, &onionTlsCert, &onionTlsKey, auto)
 				if nil != err {
@@ -427,86 +336,86 @@ func reseedAction(c *cli.Context) error {
 		}
 	}
 
-	reloadIntvl, err := time.ParseDuration(c.String("interval"))
+	reloadIntvl, err := time.ParseDuration(viper.GetString("interval"))
 	if nil != err {
 		fmt.Printf("'%s' is not a valid time interval.\n", reloadIntvl)
 		return fmt.Errorf("'%s' is not a valid time interval.\n", reloadIntvl)
 	}
 
-	signerKey := c.String("key")
+	signerKey := viper.GetString("key")
 	// if no key is specified, default to the signerID.pem in the current dir
 	if signerKey == "" {
 		signerKey = signerFile(signerID) + ".pem"
 	}
 
 	// load our signing privKey
-	auto := c.Bool("yes")
+	auto := viper.GetBool("yes")
 	privKey, err := getOrNewSigningCert(&signerKey, signerID, auto)
 	if nil != err {
 		log.Fatalln(err)
 	}
 
 	// create a local file netdb provider
-	routerInfoAge := c.Duration("routerInfoAge")
+	routerInfoAge := viper.GetDuration("routerInfoAge")
 	netdb := reseed.NewLocalNetDb(netdbDir, routerInfoAge)
 
 	// create a reseeder
 	reseeder := reseed.NewReseeder(netdb)
 	reseeder.SigningKey = privKey
 	reseeder.SignerID = []byte(signerID)
-	reseeder.NumRi = c.Int("numRi")
-	reseeder.NumSu3 = c.Int("numSu3")
+	reseeder.NumRi = viper.GetInt("numRi")
+	reseeder.NumSu3 = viper.GetInt("numSu3")
 	reseeder.RebuildInterval = reloadIntvl
 	reseeder.Start()
 
 	// create a server
 
-	if c.Bool("onion") {
+	if viper.GetBool("onion") {
 		log.Printf("Onion server starting\n")
 		if tlsHost != "" && tlsCert != "" && tlsKey != "" {
-			go reseedOnion(c, onionTlsCert, onionTlsKey, reseeder)
+			go reseedOnion(onionTlsCert, onionTlsKey, reseeder)
 		} else {
-			reseedOnion(c, onionTlsCert, onionTlsKey, reseeder)
+			reseedOnion(onionTlsCert, onionTlsKey, reseeder)
 		}
 	}
-	if c.Bool("i2p") {
+	if viper.GetBool("i2p") {
 		log.Printf("I2P server starting\n")
 		if tlsHost != "" && tlsCert != "" && tlsKey != "" {
-			go reseedI2P(c, i2pTlsCert, i2pTlsKey, i2pkey, reseeder)
+			go reseedI2P(i2pTlsCert, i2pTlsKey, i2pkey, reseeder)
 		} else {
-			reseedI2P(c, i2pTlsCert, i2pTlsKey, i2pkey, reseeder)
+			reseedI2P(i2pTlsCert, i2pTlsKey, i2pkey, reseeder)
 		}
 	}
-	if !c.Bool("trustProxy") {
+	if !viper.GetBool("trustProxy") {
 		log.Printf("HTTPS server starting\n")
-		reseedHTTPS(c, tlsCert, tlsKey, reseeder)
+		reseedHTTPS(tlsCert, tlsKey, reseeder)
 	} else {
 		log.Printf("HTTP server starting on\n")
-		reseedHTTP(c, reseeder)
+		reseedHTTP(reseeder)
 	}
 	return nil
 }
 
-func reseedHTTPS(c *cli.Context, tlsCert, tlsKey string, reseeder *reseed.ReseederImpl) {
-	server := reseed.NewServer(c.String("prefix"), c.Bool("trustProxy"))
+func reseedHTTPS(tlsCert, tlsKey string, reseeder *reseed.ReseederImpl) {
+	server := reseed.NewServer(viper.GetString("prefix"), viper.GetBool("trustProxy"))
 	server.Reseeder = reseeder
-	server.RequestRateLimit = c.Int("ratelimit")
-	server.WebRateLimit = c.Int("ratelimitweb")
-	server.Addr = net.JoinHostPort(c.String("ip"), c.String("port"))
+	server.RequestRateLimit = viper.GetInt("ratelimit")
+	server.WebRateLimit = viper.GetInt("ratelimitweb")
+	server.Addr = net.JoinHostPort(viper.GetString("ip"), viper.GetString("port"))
 
 	// load a blacklist
 	blacklist := reseed.NewBlacklist()
 	server.Blacklist = blacklist
-	blacklistFile := c.String("blacklist")
+	blacklistFile := viper.GetString("blacklist")
 	if "" != blacklistFile {
 		blacklist.LoadFile(blacklistFile)
 	}
 
 	// print stats once in a while
-	if c.Duration("stats") != 0 {
+	if viper.GetDuration("stats") != 0 {
 		go func() {
 			var mem runtime.MemStats
-			for range time.Tick(c.Duration("stats")) {
+			for range time.Tick(viper.GetDuration("stats")) {
 				runtime.ReadMemStats(&mem)
 				log.Printf("TotalAllocs: %d Kb, Allocs: %d Kb, Mallocs: %d, NumGC: %d", mem.TotalAlloc/1024, mem.Alloc/1024, mem.Mallocs, mem.NumGC)
 			}
@@ -518,26 +427,26 @@ func reseedHTTPS(c *cli.Context, tlsCert, tlsKey string, reseeder *reseed.Reseed
 	}
 }
 
-func reseedHTTP(c *cli.Context, reseeder *reseed.ReseederImpl) {
-	server := reseed.NewServer(c.String("prefix"), c.Bool("trustProxy"))
-	server.RequestRateLimit = c.Int("ratelimit")
-	server.WebRateLimit = c.Int("ratelimitweb")
+func reseedHTTP(reseeder *reseed.ReseederImpl) {
+	server := reseed.NewServer(viper.GetString("prefix"), viper.GetBool("trustProxy"))
+	server.RequestRateLimit = viper.GetInt("ratelimit")
+	server.WebRateLimit = viper.GetInt("ratelimitweb")
 	server.Reseeder = reseeder
-	server.Addr = net.JoinHostPort(c.String("ip"), c.String("port"))
+	server.Addr = net.JoinHostPort(viper.GetString("ip"), viper.GetString("port"))
 
 	// load a blacklist
 	blacklist := reseed.NewBlacklist()
 	server.Blacklist = blacklist
-	blacklistFile := c.String("blacklist")
+	blacklistFile := viper.GetString("blacklist")
 	if "" != blacklistFile {
 		blacklist.LoadFile(blacklistFile)
 	}
 
 	// print stats once in a while
-	if c.Duration("stats") != 0 {
+	if viper.GetDuration("stats") != 0 {
 		go func() {
 			var mem runtime.MemStats
-			for range time.Tick(c.Duration("stats")) {
+			for range time.Tick(viper.GetDuration("stats")) {
 				runtime.ReadMemStats(&mem)
 				log.Printf("TotalAllocs: %d Kb, Allocs: %d Kb, Mallocs: %d, NumGC: %d", mem.TotalAlloc/1024, mem.Alloc/1024, mem.Mallocs, mem.NumGC)
 			}
@@ -549,36 +458,36 @@ func reseedHTTP(c *cli.Context, reseeder *reseed.ReseederImpl) {
 	}
 }
 
-func reseedOnion(c *cli.Context, onionTlsCert, onionTlsKey string, reseeder *reseed.ReseederImpl) {
-	server := reseed.NewServer(c.String("prefix"), c.Bool("trustProxy"))
+func reseedOnion(onionTlsCert, onionTlsKey string, reseeder *reseed.ReseederImpl) {
+	server := reseed.NewServer(viper.GetString("prefix"), viper.GetBool("trustProxy"))
 	server.Reseeder = reseeder
-	server.Addr = net.JoinHostPort(c.String("ip"), c.String("port"))
+	server.Addr = net.JoinHostPort(viper.GetString("ip"), viper.GetString("port"))
 
 	// load a blacklist
 	blacklist := reseed.NewBlacklist()
 	server.Blacklist = blacklist
-	blacklistFile := c.String("blacklist")
+	blacklistFile := viper.GetString("blacklist")
 	if "" != blacklistFile {
 		blacklist.LoadFile(blacklistFile)
 	}
 
 	// print stats once in a while
-	if c.Duration("stats") != 0 {
+	if viper.GetDuration("stats") != 0 {
 		go func() {
 			var mem runtime.MemStats
-			for range time.Tick(c.Duration("stats")) {
+			for range time.Tick(viper.GetDuration("stats")) {
 				runtime.ReadMemStats(&mem)
 				log.Printf("TotalAllocs: %d Kb, Allocs: %d Kb, Mallocs: %d, NumGC: %d", mem.TotalAlloc/1024, mem.Alloc/1024, mem.Mallocs, mem.NumGC)
 			}
 		}()
 	}
-	port, err := strconv.Atoi(c.String("port"))
+	port, err := strconv.Atoi(viper.GetString("port"))
 	if err != nil {
 		log.Fatalln(err.Error())
 	}
 	port += 1
-	if _, err := os.Stat(c.String("onionKey")); err == nil {
-		ok, err := ioutil.ReadFile(c.String("onionKey"))
+	if _, err := os.Stat(viper.GetString("onionKey")); err == nil {
+		ok, err := os.ReadFile(viper.GetString("onionKey"))
 		if err != nil {
 			log.Fatalln(err.Error())
 		} else {
@@ -588,7 +497,7 @@ func reseedOnion(c *cli.Context, onionTlsCert, onionTlsKey string, reseeder *res
 					Key:          ed25519.PrivateKey(ok),
 					RemotePorts:  []int{443},
 					Version3:     true,
-					NonAnonymous: c.Bool("singleOnion"),
+					NonAnonymous: viper.GetBool("singleOnion"),
 					DiscardKey:   false,
 				}
 				if err := server.ListenAndServeOnionTLS(nil, tlc, onionTlsCert, onionTlsKey); err != nil {
@@ -600,7 +509,7 @@ func reseedOnion(c *cli.Context, onionTlsCert, onionTlsKey string, reseeder *res
 					Key:          ed25519.PrivateKey(ok),
 					RemotePorts:  []int{80},
 					Version3:     true,
-					NonAnonymous: c.Bool("singleOnion"),
+					NonAnonymous: viper.GetBool("singleOnion"),
 					DiscardKey:   false,
 				}
 				if err := server.ListenAndServeOnion(nil, tlc); err != nil {
@@ -614,7 +523,7 @@ func reseedOnion(c *cli.Context, onionTlsCert, onionTlsKey string, reseeder *res
 			LocalPort:    port,
 			RemotePorts:  []int{80},
 			Version3:     true,
-			NonAnonymous: c.Bool("singleOnion"),
+			NonAnonymous: viper.GetBool("singleOnion"),
 			DiscardKey:   false,
 		}
 		if err := server.ListenAndServeOnion(nil, tlc); err != nil {
@@ -624,42 +533,42 @@ func reseedOnion(c *cli.Context, onionTlsCert, onionTlsKey string, reseeder *res
 	log.Printf("Onion server started on %s\n", server.Addr)
 }
 
-func reseedI2P(c *cli.Context, i2pTlsCert, i2pTlsKey string, i2pIdentKey i2pkeys.I2PKeys, reseeder *reseed.ReseederImpl) {
-	server := reseed.NewServer(c.String("prefix"), c.Bool("trustProxy"))
-	server.RequestRateLimit = c.Int("ratelimit")
-	server.WebRateLimit = c.Int("ratelimitweb")
+func reseedI2P(i2pTlsCert, i2pTlsKey string, i2pIdentKey i2pkeys.I2PKeys, reseeder *reseed.ReseederImpl) {
+	server := reseed.NewServer(viper.GetString("prefix"), viper.GetBool("trustProxy"))
+	server.RequestRateLimit = viper.GetInt("ratelimit")
+	server.WebRateLimit = viper.GetInt("ratelimitweb")
 	server.Reseeder = reseeder
-	server.Addr = net.JoinHostPort(c.String("ip"), c.String("port"))
+	server.Addr = net.JoinHostPort(viper.GetString("ip"), viper.GetString("port"))
 
 	// load a blacklist
 	blacklist := reseed.NewBlacklist()
 	server.Blacklist = blacklist
-	blacklistFile := c.String("blacklist")
+	blacklistFile := viper.GetString("blacklist")
 	if "" != blacklistFile {
 		blacklist.LoadFile(blacklistFile)
 	}
 
 	// print stats once in a while
-	if c.Duration("stats") != 0 {
+	if viper.GetDuration("stats") != 0 {
 		go func() {
 			var mem runtime.MemStats
-			for range time.Tick(c.Duration("stats")) {
+			for range time.Tick(viper.GetDuration("stats")) {
 				runtime.ReadMemStats(&mem)
 				log.Printf("TotalAllocs: %d Kb, Allocs: %d Kb, Mallocs: %d, NumGC: %d", mem.TotalAlloc/1024, mem.Alloc/1024, mem.Mallocs, mem.NumGC)
 			}
 		}()
 	}
-	port, err := strconv.Atoi(c.String("port"))
+	port, err := strconv.Atoi(viper.GetString("port"))
 	if err != nil {
 		log.Fatalln(err.Error())
 	}
 	port += 1
 	if i2pTlsCert != "" && i2pTlsKey != "" {
-		if err := server.ListenAndServeI2PTLS(c.String("samaddr"), i2pIdentKey, i2pTlsCert, i2pTlsKey); err != nil {
+		if err := server.ListenAndServeI2PTLS(viper.GetString("samaddr"), i2pIdentKey, i2pTlsCert, i2pTlsKey); err != nil {
 			log.Fatalln(err)
 		}
 	} else {
-		if err := server.ListenAndServeI2P(c.String("samaddr"), i2pIdentKey); err != nil {
+		if err := server.ListenAndServeI2P(viper.GetString("samaddr"), i2pIdentKey); err != nil {
 			log.Fatalln(err)
 		}
 	}
@@ -713,10 +622,10 @@ func downloadRemoteNetDB(remote, password, path, samaddr string) error {
 	if resp, err := client.Do(&httpRequest); err != nil {
 		return err
 	} else {
-		if bodyBytes, err := ioutil.ReadAll(resp.Body); err != nil {
+		if bodyBytes, err := io.ReadAll(resp.Body); err != nil {
 			return err
 		} else {
-			if err := ioutil.WriteFile("netDb.tar.gz", bodyBytes, 0o644); err != nil {
+			if err := os.WriteFile("netDb.tar.gz", bodyBytes, 0o644); err != nil {
 				return err
 			} else {
 				dbPath := filepath.Join(path, "reseed-netDb")
